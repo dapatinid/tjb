@@ -428,6 +428,10 @@ class CheckoutPage extends Component
         ];
         User::where('id', Auth::user()->id)->update($update);
     }
+    public function change_payment_method()
+    {
+        $this->rekening = "";
+    }
 
 
     public function render()
