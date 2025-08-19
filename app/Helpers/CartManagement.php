@@ -30,9 +30,11 @@ class CartManagement
         if ($existing_item !== null) {
             $data = Cart::where('product_id', $product_id)->where('created_by', auth()->user()->id);
             $thispoin = Product::where('id', $product_id)->value('poin');
+            $thisweight = Product::where('id', $product_id)->value('weight');
             $update = [
                 'quantity' => $thisqty + 1,
                 'total_amount' => ($thisqty + 1) * $this_unit_amount,
+                'total_weight' => ($thisqty + 1) * $thisweight,
                 'poin' => ($thisqty + 1) * $thispoin,
             ];
             $data->update($update);
@@ -52,7 +54,7 @@ class CartManagement
                     'variant' => $product->variant,
                     'slug' => $product->slug,
                     'unit_name' => $product->unit_name,
-                    'total_weight' => $product->weight * 1,
+                    'total_weight' => $product->weight,
                     'contain' => $product->contain,
                     'image' => $productimg,
                     'quantity' => 1,
@@ -88,6 +90,7 @@ class CartManagement
         if ($existing_item !== null) {
             $data = Cart::where('product_id', $product_id)->where('created_by', auth()->user()->id);
             $thispoin = Product::where('id', $product_id)->value('poin');
+            $thisweight = Product::where('id', $product_id)->value('weight');
             if ($qty < 1) {
                 $qty = 1;
             } else {
@@ -96,6 +99,7 @@ class CartManagement
             $update = [
                 'quantity' => $qty,
                 'total_amount' => $qty * $this_unit_amount,
+                'total_weight' => $qty * $thisweight,
                 'poin' => $qty * $thispoin,
             ];
             $data->update($update);
@@ -157,6 +161,7 @@ class CartManagement
         if ($existing_item !== null) {
             $data = Cart::where('product_id', $product_id)->where('created_by', auth()->user()->id);
             $thispoin = Product::where('id', $product_id)->value('poin');
+            $thisweight = Product::where('id', $product_id)->value('weight');
             if ($qty == null || $qty < 0) {
                 $qty = $this_quantity;
             } else {
@@ -171,6 +176,7 @@ class CartManagement
                 'quantity' => $qty,
                 'unit_amount' => $price,
                 'total_amount' => $qty * $price,
+                'total_weight' => $qty * $thisweight,
                 'poin' => $qty * $thispoin,
             ];
             $data->update($update);
@@ -271,9 +277,11 @@ class CartManagement
             }
         }
         $data = Cart::where('product_id', $this_id)->where('created_by', auth()->user()->id);
+        $thisweight = Product::where('id', $product_id)->value('weight');
         $update = [
             'quantity' => $thisqty + 1,
             'total_amount' => ($thisqty + 1) * $this_unit_amount,
+            'total_weight' => ($thisqty + 1) * $thisweight,
         ];
         $data->update($update);
         return $cart_items;
@@ -295,9 +303,11 @@ class CartManagement
 
         if ($thisqty > 1) {
             $data = Cart::where('product_id', $this_id)->where('created_by', auth()->user()->id);
+            $thisweight = Product::where('id', $product_id)->value('weight');
             $update = [
                 'quantity' => $thisqty - 1,
                 'total_amount' => ($thisqty - 1) * $this_unit_amount,
+                'total_weight' => ($thisqty - 1) * $thisweight,
             ];
             $data->update($update);
         }
