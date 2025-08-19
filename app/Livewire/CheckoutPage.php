@@ -25,6 +25,7 @@ use App\Models\City;
 use App\Models\District;
 use App\Models\Province;
 use App\Models\Village;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 #[Title('Checkout - TegarJaya')]
@@ -74,26 +75,26 @@ class CheckoutPage extends Component
             return redirect('/products');
         }
 
-        if (auth()->user()->is_admin == 0 && auth()->user()->phone != '') {
-            $this->phone = auth()->user()->phone;
+        if (Auth::user()->is_admin == 0 && Auth::user()->phone != '') {
+            $this->phone = Auth::user()->phone;
         }
-        if (auth()->user()->is_admin == 0 && auth()->user()->street_address != '') {
-            $this->street_address = auth()->user()->street_address;
+        if (Auth::user()->is_admin == 0 && Auth::user()->street_address != '') {
+            $this->street_address = Auth::user()->street_address;
         }
-        if (auth()->user()->is_admin == 0 && auth()->user()->village != '') {
-            $this->village = auth()->user()->village;
+        if (Auth::user()->is_admin == 0 && Auth::user()->village != '') {
+            $this->village = Auth::user()->village;
         }
-        if (auth()->user()->is_admin == 0 && auth()->user()->district != '') {
-            $this->district = auth()->user()->district;
+        if (Auth::user()->is_admin == 0 && Auth::user()->district != '') {
+            $this->district = Auth::user()->district;
         }
-        if (auth()->user()->is_admin == 0 && auth()->user()->city != '') {
-            $this->city = auth()->user()->city;
+        if (Auth::user()->is_admin == 0 && Auth::user()->city != '') {
+            $this->city = Auth::user()->city;
         }
-        if (auth()->user()->is_admin == 0 && auth()->user()->state != '') {
-            $this->state = auth()->user()->state;
+        if (Auth::user()->is_admin == 0 && Auth::user()->state != '') {
+            $this->state = Auth::user()->state;
         }
-        if (auth()->user()->is_admin == 0 && auth()->user()->zip_code != '') {
-            $this->zip_code = auth()->user()->zip_code;
+        if (Auth::user()->is_admin == 0 && Auth::user()->zip_code != '') {
+            $this->zip_code = Auth::user()->zip_code;
         }
     }
 
@@ -128,12 +129,12 @@ class CheckoutPage extends Component
     public function placeOrder()
     {
 
-        $isadmin = auth()->user()->is_admin;
+        $isadmin = Auth::user()->is_admin;
         $today = Carbon::today()->format('Y-m-d');
 
         if ($isadmin == 1) {
             $cekPartnerID = Branch::where('id', $this->branch_id)->value('partner_id');
-            if ($cekPartnerID == auth()->user()->partner_id) {
+            if ($cekPartnerID == Auth::user()->partner_id) {
                 $this->branch_id = $this->branch_id;
             } else {
                 $this->branch_id = '';
@@ -208,13 +209,13 @@ class CheckoutPage extends Component
         $cart_items = CartManagement::getCartItemsFromCart()->where('branch_id', $this->branch_id);
 
         $order = new Order();
-        $order->q = Order::where('branch_id', auth()->user()->branch_id)->where('date_order', 'like', "%$today%")->count() + 1;
+        $order->q = Order::where('branch_id', Auth::user()->branch_id)->where('date_order', 'like', "%$today%")->count() + 1;
         $order->branch_id = $this->branch_id;
-        $order->code_tr = 'ORD' . date('YmdHis') . '-' . auth()->user()->id . '-' . Order::where('branch_id', auth()->user()->branch_id)->where('created_by', auth()->user()->id)->where('date_order', 'like', "%" . Carbon::now()->format('Y-m-d') . "%")->count() + 1;
-        $order->created_by = auth()->user()->id;
-        $order->updated_by = auth()->user()->id;
-        $order->total_weight = Cart::where('created_by', auth()->user()->id)->where('branch_id', $this->branch_id)->sum('total_weight');
-        $order->grand_total = Cart::where('created_by', auth()->user()->id)->where('branch_id', $this->branch_id)->sum('total_amount') - Str::replace('.', '', $this->discount) + Str::replace('.', '', $this->shipping_amount);
+        $order->code_tr = 'ORD' . date('YmdHis') . '-' . Auth::user()->id . '-' . Order::where('branch_id', Auth::user()->branch_id)->where('created_by', Auth::user()->id)->where('date_order', 'like', "%" . Carbon::now()->format('Y-m-d') . "%")->count() + 1;
+        $order->created_by = Auth::user()->id;
+        $order->updated_by = Auth::user()->id;
+        $order->total_weight = Cart::where('created_by', Auth::user()->id)->where('branch_id', $this->branch_id)->sum('total_weight');
+        $order->grand_total = Cart::where('created_by', Auth::user()->id)->where('branch_id', $this->branch_id)->sum('total_amount') - Str::replace('.', '', $this->discount) + Str::replace('.', '', $this->shipping_amount);
         $order->sales_type = $this->sales_type;
         if (Str::replace('.', '', $this->total_payment) >= $order->grand_total) {
             $order->is_paid = 1;
@@ -231,12 +232,12 @@ class CheckoutPage extends Component
             $order->status = 'new';
         }
         if (isset($this->notes)) {
-            // $order->notes =  $this->notes . PHP_EOL . PHP_EOL . 'Order oleh ' . PHP_EOL . auth()->user()->name . ' <' . auth()->user()->email . '>';
-            $order->notes =  $this->notes . PHP_EOL .  'Order oleh ' . PHP_EOL . auth()->user()->name;
+            // $order->notes =  $this->notes . PHP_EOL . PHP_EOL . 'Order oleh ' . PHP_EOL . Auth::user()->name . ' <' . Auth::user()->email . '>';
+            $order->notes =  $this->notes . PHP_EOL .  'Order oleh ' . PHP_EOL . Auth::user()->name;
             // PHP_EOL untuk enter textarea
         }
         // else {
-        // $order->notes =  'Order oleh ' . PHP_EOL . auth()->user()->name . ' <' . auth()->user()->email . '>';
+        // $order->notes =  'Order oleh ' . PHP_EOL . Auth::user()->name . ' <' . Auth::user()->email . '>';
         // }
 
         if ($isadmin == 1) {
@@ -251,7 +252,7 @@ class CheckoutPage extends Component
             }
             $order->total_cashback = $order->total_payment - $order->grand_total;
         } else {
-            $order->user_id = auth()->user()->id;
+            $order->user_id = Auth::user()->id;
             $order->shipping_method = 'kurir_taibah';
             $order->shipping_amount = 0;
             $order->discount = 0;
@@ -286,8 +287,8 @@ class CheckoutPage extends Component
         } else {
             $payment->rekening = $this->rekening;
         }
-        $payment->created_by = auth()->user()->id;
-        $payment->updated_by = auth()->user()->id;
+        $payment->created_by = Auth::user()->id;
+        $payment->updated_by = Auth::user()->id;
         $payment->branch_id = $this->branch_id;
 
 
@@ -331,8 +332,8 @@ class CheckoutPage extends Component
                     'poin' => $item['poin'],
                     'status' => $order->status,
                     'mutation_type' => 'Sales',
-                    'created_by' => auth()->user()->id,
-                    'updated_by' => auth()->user()->id,
+                    'created_by' => Auth::user()->id,
+                    'updated_by' => Auth::user()->id,
                     'branch_id' => $this->branch_id,
                 ]),
             ]);
@@ -351,9 +352,9 @@ class CheckoutPage extends Component
         $piutang->nominal_mins = 0;
         $piutang->nominal = $order->grand_total;
         $piutang->user_id = $order->user_id;
-        $piutang->created_by = auth()->user()->id;
-        $piutang->updated_by = auth()->user()->id;
-        $piutang->branch_id  = auth()->user()->branch_id;
+        $piutang->created_by = Auth::user()->id;
+        $piutang->updated_by = Auth::user()->id;
+        $piutang->branch_id  = Auth::user()->branch_id;
         $piutang->save();
 
         // hitung nilai barang untuk jurnal
@@ -374,9 +375,9 @@ class CheckoutPage extends Component
         $barangterjual->nominal_mins = $barang_terjual;
         $barangterjual->nominal = $barang_terjual;
         $barangterjual->user_id = $order->user_id;
-        $barangterjual->created_by = auth()->user()->id;
-        $barangterjual->updated_by = auth()->user()->id;
-        $barangterjual->branch_id  = auth()->user()->branch_id;
+        $barangterjual->created_by = Auth::user()->id;
+        $barangterjual->updated_by = Auth::user()->id;
+        $barangterjual->branch_id  = Auth::user()->branch_id;
         $barangterjual->save();
 
 
@@ -419,12 +420,20 @@ class CheckoutPage extends Component
     {
         $this->village = "";
     }
+    public function changeStore()
+    {
+        $update = [
+            'branch_id' => $this->branch_id,
+            'partner_id' => Branch::find($this->branch_id)->partner_id,
+        ];
+        User::where('id', Auth::user()->id)->update($update);
+    }
 
 
     public function render()
     {
         $cart_items = CartManagement::getCartItemsFromCart()->where('branch_id', $this->branch_id);
-        $subtotal = Cart::where('created_by', auth()->user()->id)->where('branch_id', $this->branch_id)->sum('total_amount');
+        $subtotal = Cart::where('created_by', Auth::user()->id)->where('branch_id', $this->branch_id)->sum('total_amount');
         $discount = intval(Str::replace('.', '', $this->discount));
         $shipping_amount = intval(Str::replace('.', '', $this->shipping_amount));
         $grand_total = $subtotal - $discount + $shipping_amount;
@@ -435,13 +444,13 @@ class CheckoutPage extends Component
         $districts = District::all()->where('city_code', $this->city)->sortBy('name');
         $villages = Village::all()->where('district_code', $this->district)->sortBy('name');
 
-        $branchesCust = Cart::where('created_by', auth()->user()->id)->groupBy('branch_id')->selectRaw('branch_id')->get();
+        $branchesCust = Cart::where('created_by', Auth::user()->id)->groupBy('branch_id')->selectRaw('branch_id')->get();
         $users = User::all();
 
-        if (auth()->user()->is_admin == 0) {
+        if (Auth::user()->is_admin == 0) {
             $branches = Branch::all()->where('is_active', 1);
         } else {
-            $branches = Branch::all()->where('partner_id', auth()->user()->partner_id)->where('is_active', 1);
+            $branches = Branch::all()->where('partner_id', Auth::user()->partner_id)->where('is_active', 1);
         }
         $products = Product::all();
 

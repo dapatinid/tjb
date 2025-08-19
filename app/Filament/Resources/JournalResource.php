@@ -327,6 +327,7 @@ class JournalResource extends Resource
                             'NR-DB-A-4100 Akum. Kendaraan' => 'NR-DB-A-4100 Akum. Kendaraan',
 
                             'NR-DB-B-1100 CASH / BANK' => 'NR-DB-B-1100 CASH / BANK',
+                            'NR-DB-B-1900 DANA DISIMPAN' => 'NR-DB-B-1900 DANA DISIMPAN',
                             'NR-DB-B-2000 Persediaan Barang Dagang' => 'NR-DB-B-2000 Persediaan Barang Dagang',
                             'NR-DB-B-3000 Piutang Penjualan Barang' => 'NR-DB-B-3000 Piutang Penjualan Barang',
                             'NR-DB-B-4000 Piutang Usaha' => 'NR-DB-B-4000 Piutang Usaha',
@@ -411,6 +412,7 @@ class JournalResource extends Resource
                             'NR-DB-A-4100 Akum. Kendaraan' => 'NR-DB-A-4100 Akum. Kendaraan',
 
                             'NR-DB-B-1100 CASH / BANK' => 'NR-DB-B-1100 CASH / BANK',
+                            'NR-DB-B-1900 DANA DISIMPAN' => 'NR-DB-B-1900 DANA DISIMPAN',
                             'NR-DB-B-2000 Persediaan Barang Dagang' => 'NR-DB-B-2000 Persediaan Barang Dagang',
                             'NR-DB-B-3000 Piutang Penjualan Barang' => 'NR-DB-B-3000 Piutang Penjualan Barang',
                             'NR-DB-B-4000 Piutang Usaha' => 'NR-DB-B-4000 Piutang Usaha',

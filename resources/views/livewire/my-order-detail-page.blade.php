@@ -428,7 +428,7 @@
                 <a href="{{ route('printorderprocess', [$order->id]) }}"
                     class="{{ auth()->user()->is_admin == 1 ? 'block' : 'hidden' }}">
                     <button class="w-full p-3 mt-4 text-sm text-white bg-gray-500 rounded-lg hover:bg-gray-600">
-                        <i class="fa fa-coffee" aria-hidden="true"></i> Print Proses
+                        <i class="fa fa-coffee" aria-hidden="true"></i> Srt Jalan
                     </button>
                 </a>
             </div>

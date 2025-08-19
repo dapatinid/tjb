@@ -26,7 +26,7 @@
 						</div>
 						<div class="gap-4" >
 							<div wire:ignore>
-								<select wire:model.live='branch_id' data-hs-select='{
+								<select wire:model.live='branch_id' wire:change='changeStore()' data-hs-select='{
 									"hasSearch": true,
 									"searchPlaceholder": "Search...",
 									"searchClasses": "block w-full text-sm border-gray-200 rounded-lg focus:border-blue-500 focus:ring-blue-500 before:absolute before:inset-0 before:z-[1] dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 py-2 px-3",

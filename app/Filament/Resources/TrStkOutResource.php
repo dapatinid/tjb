@@ -26,6 +26,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ButtonAction;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
@@ -415,6 +416,12 @@ class TrStkOutResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make('print')
+                    // ->label('Print Transfer')
+                    ->hiddenLabel()
+                    ->url(fn(TrStkOut $record) => route('printtransferstock', $record))
+                    ->openUrlInNewTab()
+                    ->icon('heroicon-o-printer'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

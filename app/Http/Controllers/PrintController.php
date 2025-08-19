@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\City;
 use App\Models\District;
 use App\Models\Province;
+use App\Models\TrStkOut;
 use App\Models\Village;
 use Illuminate\Support\Str;
 
@@ -73,5 +74,22 @@ class PrintController extends Controller
             'orderitems' => $orderitems,
         ];
         return view('printorder-process', $data);
+    }
+    public function printviewtransferstock($id)
+    {
+        if (Auth::check()) {
+            if (auth()->user()->is_admin == 0) {
+                return redirect('/admin/tr-stk-outs');
+            }
+        }
+
+        $trSTK = TrStkOut::find($id);
+        $orderitems = OrderItem::where('tr_stk_out_id', $id)->get();
+        $data = [
+            'date' => date('d/m/Y'),
+            'trSTK' => $trSTK,
+            'orderitems' => $orderitems,
+        ];
+        return view('print-transfer-stock', $data);
     }
 }

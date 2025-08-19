@@ -14,8 +14,8 @@
 <body style="font-size: 18px; margin-bottom: 2em;">
             <div style="text-align: center;">
                 {{-- <img src="{{ url('storage/Taibah-FC-LOGO-bulat-aja-w-Stroke.png') }}" alt="ZaharaPOS" width="100" /> --}}
-                <h4>Delivery Order No. {{ $order->q }}</h4>
-                <h4 style="margin-top: -12px;">{{ $order->code_tr }}</h4>
+                <h4>Transfer No. {{ $trSTK->q }}</h4>
+                <h4 style="margin-top: -12px;">{{ $trSTK->code_tr }}</h4>
             </div>
     <div class="">
         {{-- <div style="text-align: center; margin-bottom: 12px;"><b>order items</b></div> --}}
@@ -47,7 +47,7 @@
     </div>
  <hr size="3" color="black">
 
- <div style="justify-content: space-between; display: flex; font-size: 18px;"><span>Berat</span><span>{{ substr($order->total_weight, 0, -3) }}kg</span></div>
+    <div style="justify-content: space-between; display: flex; font-size: 18px;"><span>Berat</span><span>{{ substr($trSTK->total_weight, 0, -3) }}kg</span></div>
 
  <script type = 'text/javascript'>  
     window.onload = function(){ window.print(); }

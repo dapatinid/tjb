@@ -97,6 +97,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/printprevieworder/{id}', [PrintController::class, 'printvieworder'])->name('printorder');
     Route::get('/printprevieworderprocess/{id}', [PrintController::class, 'printvieworderprocess'])->name('printorderprocess');
+    Route::get('/printpreviewtransferstock/{id}', [PrintController::class, 'printviewtransferstock'])->name('printtransferstock');
     Route::get('/exportproducts', [ExportController::class, 'exportProduct']);
     Route::get('/exportbrands', [ExportController::class, 'exportBrand']);
 });

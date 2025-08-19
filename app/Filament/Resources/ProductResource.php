@@ -95,7 +95,7 @@ class ProductResource extends Resource
                             ->columnSpanFull()
                             ->readOnly(fn($record) => !is_null($record)) # tidak dapat diedit setelah terisi
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn(string $operation, $state, Set $set) => $operation === 'create' ? $set('sku', Str::upper($state)) : null)
+                            ->afterStateUpdated(fn(string $operation, $state, Set $set) => $operation === 'create' ? $set('sku', Str::upper(Str::slug($state))) : null)
                             ->afterStateUpdated(
                                 function (string $operation, $state, Set $set) {
                                     // Query Count

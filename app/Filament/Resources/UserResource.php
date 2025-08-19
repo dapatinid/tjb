@@ -42,6 +42,7 @@ use App\Models\Province;
 use App\Models\Village;
 use Filament\Pages\Actions;
 use Filament\Tables\Columns\ImageColumn;
+use illuminate\Support\Str;
 
 class UserResource extends Resource
 {
@@ -123,7 +124,7 @@ class UserResource extends Resource
                     ->required()
                     ->afterStateHydrated(function ($record) {
                         if (!is_null($record)) {
-                            if (Auth::user()->level != 'backofficer' && $record->level === 'backofficer') {
+                            if (Auth::user()->level != 'backofficer' && $record->level === 'backofficer' || $record->id == 1) {
                                 return redirect('/admin/users');
                             }
                         }
@@ -150,8 +151,31 @@ class UserResource extends Resource
                     }),
                 Forms\Components\TextInput::make('password')
                     ->password()
+                    ->live()
                     ->dehydrated(fn($state) => filled($state))
-                    ->required(fn(Page $livewire): bool => $livewire instanceof CreateRecord),
+                    ->required(fn(Page $livewire): bool => $livewire instanceof CreateRecord)
+                    // ->prefixAction(
+                    //     Forms\Components\Actions\Action::make('toggle-password-visibility')
+                    //         ->icon('heroicon-o-eye')
+                    //         ->iconSize('md')
+                    //         ->action(function ($component) {
+                    //             $component->type('text');
+                    //         })
+                    // )
+                    ->suffixAction(
+                        Forms\Components\Actions\Action::make('toggle-password-visibility')
+                            ->icon('heroicon-o-eye')
+                            ->iconSize('md')
+                            ->action(function ($component) {
+                                $component->type('text');
+                            })
+                        // Forms\Components\Actions\Action::make('toggle-password-invisibility')
+                        //     ->icon('heroicon-o-eye-slash')
+                        //     ->iconSize('md')
+                        //     ->action(function ($component) {
+                        //         $component->type('password');
+                        //     })
+                    ),
                 Forms\Components\DateTimePicker::make('created_at')
                     ->label('Created At')
                     ->readOnly(),
@@ -256,6 +280,15 @@ class UserResource extends Resource
                 Textarea::make('street_address')
                     ->columnSpanFull(),
                 TextInput::make('rute')
+                    ->dehydrated()
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(
+                        function ($state, Set $set,) {
+                            $ruteSlug = Str::slug($state);
+                            $ruteUpper = Str::upper($ruteSlug);
+                            $set('rute', $ruteUpper);
+                        },
+                    )
                     ->columnSpanFull(),
             ]);
     }
@@ -283,19 +316,29 @@ class UserResource extends Resource
                     ->label('Admin?')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->sortable()
                     ->searchable(),
                 ImageColumn::make('image')->circular(),
                 Tables\Columns\TextColumn::make('email')
                     ->icon('heroicon-m-envelope')
                     ->iconColor('primary')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextInputColumn::make('rute')
+                    ->afterStateUpdated(
+                        function ($state, $record) {
+                            $ruteSlug = Str::slug($state);
+                            $ruteUpper = Str::upper($ruteSlug);
+                            User::where('id', $record->id)->update(['rute' => $ruteUpper]);
+                        },
+                    )
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('level')
                     ->sortable()
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('roles.name')
                     ->sortable()
                     ->searchable()

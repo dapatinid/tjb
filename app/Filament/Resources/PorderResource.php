@@ -108,7 +108,7 @@ class PorderResource extends Resource
                             ->required()
                             ->grouped()
                             ->options([
-                                'dine_in' => 'Dine In',
+                                // 'dine_in' => 'Dine In',
                                 'self_pickup' => 'Self Pickup',
                                 'delivery' => 'Delivery'
                             ])
@@ -405,25 +405,15 @@ class PorderResource extends Resource
                                             'KAS KECIL' => 'KAS KECIL',
                                         ],
                                         'transfer' => [
-                                            'BANK BSI' => 'BANK BSI',
                                             'BANK BCA' => 'BANK BCA',
                                             'BANK BRI' => 'BANK BRI',
-                                            'BANK BNI' => 'BANK BNI',
-                                            'BANK BTN' => 'BANK BTN',
-                                            'BANK MANDIRI' => 'BANK MANDIRI',
-                                            'BANK JATENG' => 'BANK JATENG',
                                         ],
                                         default => [
                                             'KAS UTAMA' => 'KAS UTAMA',
                                             'KAS KASIR' => 'KAS KASIR',
                                             'KAS KECIL' => 'KAS KECIL',
-                                            'BANK BSI' => 'BANK BSI',
                                             'BANK BCA' => 'BANK BCA',
                                             'BANK BRI' => 'BANK BRI',
-                                            'BANK BNI' => 'BANK BNI',
-                                            'BANK BTN' => 'BANK BTN',
-                                            'BANK MANDIRI' => 'BANK MANDIRI',
-                                            'BANK JATENG' => 'BANK JATENG',
                                         ],
                                     })
                                     ->searchable()
@@ -582,17 +572,26 @@ class PorderResource extends Resource
                     ->alignRight()
                     ->summarize(Sum::make()->numeric(locale: 'id')->prefix('Rp ')->label('Total')),
                 TextColumn::make('total_payment')
+                    ->label('Terbayar')
                     ->numeric(locale: 'id')->prefix('Rp ')
                     ->sortable()
                     ->alignRight()
                     ->summarize(Sum::make()->numeric(locale: 'id')->prefix('Rp ')->label('Total')),
                 TextColumn::make('total_cashback')
+                    ->label('Kurang/Kembali')
                     ->numeric(locale: 'id')->prefix('Rp ')
                     ->sortable()
                     ->alignRight()
                     ->summarize(Sum::make()->numeric(locale: 'id')->prefix('Rp ')->label('Total')),
 
                 TextColumn::make('payments.payment_method')
+                    ->label('Mtd')
+                    ->listWithLineBreaks()
+                    ->bulleted()
+                    // ->sortable()
+                    ->searchable(),
+                TextColumn::make('payments.rekening')
+                    ->label('Rek')
                     ->listWithLineBreaks()
                     ->bulleted()
                     // ->sortable()
@@ -758,29 +757,15 @@ class PorderResource extends Resource
                                         'KAS KECIL' => 'KAS KECIL',
                                     ],
                                     'transfer' => [
-                                        'BANK BSI' => 'BANK BSI',
                                         'BANK BCA' => 'BANK BCA',
                                         'BANK BRI' => 'BANK BRI',
-                                        'BANK BNI' => 'BANK BNI',
-                                        'BANK BTN' => 'BANK BTN',
-                                        'BANK MANDIRI' => 'BANK MANDIRI',
-                                        'BANK JATENG' => 'BANK JATENG',
                                     ],
                                     default => [
                                         'KAS UTAMA' => 'KAS UTAMA',
-                                        'KAS KASIR A' => 'KAS KASIR A',
-                                        'KAS KASIR B' => 'KAS KASIR B',
-                                        'KAS KASIR C' => 'KAS KASIR C',
-                                        'KAS KECIL A' => 'KAS KECIL A',
-                                        'KAS KECIL B' => 'KAS KECIL B',
-                                        'KAS KECIL C' => 'KAS KECIL C',
-                                        'BANK BSI' => 'BANK BSI',
+                                        'KAS KASIR' => 'KAS KASIR',
+                                        'KAS KECIL' => 'KAS KECIL',
                                         'BANK BCA' => 'BANK BCA',
                                         'BANK BRI' => 'BANK BRI',
-                                        'BANK BNI' => 'BANK BNI',
-                                        'BANK BTN' => 'BANK BTN',
-                                        'BANK MANDIRI' => 'BANK MANDIRI',
-                                        'BANK JATENG' => 'BANK JATENG',
                                     ],
                                 })
                                 ->required()
