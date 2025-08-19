@@ -133,6 +133,12 @@ class MyOrderDetailPage extends Component
         $totalpaid = Payment::where('paymentable_type', Order::class)->where('mutation_type', "Sales")->where('paymentable_id', $id)->sum('nominal_plus');
         $this->input_payment = Str::replace('.', '', $this->input_payment);
 
+        if (str_contains($this->rekening, 'BANK')) {
+            $this->payment_method = 'transfer';
+        } else {
+            $this->payment_method = 'cash';
+        }
+
         if ($this->payment_method == null) {
             $payment_method = 'cash';
         } else {

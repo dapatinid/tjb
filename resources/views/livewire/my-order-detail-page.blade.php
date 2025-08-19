@@ -482,7 +482,7 @@
                 @error('payment_date_paid')
                     <div class="text-sm text-red-500">{{ $message }}</div>
                 @enderror
-                <div class="p-4 overflow-y-auto">
+                <div class="p-4 overflow-y-auto hidden">
                     <div class="grid grid-cols-2 gap-2">
                         <label for="payment_cash"
                             class="flex w-full p-3 text-sm bg-white border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-blue-500">
@@ -512,29 +512,19 @@
                         class="block w-full px-4 py-3 text-sm text-center border-gray-200 rounded-lg focus:border-yellow-400 focus:ring-yellow-400"
                         required="">
                         {{-- @if ($this->payment_method === "cash") --}}
-                            {{-- <option value="">-</option>    
-                            <option value="KAS KASIR">KAS KASIR</option>                           --}}
+                            <option value="">-</option>    
+                            <option value="KAS KASIR">KAS KASIR</option>                          
                         {{-- @else --}}
-                            {{-- <option value="BANK BSI">BANK BSI</option>
                             <option value="BANK BCA">BANK BCA</option>
                             <option value="BANK BRI">BANK BRI</option>
-                            <option value="BANK BNI">BANK BNI</option>
-                            <option value="BANK BTN">BANK BTN</option>
-                            <option value="BANK MANDIRI">BANK MANDIRI</option>
-                            <option value="BANK JATENG">BANK JATENG</option> --}}
                         {{-- @endif --}}
-                            <script>
+                            {{-- <script>
                                 let selectKas = {
                                 "KAS KASIR": "KAS KASIR",
                                 }
                                 let selectBank = {
-                                "BANK BSI": "BANK BSI",
                                 "BANK BCA": "BANK BCA",
                                 "BANK BRI": "BANK BRI",
-                                "BANK BNI": "BANK BNI",
-                                "BANK BTN": "BANK BTN",
-                                "BANK MANDIRI": "BANK MANDIRI",
-                                "BANK JATENG": "BANK JATENG"
                                 }
                                 const selectRek = document.getElementById('rekening')
                                 document.getElementById("payment_cash").addEventListener("click", (e) => {
@@ -546,7 +536,7 @@
                                     Object.keys(selectBank).map(key => selectRek.add(new Option(selectBank[key], key)))
                                     });
 
-                            </script>
+                            </script> --}}
                     </select>
                 </div>
                 @error('rekening')
@@ -686,13 +676,8 @@
                                                 <option value="">-</option>    
                                                 <option value="KAS KASIR">KAS KASIR</option>                          
                                             {{-- @else --}}
-                                                <option value="BANK BSI">BANK BSI</option>
                                                 <option value="BANK BCA">BANK BCA</option>
                                                 <option value="BANK BRI">BANK BRI</option>
-                                                <option value="BANK BNI">BANK BNI</option>
-                                                <option value="BANK BTN">BANK BTN</option>
-                                                <option value="BANK MANDIRI">BANK MANDIRI</option>
-                                                <option value="BANK JATENG">BANK JATENG</option>
                                             {{-- @endif --}}
                                         </select>
                                     </div>
