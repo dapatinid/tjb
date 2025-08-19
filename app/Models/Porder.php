@@ -76,18 +76,18 @@ class Porder extends Model
         });
         static::updating(function ($model) {
             // hitung Hutang Pembelian untuk jurnal
-            if ($model->isDirty('grand_total')) {
-                Payment::where('paymentable_type', Porder::class)
-                    ->where('paymentable_id', $model->id)
-                    ->where('mutation_type', "Hutang Pembelian")
-                    ->update([
-                        // 'date_payment' => $lastEdit,
-                        'date_payment' => $model->date_order,
-                        'nominal_plus' => 0,
-                        'nominal_mins' => $model->grand_total,
-                        'nominal' => $model->grand_total,
-                    ]);
-            }
+            // if ($model->isDirty('grand_total')) {
+            Payment::where('paymentable_type', Porder::class)
+                ->where('paymentable_id', $model->id)
+                ->where('mutation_type', "Hutang Pembelian")
+                ->update([
+                    // 'date_payment' => $lastEdit,
+                    'date_payment' => $model->date_order,
+                    'nominal_plus' => 0,
+                    'nominal_mins' => $model->grand_total,
+                    'nominal' => $model->grand_total,
+                ]);
+            // }
         });
         static::updated(function ($model) {
             // Update HPP tiap produk ketika melakukan Pembelian

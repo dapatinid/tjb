@@ -83,18 +83,18 @@ class Order extends Model
         });
         static::updating(function ($model) {
             // hitung Piutang Penjualan untuk jurnal
-            if ($model->isDirty('grand_total')) {
-                Payment::where('paymentable_type', Order::class)
-                    ->where('paymentable_id', $model->id)
-                    ->where('mutation_type', "Piutang Penjualan")
-                    ->update([
-                        // 'date_payment' => $lastEdit,
-                        'date_payment' => $model->date_order,
-                        'nominal_plus' => $model->grand_total,
-                        'nominal_mins' => 0,
-                        'nominal' => $model->grand_total,
-                    ]);
-            }
+            // if ($model->isDirty('grand_total')) {
+            Payment::where('paymentable_type', Order::class)
+                ->where('paymentable_id', $model->id)
+                ->where('mutation_type', "Piutang Penjualan")
+                ->update([
+                    // 'date_payment' => $lastEdit,
+                    'date_payment' => $model->date_order,
+                    'nominal_plus' => $model->grand_total,
+                    'nominal_mins' => 0,
+                    'nominal' => $model->grand_total,
+                ]);
+            // }
         });
         static::updated(function ($model) {
             $orderTarget = Order::where('id', $model->id);
