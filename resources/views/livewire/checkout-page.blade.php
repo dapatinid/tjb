@@ -333,7 +333,7 @@
 					</div>
 					<ul class="grid w-full grid-cols-2 gap-6 max-md:grid-cols-2"">
 						<li class="group">
-							<input  wire:model.live='payment_method' wire:click.prevent='change_payment_method()' class="hidden peer" id="paymentmtd001" type="radio" value="cash" />
+							<input  wire:model.live='payment_method' wire:click='change_payment_method()' class="hidden peer" id="paymentmtd001" type="radio" value="cash" />
 							<label class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:group-hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 group-hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:group-hover:bg-gray-700" for="paymentmtd001">
 								<div class="block">
 									<div class="relative z-10 w-full pr-1 text-sm font-semibold bg-white rounded-sm dark:bg-gray-800 dark:group-hover:bg-gray-700 xs:text-lg group-hover:bg-gray-100">
@@ -345,7 +345,7 @@
 							</input>
 						</li>
 						<li class="group">
-							<input wire:model.live='payment_method' wire:click.prevent='change_payment_method()' class="hidden peer" id="paymentmtd002" type="radio" value="transfer">
+							<input wire:model.live='payment_method' wire:click='change_payment_method()' class="hidden peer" id="paymentmtd002" type="radio" value="transfer">
 							<label class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:group-hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 group-hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:group-hover:bg-gray-700" for="paymentmtd002">
 								<div class="block">
 									<div class="relative z-10 w-full pr-1 text-sm font-semibold bg-white rounded-sm dark:bg-gray-800 dark:group-hover:bg-gray-700 xs:text-lg group-hover:bg-gray-100">
