@@ -439,7 +439,7 @@ class CheckoutPage extends Component
         $users = User::all();
 
         if (auth()->user()->is_admin == 0) {
-            $branches = Branch::all();
+            $branches = Branch::all()->where('is_active', 1);
         } else {
             $branches = Branch::all()->where('partner_id', auth()->user()->partner_id)->where('is_active', 1);
         }

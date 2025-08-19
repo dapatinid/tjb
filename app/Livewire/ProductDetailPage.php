@@ -82,7 +82,7 @@ class ProductDetailPage extends Component
     public function render()
     {
         $branchID = Product::where('slug', $this->slug)->value('branch_id');
-        $brnID = Product::where('slug', $this->slug)->value('brand_id');
+        // $brnID = Product::where('slug', $this->slug)->value('brand_id');
         $varget = Product::where('slug', $this->slug)->value('name');
         // $variants = Product::where('is_active', 1)->where('name', '=', $varvalue)->where('slug', 'not like', $this->slug)->get();
         $variants = Product::where('branch_id', $branchID)->where('is_active', 1)->where('name', 'like', $varget)->get();

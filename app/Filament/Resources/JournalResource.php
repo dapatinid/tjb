@@ -544,9 +544,9 @@ class JournalResource extends Resource
                         ->label('ke Cabang')
                         ->relationship(
                             name: 'branch',
-                            modifyQueryUsing: fn(Builder $query) => $query->orderBy('name')->where('partner_id', Auth::user()->partner_id),
+                            modifyQueryUsing: fn(Builder $query) => $query->orderBy('name')->where('partner_id', Auth::user()->partner_id)->where('is_active', 1),
                         )
-                        ->options(Branch::query()->orderBy('name')->where('partner_id', Auth::user()->partner_id)->pluck('name', 'id'))
+                        ->options(Branch::query()->orderBy('name')->where('partner_id', Auth::user()->partner_id)->where('is_active', 1)->pluck('name', 'id'))
                         ->default(Auth::user()->branch_id)
                         ->searchable()
                         // ->getSearchResultsUsing(fn(string $search): array => Branch::query()

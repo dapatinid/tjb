@@ -277,11 +277,13 @@ class CartManagement
             }
         }
         $data = Cart::where('product_id', $this_id)->where('created_by', auth()->user()->id);
+        $thispoin = Product::where('id', $product_id)->value('poin');
         $thisweight = Product::where('id', $product_id)->value('weight');
         $update = [
             'quantity' => $thisqty + 1,
             'total_amount' => ($thisqty + 1) * $this_unit_amount,
             'total_weight' => ($thisqty + 1) * $thisweight,
+            'poin' => ($thisqty + 1) * $thispoin,
         ];
         $data->update($update);
         return $cart_items;
@@ -303,11 +305,13 @@ class CartManagement
 
         if ($thisqty > 1) {
             $data = Cart::where('product_id', $this_id)->where('created_by', auth()->user()->id);
+            $thispoin = Product::where('id', $product_id)->value('poin');
             $thisweight = Product::where('id', $product_id)->value('weight');
             $update = [
                 'quantity' => $thisqty - 1,
                 'total_amount' => ($thisqty - 1) * $this_unit_amount,
                 'total_weight' => ($thisqty - 1) * $thisweight,
+                'poin' => ($thisqty - 1) * $thispoin,
             ];
             $data->update($update);
         }
@@ -327,9 +331,14 @@ class CartManagement
             }
         }
         $data = Cart::where('id', $this_id)->where('created_by', auth()->user()->id);
+        $pridukID = Cart::where('id', $this_id)->where('created_by', auth()->user()->id)->value('product_id');
+        $thispoin = Product::where('id', $pridukID)->value('poin');
+        $thisweight = Product::where('id', $pridukID)->value('weight');
         $update = [
             'quantity' => $thisqty,
             'total_amount' => $thisqty * $this_unit_amount,
+            'total_weight' => $thisqty * $thisweight,
+            'poin' => $thisqty * $thispoin,
         ];
         $data->update($update);
         return $cart_items;

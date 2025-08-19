@@ -98,7 +98,7 @@ class TrStkOutResource extends Resource
                                     DB::raw("CONCAT(name, ' ', phone) as nameNphone"),
                                     'id',
                                 ])
-                                ->where('name', 'like', "%{$search}%")->orWhere('phone', 'like', "%{$search}%")->pluck('nameNphone', 'id')->toArray())
+                                ->where('is_active', 1)->where('name', 'like', "%{$search}%")->orWhere('phone', 'like', "%{$search}%")->pluck('nameNphone', 'id')->toArray())
                             ->getOptionLabelUsing(fn($value): ?string => Branch::find($value)?->name)
                             ->preload()
                             ->required()
