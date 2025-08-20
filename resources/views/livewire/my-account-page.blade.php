@@ -54,7 +54,7 @@
               <x-fas-chevron-right class="text-green-600 size-5 float-right" />
               </div>
             </a>
-            <a aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-focus-management-modal-x" data-hs-overlay="#hs-focus-management-modal-x">
+            {{-- <a aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-focus-management-modal-x" data-hs-overlay="#hs-focus-management-modal-x">
               <div class="cursor-pointer flex justify-between items-center rounded-lg mx-auto my-2 p-4 w-full hover:bg-green-400 bg-gray-100 bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-black dark:!shadow-none">
                 <div class="flex flex-nowrap">
                 <x-fas-file-lines class="text-green-600 size-5 mr-3" aria-hidden="true"/>
@@ -62,7 +62,7 @@
               </div>
               <x-fas-chevron-right class="text-green-600 size-5 float-right" />
               </div>
-            </a>
+            </a> --}}
             <a target="_blank" href="https://wa.me/6287881231119">
               <div class="flex justify-between items-center rounded-lg mx-auto my-2 p-4 w-full hover:bg-green-400 bg-gray-100 bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-black dark:!shadow-none">
                 <div class="flex flex-nowrap">
@@ -75,9 +75,9 @@
 
             {{-- MODAL --}}
             
-            <div id="hs-focus-management-modal-x" class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none" role="dialog" tabindex="-1" aria-labelledby="hs-focus-management-modal-label">
+            {{-- <div id="hs-focus-management-modal-x" class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none" role="dialog" tabindex="-1" aria-labelledby="hs-focus-management-modal-label">
               <div class="m-3 mt-0 transition-all ease-out opacity-0 hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 sm:max-w-lg sm:w-full sm:mx-auto">
-                {{-- <form > --}}
+                <form >
                   <div class="flex flex-col bg-white border shadow-sm pointer-events-auto rounded-xl">
                     <div class="flex items-center justify-between px-4 py-3 border-b">
                       <h3 id="hs-focus-management-modal-label" class="font-bold text-gray-800">
@@ -127,9 +127,9 @@
                       </button>
                     </div>
                   </div>
-                {{-- </form> --}}
+                </form>
               </div>
-            </div>
+            </div> --}}
 
 
         </div>  
