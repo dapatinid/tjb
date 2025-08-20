@@ -63,7 +63,7 @@
               <x-fas-chevron-right class="text-green-600 size-5 float-right" />
               </div>
             </a> --}}
-            <a target="_blank" href="https://wa.me/6287881231119">
+            <a target="_blank" href="https://wa.me/6285950540055">
               <div class="flex justify-between items-center rounded-lg mx-auto my-2 p-4 w-full hover:bg-green-400 bg-gray-100 bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-black dark:!shadow-none">
                 <div class="flex flex-nowrap">
                   <x-fas-phone-volume class="text-green-600 size-5 mr-3" aria-hidden="true"/>
