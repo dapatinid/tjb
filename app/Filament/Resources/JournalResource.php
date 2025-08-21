@@ -605,6 +605,7 @@ class JournalResource extends Resource
                         ->required(fn(Get $get) => $get('journal_type') === 'tf')
                         ->columnSpan(['default' => 12, 'sm' => 12, 'md' => 4, 'lg' => 4, 'xl' => 4]),
 
+
                     TextInput::make('nominal')
                         ->afterStateHydrated(function ($record) {
                             if (!is_null($record)) {
