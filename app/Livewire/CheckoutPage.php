@@ -45,7 +45,9 @@ class CheckoutPage extends Component
     public $discount = 0;
     public $shipping_amount = 0;
     public $total_payment = 0;
+    #[Url()]
     public $payment_method;
+    #[Url()]
     public $rekening;
     public $notes;
 

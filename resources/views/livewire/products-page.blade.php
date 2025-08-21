@@ -252,16 +252,16 @@
                                                 </span>
                                                 @if ($product->strikethroughprice != null && $product->strikethroughprice > 0)
                                                     <span class="pr-2 text-xs font-normal text-gray-500 line-through text-nowrap dark:text-green-600">
-                                                        @if (Str::length($product->strikethroughprice) > 6)
-                                                        Rp{{  Number::forHumans($product->strikethroughprice, precision: 2) }}
+                                                        @if (Str::length($product->strikethroughprice) > 3)
+                                                        {{  substr($product->strikethroughprice, 0, -3) }}rb
                                                         @else
                                                         @currency($product->strikethroughprice)
                                                         @endif
                                                     </span>
                                                 @endif
                                             </p>
-                                            <p class="flex items-center text-nowrap dark:text-white">
-                                                <x-fas-star class="size-4 text-yellow-400 mb-0.5 mr-1"/> {{ $product->rating }}</p>
+                                            <p class="flex items-center text-nowrap dark:text-white text-xs">
+                                                <x-fas-star class="size-3 text-yellow-400 mb-0.5 mr-1"/> {{ $product->rating }}</p>
                                         </div>
                                     </div>
                                     <div 

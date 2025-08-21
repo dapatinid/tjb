@@ -11,7 +11,7 @@
 </style>
 
 </head>
-<body style="font-size: 18px; margin-bottom: 2em;">
+<body style="font-size: 18px; margin-bottom: 2em; padding-top: 1rem; padding-left: 1rem; padding-right: 1rem">
             <div style="text-align: center;">
                 {{-- <img src="{{ url('storage/Taibah-FC-LOGO-bulat-aja-w-Stroke.png') }}" alt="ZaharaPOS" width="100" /> --}}
                 <h4>Delivery Order No. {{ $order->q }}</h4>
@@ -19,10 +19,10 @@
             </div>
     <div class="">
         {{-- <div style="text-align: center; margin-bottom: 12px;"><b>order items</b></div> --}}
-        <div style="justify-content: space-between; display: flex; font-size: 18px; margin-bottom: 12px;"><span>No  |  Item Name</span> <span style="font-size: 18px;">QTY</span></div>
+        <div style="justify-content: space-between; display: flex;  margin-bottom: 12px;"><span>No  |  Item Name</span> <span style="">QTY</span></div>
         @foreach ($orderitems as $orderitem)
         <div class="items" style="margin-bottom: 12px;">
-            <div style="justify-content: space-between; display: flex; font-size: 18px;"><span>#{{$loop->iteration}} {{ $orderitem->product->name }} {{ $orderitem->product->variant }}</span> <span style="font-size: 24px;">{{ $orderitem->quantity }}</span></div>
+            <div style="justify-content: space-between; display: flex; "><span>#{{$loop->iteration}} {{ $orderitem->product->name }} {{ $orderitem->product->variant }}</span> <span style="font-size: 24px;">{{ $orderitem->quantity }}</span></div>
 
             @if($orderitem->contain != '')
             @php 
@@ -47,7 +47,7 @@
     </div>
  <hr size="3" color="black">
 
- <div style="justify-content: space-between; display: flex; font-size: 18px;"><span>Berat</span><span>{{ substr($order->total_weight, 0, -3) }}kg</span></div>
+ <div style="justify-content: space-between; display: flex; "><span>Berat</span><span>{{ substr($order->total_weight, 0, -3) }}kg</span></div>
 
  <script type = 'text/javascript'>  
     window.onload = function(){ window.print(); }

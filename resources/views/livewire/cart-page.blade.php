@@ -156,7 +156,7 @@
                     <button wire:click='removeItem({{ $item['product_id'] }})' class="text-sm bg-slate-200 border-2 border-red-400 rounded-md px-[0.35rem] hover:bg-red-500 hover:text-white hover:border-red-700 mt-1">
                       <span wire:loading.remove wire:target='removeItem({{ $item['product_id'] }})'>X</span>
                       <span wire:loading wire:target='removeItem({{ $item['product_id'] }})'>
-                        <div class="mt-1 animate-spin inline-block size-3 border-[2px] border-current border-t-transparent text-red-500 rounded-full dark:text-red-400 group-hover:text-white dark:group-hover:text-white" role="status" aria-label="loading">
+                        <div class="mt-1 animate-spin inline-block size-3 border-[2px] border-current border-t-transparent text-black rounded-full dark:text-black group-hover:text-white dark:group-hover:text-white" role="status" aria-label="loading">
                           <span class="sr-only">Loading...</span>
                         </div>  
                       </span>   
@@ -171,7 +171,7 @@
             </tbody>
           </table>
         </div>
-        <a wire:navigate href="/checkout?branch_id={{ $gr_item['branch_id'] }}&shipping_method=self_pickup&sales_type=self_pickup"><button class="w-full px-4 py-2 mt-5 text-center text-white bg-blue-500 rounded-lg hover:bg-green-500">Checkout @currency($cart_items->where('branch_id', $gr_item['branch_id'])->sum('total_amount'))</button></a>
+        <a wire:navigate href="/checkout?branch_id={{ $gr_item['branch_id'] }}&shipping_method=self_pickup&sales_type=self_pickup&payment_method=cash&rekening=KAS+KASIR"><button class="w-full px-4 py-2 mt-5 text-center text-white bg-blue-500 rounded-lg hover:bg-green-500">Checkout @currency($cart_items->where('branch_id', $gr_item['branch_id'])->sum('total_amount'))</button></a>
         </div>
         
       </div>

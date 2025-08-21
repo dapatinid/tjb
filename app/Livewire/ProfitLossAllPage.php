@@ -29,13 +29,13 @@ class ProfitLossAllPage extends Component
 
             if (Auth::user()->is_admin == 1) {
                 if (Auth::user()->level === 'frontliner' ||  Auth::user()->roles[0]->name === "Kasir") {
-                    return $this->redirect('/', navigate: true);
+                    return $this->redirect('/dompet', navigate: true);
                 }
             } else {
-                return $this->redirect('/', navigate: true);
+                return $this->redirect('/dompet', navigate: true);
             }
         } else {
-            return $this->redirect('/', navigate: true);
+            return $this->redirect('/dompet', navigate: true);
         }
 
         if ($this->date_awal == '' || $this->date_akhir == '') {
