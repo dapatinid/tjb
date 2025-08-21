@@ -85,10 +85,12 @@ class PrintController extends Controller
 
         $trSTK = TrStkOut::find($id);
         $orderitems = OrderItem::where('tr_stk_out_id', $id)->get();
+        $branch = Branch::where('is_active', 1)->get();
         $data = [
             'date' => date('d/m/Y'),
             'trSTK' => $trSTK,
             'orderitems' => $orderitems,
+            'branch' => $branch,
         ];
         return view('print-transfer-stock', $data);
     }

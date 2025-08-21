@@ -14,17 +14,26 @@
 <body style="font-size: 18px; margin-bottom: 2em;">
             <div style="text-align: center;">
                 {{-- <img src="{{ url('storage/Taibah-FC-LOGO-bulat-aja-w-Stroke.png') }}" alt="ZaharaPOS" width="100" /> --}}
-                <h4>Transfer No. {{ $trSTK->q }}</h4>
-                <h4 style="margin-top: -12px;">{{ $trSTK->code_tr }}</h4>
+                <h4>Transfer No. {{ $trSTK->code_tr }}</h4>
+                <h4 style="margin-top: -12px;">Dari {{ $branch->find($trSTK->from_branch_id)->name }}</h4>
+                <h4 style="margin-top: -12px;">Kepada {{ $branch->find($trSTK->to_branch_id)->name }}</h4>
             </div>
     <div class="">
         {{-- <div style="text-align: center; margin-bottom: 12px;"><b>order items</b></div> --}}
-        <div style="justify-content: space-between; display: flex; font-size: 18px; margin-bottom: 12px;"><span>No  |  Item Name</span> <span style="font-size: 18px;">QTY</span></div>
+        <div style="justify-content: space-between; display: flex; font-size: 18px; margin-bottom: 12px;">
+            <span>No  |  Item Name</span> 
+            <span style="font-size: 18px;">QTY</span>
+            <span style="font-size: 18px;">W</span>
+        </div>
         @foreach ($orderitems as $orderitem)
         <div class="items" style="margin-bottom: 12px;">
-            <div style="justify-content: space-between; display: flex; font-size: 18px;"><span>#{{$loop->iteration}} {{ $orderitem->product->name }} {{ $orderitem->product->variant }}</span> <span style="font-size: 24px;">{{ $orderitem->quantity }}</span></div>
+            <div style="justify-content: space-between; display: flex; font-size: 18px;">
+                <span>#{{$loop->iteration}} {{ $orderitem->product->name }} {{ $orderitem->product->variant }}</span> 
+                <span style="font-size: 24px;">{{ $orderitem->quantity }}</span>
+                <span style="font-size: 24px;">{{ substr($orderitem->total_weight, 0, -3) }}</span>
+            </div>
 
-            @if($orderitem->contain != '')
+            {{-- @if($orderitem->contain != '')
             @php 
               $contains = Str::of($orderitem->contain)->explode(',')
             @endphp
@@ -40,7 +49,7 @@
             @endphp
             <div style="margin-top: 6px; justify-content: space-between; display: flex;"><span style="margin-left: 1em;">{{ $contain }}</span><span>x{{ $orderitem->quantity }} = {{$qtyCo}}</span></div>
             @endforeach
-            @endif
+            @endif --}}
         
         </div>
         @endforeach
