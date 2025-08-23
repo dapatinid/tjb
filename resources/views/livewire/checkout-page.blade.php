@@ -316,6 +316,12 @@
 									</label>
 									<input wire:model.live='date_order' class="text-green-500 dark:text-white font-bold w-full rounded-lg border border-slate-200 py-2 px-3 dark:bg-gray-700 dark:border-none @error('date_order') border-red-500 @enderror" id="date_order" type="datetime-local">
 									</input>
+									<script>
+										let taskTime = document.querySelector('#date_order');
+										taskTime.addEventListener('input', (e) => {
+										taskTime.blur();
+										});
+									</script>
 								</div>
         						@error('date_order')
         							<div class="text-sm text-red-500">{{ $message }}</div>

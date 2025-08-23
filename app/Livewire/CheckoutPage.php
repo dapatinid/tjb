@@ -72,6 +72,14 @@ class CheckoutPage extends Component
 
     public function mount()
     {
+        if (Auth::user()->branch_id != $this->branch_id) {
+            $update = [
+                'branch_id' => $this->branch_id,
+                'partner_id' => Branch::find($this->branch_id)->partner_id,
+            ];
+            User::where('id', Auth::user()->id)->update($update);
+        }
+
         $cartitems = CartManagement::getCartItemsFromCart();
         if (count($cartitems) == 0) {
             return redirect('/products');
@@ -132,7 +140,8 @@ class CheckoutPage extends Component
     {
 
         $isadmin = Auth::user()->is_admin;
-        $today = Carbon::today()->format('Y-m-d');
+        // $today = Carbon::today()->format('Y-m-d');
+        $date_order_this = Carbon::parse($this->date_order)->format('Y-m-d');
 
         if ($isadmin == 1) {
             $cekPartnerID = Branch::where('id', $this->branch_id)->value('partner_id');
@@ -211,7 +220,7 @@ class CheckoutPage extends Component
         $cart_items = CartManagement::getCartItemsFromCart()->where('branch_id', $this->branch_id);
 
         $order = new Order();
-        $order->q = Order::where('branch_id', Auth::user()->branch_id)->where('date_order', 'like', "%$today%")->count() + 1;
+        $order->q = Order::where('branch_id', Auth::user()->branch_id)->where('date_order', 'like', "%$date_order_this%")->count() + 1;
         $order->branch_id = $this->branch_id;
         $order->code_tr = 'ORD' . date('YmdHis') . '-' . Auth::user()->id . '-' . Order::where('branch_id', Auth::user()->branch_id)->where('created_by', Auth::user()->id)->where('date_order', 'like', "%" . Carbon::now()->format('Y-m-d') . "%")->count() + 1;
         $order->created_by = Auth::user()->id;

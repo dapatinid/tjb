@@ -128,7 +128,7 @@
                                                 style="position: relative; mask: radial-gradient(7px at 14px 14px, transparent 98%, black) -14px -14px;"  
                                                 class="flex justify-between px-3 py-2 bg-white border-b-2 border-gray-300 border-dashed group-hover:bg-zinc-50 group-focus:bg-zinc-50">
                                                     <span>{{ $order->q }}</span>
-                                                    <span class="font-medium">{{ auth()->user()->is_admin == 1 ? $order->user->name : '' }}
+                                                    <span class="font-medium">{{ auth()->user()->is_admin == 1 ? ($order->user->id == 2 ? "Supplier Umum" : $order->user->name) : '' }}
                                                         {{ auth()->user()->is_admin == 0 ? $order->branch->name : '' }}
                                                         {{ $nama }} </span>
                                                     <span class="flex hover:lg:text-yellow-500 whitespace-nowrap">

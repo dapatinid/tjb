@@ -96,7 +96,7 @@ class PorderResource extends Resource
                             ->label('Supplier')
                             ->relationship(
                                 name: 'user',
-                                modifyQueryUsing: fn(Builder $query) => $query->orderBy('name'),
+                                modifyQueryUsing: fn(Builder $query) => $query->where('level', 'frontliner')->where('is_admin', 0)->orderBy('name'),
                             )
                             ->getOptionLabelFromRecordUsing(fn(Model $record) => $record->id == 2 ? "Supplier Umum" : "{$record->name}")
                             ->searchable(['name'])

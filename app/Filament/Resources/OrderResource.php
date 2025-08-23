@@ -126,7 +126,7 @@ class OrderResource extends Resource
 
                         Select::make('shipping_method')
                             ->dehydrated()
-                            ->options(User::query()->where('is_admin', true)->pluck('name', 'id'))
+                            ->options(User::query()->where('is_admin', true)->whereNull('level')->pluck('name', 'id'))
                             ->required(function (Get $get) {
                                 if ($get('sales_type') == 'delivery') {
                                     return true;
@@ -174,13 +174,13 @@ class OrderResource extends Resource
                             ->relationship()
                             ->reorderable()
                             ->deleteAction(
-                                fn(Action $action) => $action->hidden(fn() => Auth::user()->level !== "backofficer"),
+                                fn(Action $action) => $action->hidden(fn() => Auth::user()->roles[0]->name === 'Kasir'),
                             )
                             ->schema([
 
                                 Select::make('product_id')
                                     ->disabled(function (Get $get) {
-                                        if (Auth::user()->level !== "backofficer" && $get('id') != null) {
+                                        if (Auth::user()->roles[0]->name === 'Kasir' && $get('id') != null) {
                                             return true;
                                         }
                                     })
@@ -203,7 +203,7 @@ class OrderResource extends Resource
 
                                 TextInput::make('quantity')
                                     ->disabled(function (Get $get) {
-                                        if (Auth::user()->level !== "backofficer" && $get('id') != null) {
+                                        if (Auth::user()->roles[0]->name === 'Kasir' && $get('id') != null) {
                                             return true;
                                         }
                                     })
@@ -224,7 +224,7 @@ class OrderResource extends Resource
 
                                 TextInput::make('unit_amount')
                                     ->disabled(function (Get $get) {
-                                        if (Auth::user()->level !== "backofficer" && $get('id') != null) {
+                                        if (Auth::user()->roles[0]->name === 'Kasir' && $get('id') != null) {
                                             return true;
                                         }
                                     })
@@ -341,7 +341,7 @@ class OrderResource extends Resource
                             )
                             // ->reorderable()
                             ->deleteAction(
-                                fn(Action $action) => $action->hidden(fn() => Auth::user()->level !== "backofficer"),
+                                fn(Action $action) => $action->hidden(fn() => Auth::user()->roles[0]->name === 'Kasir'),
                             )
                             ->schema([
 
@@ -357,7 +357,7 @@ class OrderResource extends Resource
 
                                 DateTimePicker::make('date_payment')
                                     ->disabled(function (Get $get) {
-                                        if (Auth::user()->level !== "backofficer" && $get('id') != null) {
+                                        if (Auth::user()->roles[0]->name === 'Kasir' && $get('id') != null) {
                                             return true;
                                         }
                                     })
@@ -369,7 +369,7 @@ class OrderResource extends Resource
 
                                 Select::make('currency')
                                     ->disabled(function (Get $get) {
-                                        if (Auth::user()->level !== "backofficer" && $get('id') != null) {
+                                        if (Auth::user()->roles[0]->name === 'Kasir' && $get('id') != null) {
                                             return true;
                                         }
                                     })
@@ -386,7 +386,7 @@ class OrderResource extends Resource
 
                                 ToggleButtons::make('payment_method')
                                     ->disabled(function (Get $get) {
-                                        if (Auth::user()->level !== "backofficer" && $get('id') != null) {
+                                        if (Auth::user()->roles[0]->name === 'Kasir' && $get('id') != null) {
                                             return true;
                                         }
                                     })
@@ -403,7 +403,7 @@ class OrderResource extends Resource
 
                                 Select::make('rekening')
                                     ->disabled(function (Get $get) {
-                                        if (Auth::user()->level !== "backofficer" && $get('id') != null) {
+                                        if (Auth::user()->roles[0]->name === 'Kasir' && $get('id') != null) {
                                             return true;
                                         }
                                     })
@@ -433,7 +433,7 @@ class OrderResource extends Resource
 
                                 TextInput::make('nominal_plus')
                                     ->disabled(function (Get $get) {
-                                        if (Auth::user()->level !== "backofficer" && $get('id') != null) {
+                                        if (Auth::user()->roles[0]->name === 'Kasir' && $get('id') != null) {
                                             return true;
                                         }
                                     })
