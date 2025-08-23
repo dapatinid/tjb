@@ -25,8 +25,9 @@ class ListProducts extends ListRecords
     {
         $decodeQueryString = urldecode(request()->getQueryString());
         $data = [
-            'exportbutton' => Actions\Action::make('export')->url(url('/exportproducts?' . $decodeQueryString)),
             'createbutton' => Actions\CreateAction::make()->url(url('/admin/products/create')),
+            'statusbutton' => Actions\Action::make('status')->url(url('/items'))->openUrlInNewTab(),
+            'exportbutton' => Actions\Action::make('export')->url(url('/exportproducts?' . $decodeQueryString))->openUrlInNewTab(),
             // 'createbutton' => Actions\CreateAction::make(), # with Modal
         ];
 

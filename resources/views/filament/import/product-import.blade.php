@@ -6,7 +6,7 @@
     <div class="flex justify-between mt-1">
         <div class="font-bold text-3xl">Products</div>
         <div>
-            {{ $exportbutton }} {{ $createbutton }}
+             {{ $createbutton }} {{ $statusbutton }} {{ $exportbutton }}
         </div>
     </div>
     <div>
