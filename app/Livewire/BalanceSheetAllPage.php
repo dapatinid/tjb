@@ -43,7 +43,7 @@ class BalanceSheetAllPage extends Component
         if ($this->date_awal == '' || $this->date_akhir == '') {
             // $date_awal = Carbon::now()->firstOfMonth()->format('Y-m-d');
             $date_awal = '2000-01-01';
-            $date_akhir = Carbon::now()->format('Y-m-d');
+            $date_akhir = Carbon::now()->lastOfMonth()->format('Y-m-d');
             $this->date_awal = $date_awal;
             $this->date_akhir = $date_akhir;
         }
