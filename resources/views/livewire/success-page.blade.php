@@ -119,7 +119,7 @@
             <i class="fa fa-print" aria-hidden="true"></i> Print My Orders</button>
           </a>
           <a target="_blank" href="{{ route('printorderprocess', [$order->id]) }}"><button class="w-full px-4 py-2 mt-2 text-sm text-center bg-gray-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-gray-700 dark:bg-gray-800">
-            <i class="fa fa-coffee" aria-hidden="true"></i> Print for Process</button>
+            <i class="fa fa-coffee" aria-hidden="true"></i> Print Srt Jalan</button>
           </a>
           <a wire:navigate href="/pos"><button class="w-full px-4 py-2 mt-2 text-sm text-center bg-green-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-green-600 dark:hover:bg-gray-700 dark:bg-gray-800">
             <i class="fa fa-fax" aria-hidden="true"></i> POS</button>

@@ -178,7 +178,7 @@
                                                         <div class="py-1">
                                                             <a href="{{ route('printorderprocess', [$order->id]) }}"><button
                                                                     class="w-full px-4 py-2 text-white rounded-md bg-slate-600 hover:bg-slate-400">
-                                                                        Print Proses</button></a>
+                                                                        Srt Jalan</button></a>
                                                         </div>
                                                     @endif
                                                     @if (auth()->user()->is_admin == 0)
@@ -331,7 +331,7 @@
                                                                             <a
                                                                                 href="{{ route('printorderprocess', $payment->paymentable_id) }}"><button
                                                                                     class="w-full px-4 py-2 text-white rounded-md bg-slate-600 hover:bg-slate-400">
-                                                                                    Kitchen</button></a>
+                                                                                    Srt Jalan</button></a>
                                                                         </div>
                                                                     @endif
                                                                 </div>

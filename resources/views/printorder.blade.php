@@ -67,7 +67,7 @@
         <div style="justify-content: space-between; display: {{ $order->shipping_amount == 0 ? 'none' : 'flex'}}; "><span>Ongkir : </span><span>Rp @formatNumber($order->shipping_amount)</span></div>
         <div style="justify-content: space-between; display: flex; "><span>Total : </span><span>Rp @formatNumber($order->grand_total)</span></div>
     </div>
- <hr size="3" color="black">
+ <hr size="1" color="black" style="border-top: dotted 1px;">
     <div style="justify-content: space-between; display: {{ $order->total_payment == 0 ? 'none' : 'flex'}}; "><span>Bayar</span><span>Rp @formatNumber($order->total_payment)</span></div>
     <div style="justify-content: space-between; display: flex; ">
         @if ( $order->total_cashback < 0)

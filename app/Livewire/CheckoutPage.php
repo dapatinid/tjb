@@ -85,6 +85,8 @@ class CheckoutPage extends Component
             return redirect('/products');
         }
 
+        // $this->date_order = Carbon::now();
+
         if (Auth::user()->is_admin == 0 && Auth::user()->phone != '') {
             $this->phone = Auth::user()->phone;
         }

@@ -45,7 +45,7 @@
         </div>
         @endforeach
     </div>
- <hr size="3" color="black">
+ <hr size="3" color="black" style="border-top: dotted 1px;">
 
  <div style="justify-content: space-between; display: flex; "><span>Berat</span><span>{{ substr($order->total_weight, 0, -3) }}kg</span></div>
 
