@@ -11,7 +11,7 @@
 </style>
 
 </head>
-<body style="font-size: 18px; margin-bottom: 2em; padding-top: 1rem; padding-left: 1rem; padding-right: 1rem">
+<body style="font-size: 18px; margin-bottom: 2em; padding-top: 2rem; padding-left: 1rem; padding-right: 1rem">
             {{-- <div style="text-align: center;">
                 @if (isset($branchLogo))
                 <img src="{{ url('storage/'.$branchLogo) }}" alt="TegarJaya" width="100" />
