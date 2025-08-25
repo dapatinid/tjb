@@ -141,22 +141,22 @@ class OrderItemResource extends Resource
                         if ($state) {
                             if ($state === 'Sales') {
                                 $Mut_ID = OrderItem::where('id', $record->id)->value('order_id');
-                                return url("/admin/orders/{$Mut_ID}/edit");
+                                return url("/admin/orders/{$Mut_ID}");
                             } elseif ($state === 'Purchase') {
                                 $Mut_ID = OrderItem::where('id', $record->id)->value('porder_id');
-                                return url("/admin/porders/{$Mut_ID}/edit");
+                                return url("/admin/porders/{$Mut_ID}");
                             } elseif ($state === 'Adjusment') {
                                 $Mut_ID = OrderItem::where('id', $record->id)->value('adj_item_id');
-                                return url("/admin/adj-items/{$Mut_ID}/edit");
+                                return url("/admin/adj-items/{$Mut_ID}");
                             } elseif ($state === 'Production') {
                                 $Mut_ID = OrderItem::where('id', $record->id)->value('production_id');
-                                return url("/admin/productions/{$Mut_ID}/edit");
+                                return url("/admin/productions/{$Mut_ID}");
                             } elseif ($state === 'Transfer Out') {
                                 $Mut_ID = OrderItem::where('id', $record->id)->value('tr_stk_out_id');
-                                return url("/admin/tr-stk-outs/{$Mut_ID}/edit");
+                                return url("/admin/tr-stk-outs/{$Mut_ID}");
                             } elseif ($state === 'Transfer In') {
                                 $Mut_ID = OrderItem::where('id', $record->id)->value('tr_stk_in_id');
-                                return url("/admin/tr-stk-ins/{$Mut_ID}/edit");
+                                return url("/admin/tr-stk-ins/{$Mut_ID}");
                             }
                         }
                     })
