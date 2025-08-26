@@ -349,6 +349,14 @@ class UserResource extends Resource
                 // Tables\Columns\TextColumn::make('partner.name')
                 //     ->sortable()
                 //     ->searchable(),
+                Tables\Columns\TextColumn::make('phone')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('street_address')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->dateTime()
                     ->sortable()
@@ -372,6 +380,20 @@ class UserResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])->defaultSort('created_at', 'desc')
+            // ->persistSortInSession()
+            // ->persistFiltersInSession()
+            // ->persistSearchInSession()
+            // ->deselectAllRecordsWhenFiltered(false)
+            ->defaultPaginationPageOption(100)
+            ->paginated([
+                10,
+                25,
+                50,
+                100,
+                500,
+                // 1000,
+                // 'all'
+            ])
             ->filters([
                 Tables\Filters\TrashedFilter::make()
             ])
