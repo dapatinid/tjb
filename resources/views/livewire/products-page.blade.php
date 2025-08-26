@@ -266,7 +266,8 @@
                                     </div>
                                     <div 
                                         id='addToCartButton'
-                                        wire:click.prevent='addToCart({{ $product->id }}); soundBeep.play();'
+                                        {{-- wire:click.prevent='addToCart({{ $product->id }}); soundBeep.play();' --}}
+                                        wire:click.prevent='addToCart({{ $product->id }});'
                                         class="cursor-pointer flex justify-center p-2 border-t border-gray-300 dark:border-gray-700">
 
                                         {{-- @php
@@ -329,13 +330,13 @@
 		})
   </script> --}}
 
-    @auth
+    {{-- @auth
         @if (auth()->user()->is_admin == 1)
             <audio controls id="sound-beep" src="/storage/audio/beep-barcode-kasir.mp3" preload="auto"
                 class="hidden"></audio>
         @endif
-    @endauth
-    <script>
+    @endauth --}}
+    {{-- <script>
         const addToCartButton = document.getElementById('addToCartButton');
         const soundBeep = document.getElementById('sound-beep');
 
@@ -346,6 +347,6 @@
             soundBeep.play();
         });
 
-    </script>
+    </script> --}}
 
 </div>

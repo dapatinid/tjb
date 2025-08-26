@@ -39,10 +39,10 @@
                 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" 
                 class="block w-full px-4 py-3 mr-2 text-sm text-center border-gray-200 rounded-lg focus:border-green-400 focus:ring-green-400" 
                 @if ($cartcek->where('product_id', $modalIdProduk)->where('created_by', auth()->user()->id)->value('quantity') > 0)
-                wire:keyup.enter='addToCart({{ $modalIdProduk == null || $modalIdProduk == '' ? 0 : $modalIdProduk }}); soundBeep.play(); modalClose();'
+                wire:keyup.enter='addToCart({{ $modalIdProduk == null || $modalIdProduk == '' ? 0 : $modalIdProduk }}); modalClose();'
                 placeholder="{{ $cartcek->where('product_id', $modalIdProduk)->where('created_by', auth()->user()->id)->value('quantity') }}" 
                 @else
-                wire:keyup.enter='addToCart({{ $modalIdProduk == null || $modalIdProduk == '' ? 0 : $modalIdProduk }}); setTimeout(scrollBottom, 5000); soundBeep.play(); modalClose();'
+                wire:keyup.enter='addToCart({{ $modalIdProduk == null || $modalIdProduk == '' ? 0 : $modalIdProduk }}); setTimeout(scrollBottom, 5000); modalClose();'
                 placeholder="inputkan qty" 
                 @endif 
                 autofocus="">
@@ -50,10 +50,10 @@
                 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" 
                 class="block w-full px-4 py-3 ml-2 text-sm text-center bg-white border border-gray-200 rounded-lg focus:border-green-400 focus:ring-green-400" 
                 @if ($cartcek->where('product_id', $modalIdProduk)->where('created_by', auth()->user()->id)->value('quantity') > 0)
-                wire:keyup.enter='addToCart({{ $modalIdProduk == null || $modalIdProduk == '' ? 0 : $modalIdProduk }}); soundBeep.play(); modalClose();'
+                wire:keyup.enter='addToCart({{ $modalIdProduk == null || $modalIdProduk == '' ? 0 : $modalIdProduk }}); modalClose();'
                 placeholder="ubah harga" 
                 @else
-                wire:keyup.enter='addToCart({{ $modalIdProduk == null || $modalIdProduk == '' ? 0 : $modalIdProduk }}); setTimeout(scrollBottom, 5000); soundBeep.play(); modalClose();'
+                wire:keyup.enter='addToCart({{ $modalIdProduk == null || $modalIdProduk == '' ? 0 : $modalIdProduk }}); setTimeout(scrollBottom, 5000); modalClose();'
                 placeholder="inputkan harga" 
                 @endif 
                 >
@@ -73,9 +73,9 @@
             <button
             id='addToCartButton' 
             @if ($cartcek->where('product_id', $modalIdProduk)->where('created_by', auth()->user()->id)->value('quantity') > 0)
-                wire:click='addToCart({{ $modalIdProduk == null || $modalIdProduk == '' ? 0 : $modalIdProduk }}); soundBeep.play();'
+                wire:click='addToCart({{ $modalIdProduk == null || $modalIdProduk == '' ? 0 : $modalIdProduk }});'
             @else
-                wire:click='addToCart({{ $modalIdProduk == null || $modalIdProduk == '' ? 0 : $modalIdProduk }}); setTimeout(scrollBottom, 5000); soundBeep.play();'
+                wire:click='addToCart({{ $modalIdProduk == null || $modalIdProduk == '' ? 0 : $modalIdProduk }}); setTimeout(scrollBottom, 5000);'
             @endif
             class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-500 border border-transparent rounded-lg gap-x-2 hover:bg-green-600 focus:bg-green-600 focus:outline-none disabled:opacity-50 disabled" data-hs-overlay="#hs-focus-management-modal">
                 Simpan

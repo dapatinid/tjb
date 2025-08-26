@@ -266,7 +266,7 @@ class TrStkOutResource extends Resource
                                     ->columnSpan(['sm' => 4, 'md' => 4, 'lg' => 4, 'xl' => 4]),
 
                                 TextInput::make('notes')
-                                    ->label('Description')
+                                    ->label('Catatan')
                                     ->columnSpan(['sm' => 12, 'md' => 12, 'lg' => 12, 'xl' => 12]),
 
                                 Hidden::make('mutation_type')
@@ -384,6 +384,10 @@ class TrStkOutResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->selectablePlaceholder(false),
+
+                TextColumn::make('notes')
+                    ->label('Catatan')
+                    ->toggleable(isToggledHiddenByDefault: false),
 
                 TextColumn::make('date_order')
                     ->dateTime()

@@ -482,7 +482,8 @@
                                     wire:model.live="kodeproduk"  id="BarcodeBar"
                                         onmouseenter="this.focus()"
                                         placeholder="Enter Barcode..."
-                                        wire:keyup.enter='addToCartWithCode(); setTimeout(scrollBottom, 5000); soundBeep.play(); resetBarcodeBar();'
+                                        {{-- wire:keyup.enter='addToCartWithCode(); setTimeout(scrollBottom, 5000); soundBeep.play(); resetBarcodeBar();' --}}
+                                        wire:keyup.enter='addToCartWithCode(); setTimeout(scrollBottom, 5000); resetBarcodeBar();'
                                         class="w-full pl-2 pr-2 mb-2 bg-slate-200 dark:bg-slate-700 border border-white dark:border-slate-800"
                                         ></div>
                                 <body class="w-full" >
@@ -600,15 +601,15 @@
             </div>
     </section>
 
-    @auth
+    {{-- @auth
         @if (auth()->user()->is_admin == 1)
             <audio controls id="sound-beep" src="/storage/audio/beep-barcode-kasir.mp3" preload="auto"
                 class="hidden"></audio>
         @endif
-    @endauth
+    @endauth --}}
     <script>
         const addToCartButton = document.getElementById('addToCartButton');
-        const soundBeep = document.getElementById('sound-beep');
+        // const soundBeep = document.getElementById('sound-beep');
         let elemListItem = document.getElementById('ListItem');
         
         addToCartButton.addEventListener('click', function() {

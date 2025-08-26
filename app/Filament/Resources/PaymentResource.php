@@ -115,43 +115,43 @@ class PaymentResource extends Resource
                         if ($state) {
                             if ($state === 'Sales') {
                                 $Mut_ID = $record->paymentable_id;
-                                return url("/admin/orders/{$Mut_ID}/edit");
+                                return url("/admin/orders/{$Mut_ID}");
                             } elseif ($state === 'Piutang Penjualan') {
                                 $Mut_ID = $record->paymentable_id;
-                                return url("/admin/orders/{$Mut_ID}/edit");
+                                return url("/admin/orders/{$Mut_ID}");
                             } elseif ($state === 'Barang Terjual') {
                                 $Mut_ID = $record->paymentable_id;
-                                return url("/admin/orders/{$Mut_ID}/edit");
+                                return url("/admin/orders/{$Mut_ID}");
                             } elseif ($state === 'Purchase') {
                                 $Mut_ID = $record->paymentable_id;
-                                return url("/admin/porders/{$Mut_ID}/edit");
+                                return url("/admin/porders/{$Mut_ID}");
                             } elseif ($state === 'Hutang Pembelian') {
                                 $Mut_ID = $record->paymentable_id;
-                                return url("/admin/porders/{$Mut_ID}/edit");
+                                return url("/admin/porders/{$Mut_ID}");
                             } elseif ($state === 'Barang Terbeli') {
                                 $Mut_ID = $record->paymentable_id;
-                                return url("/admin/porders/{$Mut_ID}/edit");
+                                return url("/admin/porders/{$Mut_ID}");
                             } elseif ($state === 'Barang Stok Bertambah') {
                                 $Mut_ID = $record->paymentable_id;
-                                return url("/admin/adj-items/{$Mut_ID}/edit");
+                                return url("/admin/adj-items/{$Mut_ID}");
                             } elseif ($state === 'Barang Stok Berkurang') {
                                 $Mut_ID = $record->paymentable_id;
-                                return url("/admin/adj-items/{$Mut_ID}/edit");
+                                return url("/admin/adj-items/{$Mut_ID}");
                             } elseif ($state === 'Barang Produksi Berkembang') {
                                 $Mut_ID = $record->paymentable_id;
-                                return url("/admin/productions/{$Mut_ID}/edit");
+                                return url("/admin/productions/{$Mut_ID}");
                             } elseif ($state === 'Barang Produksi Menyusut') {
                                 $Mut_ID = $record->paymentable_id;
-                                return url("/admin/productions/{$Mut_ID}/edit");
+                                return url("/admin/productions/{$Mut_ID}");
                             } elseif ($state === 'Barang Transfer Keluar') {
                                 $Mut_ID = $record->paymentable_id;
-                                return url("/admin/tr-stk-outs/{$Mut_ID}/edit");
+                                return url("/admin/tr-stk-outs/{$Mut_ID}");
                             } elseif ($state === 'Barang Transfer Masuk') {
                                 $Mut_ID = $record->paymentable_id;
-                                return url("/admin/tr-stk-ins/{$Mut_ID}/edit");
+                                return url("/admin/tr-stk-ins/{$Mut_ID}");
                             } else {
                                 $Mut_ID = $record->paymentable_id;
-                                return url("/admin/journals/{$Mut_ID}/edit");
+                                return url("/admin/journals/{$Mut_ID}");
                             }
                         }
                     })

@@ -246,7 +246,8 @@ class CheckoutPage extends Component
         }
         if (isset($this->notes)) {
             // $order->notes =  $this->notes . PHP_EOL . PHP_EOL . 'Order oleh ' . PHP_EOL . Auth::user()->name . ' <' . Auth::user()->email . '>';
-            $order->notes =  $this->notes . PHP_EOL .  'Order oleh ' . PHP_EOL . Auth::user()->name;
+            // $order->notes =  $this->notes . PHP_EOL .  'Order oleh ' . PHP_EOL . Auth::user()->name;
+            $order->notes =  $this->notes . '.';
             // PHP_EOL untuk enter textarea
         }
         // else {

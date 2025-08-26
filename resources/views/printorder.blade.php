@@ -27,16 +27,6 @@
                 <div style="justify-content: space-between; display: flex; "><span>Oleh : </span><span>{{ App\Models\User::find($order->created_by)->name }}</span></div>
                 <div style="justify-content: space-between; display: flex; "><span>Pembeli : </span><span>{{ $order->user->id == 2 ? 'Customer Umum' : $order->user->name }}</span></div>
 
-                    @if ($address->value('street_address') != null)
-                    <div style="text-align: right; ">
-                        {{ $address->value('first_name') }} {{ $address->value('last_name') }} {{ $address->value('phone') }} {{ $address->value('street_address') }}
-                        {{ $villages->where('code',$address->value('village'))->value('name') }},
-                        {{ $districts->where('code',$address->value('district'))->value('name') }},
-                        {{ Illuminate\Support\Str::after($cities->where('code',$address->value('city'))->value('name'),'KABUPATEN ') }}
-                        {{-- {{ $states->where('code',$address->value('state'))->value('name') }},<br>
-                        {{ $address->value('zip_code') }} --}}
-                    </div>
-                    @else
                     <div style="text-align: right; ">
                         {{ $user->value('phone') }} {{ $user->value('street_address') }}
                         {{ $villages->where('code',$user->value('village'))->value('name') }},
@@ -45,7 +35,25 @@
                         {{-- {{ $states->where('code',$user->value('state'))->value('name') }},<br>
                         {{ $user->value('zip_code') }} --}}
                     </div>
+
+                    <div style="text-align: right; ">
+                    @if ($address->value('first_name') != null || $address->value('last_name') != null)
+                        {{ $address->value('first_name') }} {{ $address->value('last_name') }}  
                     @endif
+                    @if ($address->value('phone') != $user->value('phone'))
+                        {{ $address->value('phone') }}
+                    @endif
+                    @if ($address->value('street_address') != $user->value('street_address'))
+                        {{ $address->value('street_address') }}
+                    @endif
+                    @if ($address->value('village') != $user->value('village') || $address->value('district') != $user->value('district') || $address->value('city') != $user->value('city'))
+                        {{ $villages->where('code',$address->value('village'))->value('name') }},
+                        {{ $districts->where('code',$address->value('district'))->value('name') }},
+                        {{ Illuminate\Support\Str::after($cities->where('code',$address->value('city'))->value('name'),'KABUPATEN ') }}
+                    @endif
+                        {{-- {{ $states->where('code',$address->value('state'))->value('name') }},<br>
+                        {{ $address->value('zip_code') }} --}}
+                    </div>
 
             </div>
              <br> 
