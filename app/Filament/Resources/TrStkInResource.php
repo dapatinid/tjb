@@ -322,10 +322,10 @@ class TrStkInResource extends Resource
             ->poll('10s')
             ->modifyQueryUsing(function (Builder $query) {
                 return $query->addSelect([
-                    'from_branch' => Branch::query()->select('name')
-                        ->whereColumn('id', 'from_branch_id'),
-                    'to_branch' => Branch::query()->select('name')
-                        ->whereColumn('id', 'to_branch_id'),
+                    // 'from_branch' => Branch::query()->select('name')
+                    //     ->whereColumn('id', 'from_branch_id'),
+                    // 'to_branch' => Branch::query()->select('name')
+                    //     ->whereColumn('id', 'to_branch_id'),
                     'created' => User::query()->select('name')
                         ->whereColumn('id', 'created_by'),
                     'updated' => User::query()->select('name')
