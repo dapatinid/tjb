@@ -338,14 +338,14 @@ class TrStkInResource extends Resource
                     ->label('Code')
                     ->sortable()
                     ->searchable(),
-                TextColumn::make('from_branch')
+                TextColumn::make('from_branch.name')
                     ->label('From')
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('to_branch')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('to_branch.name')
                     ->label('To')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
 
                 TextColumn::make('user.name')
                     ->label('User')
@@ -376,6 +376,7 @@ class TrStkInResource extends Resource
 
                 TextColumn::make('notes')
                     ->label('Catatan')
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: false),
 
                 TextColumn::make('date_order')

@@ -333,10 +333,10 @@ class TrStkOutResource extends Resource
             ->poll('10s')
             ->modifyQueryUsing(function (Builder $query) {
                 return $query->addSelect([
-                    'from_branch' => Branch::query()->select('name')
-                        ->whereColumn('id', 'from_branch_id'),
-                    'to_branch' => Branch::query()->select('name')
-                        ->whereColumn('id', 'to_branch_id'),
+                    // 'from_branch' => Branch::query()->select('name')
+                    //     ->whereColumn('id', 'from_branch_id'),
+                    // 'to_branch' => Branch::query()->select('name')
+                    //     ->whereColumn('id', 'to_branch_id'),
                     'created' => User::query()->select('name')
                         ->whereColumn('id', 'created_by'),
                     'updated' => User::query()->select('name')
@@ -349,14 +349,14 @@ class TrStkOutResource extends Resource
                     ->label('Code')
                     ->sortable()
                     ->searchable(),
-                TextColumn::make('from_branch')
+                TextColumn::make('from_branch.name')
                     ->label('From')
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('to_branch')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('to_branch.name')
                     ->label('To')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
 
                 TextColumn::make('user.name')
                     ->label('User')
@@ -387,6 +387,7 @@ class TrStkOutResource extends Resource
 
                 TextColumn::make('notes')
                     ->label('Catatan')
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: false),
 
                 TextColumn::make('date_order')

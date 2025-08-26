@@ -388,6 +388,7 @@ class AdjItemResource extends Resource
 
                 TextColumn::make('notes')
                     ->label('Catatan')
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: false),
 
                 TextColumn::make('date_order')
