@@ -85,7 +85,7 @@
         @endif 
         <span>Rp @formatNumber($order->total_payment - $order->grand_total)</span>
     </div>
-    <div style="justify-content: space-between; display: {{ $order->total_payment == 0 ? 'none' : 'flex'}}; "><span>Berat</span><span>{{ substr($order->total_weight, 0, -3) }}kg</span></div>
+    <div style="justify-content: space-between; display: flex; "><span>Berat</span><span>{{ substr($order->total_weight, 0, -3) }}kg</span></div>
     <div style="justify-content: space-between; display: {{ $order->notes == null ? 'none' : 'flex'}}; "><span>Catatan </span><span style="text-align: right;">{{ $order->notes }}</span></div>
  {{-- <br>
     <div style="text-align: center;">

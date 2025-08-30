@@ -576,7 +576,7 @@
                                       </div>
                                 </button>
                             </a>
-                            <a wire:navigate href="/checkout?branch_id={{ auth()->user()->branch_id }}&shipping_method=self_pickup&sales_type=self_pickup&payment_method=cash&rekening=KAS+KASIR&date_order={{ date('Y') }}-{{ date('m') }}-{{ date('d') }}T{{ date('H') }}%3A{{ date('i') }}"
+                            <a href="/checkout?branch_id={{ auth()->user()->branch_id }}&shipping_method=self_pickup&sales_type=self_pickup&payment_method=cash&rekening=KAS+KASIR&date_order={{ date('Y') }}-{{ date('m') }}-{{ date('d') }}T{{ date('H') }}%3A{{ date('i') }}"
                                 class="items-center w-full pt-2 pb-0 text-sm text-center text-white bg-blue-500 hover:bg-blue-600">
                                 <button class="hidden mx-auto sm:flex">
                                     CHECKOUT

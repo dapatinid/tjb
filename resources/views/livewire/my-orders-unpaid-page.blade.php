@@ -2,7 +2,7 @@
     
     {{-- <div class="justify-start sm:hidden absolute left-4 top-1.5 bg-blue-600 dark:bg-neutral-800 py-2 pr-10">
         <a class="cursor-pointer flex flex-nowrap items-center text-white bg:text-gray-300 "
-        href="/cart" wire:navigate                   
+        href="/cart"                    
         >
             <x-far-arrow-alt-circle-left class="w-5 h-5 mr-2 text-white hover:text-blue-500"/> kembali
         </a> 
@@ -38,7 +38,7 @@
                             role="tab">
                             Unpaid
                         </button>
-                        <a wire:navigate href="/my-orders">
+                        <a  href="/my-orders">
                             <button type="button"
                                 class="inline-flex items-center px-2 py-1 text-sm font-medium text-gray-500 bg-transparent rounded-lg hs-tab-active:bg-white hs-tab-active:text-gray-700 hs-tab-active:dark:text-neutral-400 dark:hs-tab-active:bg-gray-800 gap-x-2 hover:text-gray-700 focus:outline-none focus:text-gray-700 hover:hover:text-yellow-600 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-white dark:focus:text-white"
                                 id="segment-item-4" aria-selected="false" data-hs-tab="#segment-4" aria-controls="segment-4"
@@ -170,7 +170,7 @@
                                                 class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden z-10 top-0 start-auto end-0 min-w-60 bg-gray-200 p-2 shadow-md rounded-lg mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700 dark:divide-neutral-700">
 
                                                 <div class="py-1">
-                                                    <a wire:navigate
+                                                    <a 
                                                         href="/my-orders/{{ $order->id}}"><button
                                                             class="w-full px-4 py-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-300 items-center flex space-x-2 justify-center"><x-fas-search class="size-4" /> <span> {{ auth()->user()->is_admin == 1 ? $order->id : 'Detail'  }}</span></button></a>
                                                 </div>
@@ -328,13 +328,13 @@
                                                             <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700" role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown-with-header">                                                          
                                                             <div class="p-2 space-y-0.5">
                                                                 <div class="py-1">
-                                                                    <a wire:navigate href="/my-orders/{{ $payment->paymentable_id }}"><button
+                                                                    <a  href="/my-orders/{{ $payment->paymentable_id }}"><button
                                                                             class="w-full px-4 py-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-300">Details</button></a>
                                                                 </div>
 
                                                                 @if (auth()->user()->is_admin == 1)
                                                                     <div class="py-1">
-                                                                        <a wire:navigate href="{{ route('printorder', $payment->paymentable_id) }}"><button
+                                                                        <a  href="{{ route('printorder', $payment->paymentable_id) }}"><button
                                                                                 class="w-full px-4 py-2 text-white rounded-md bg-slate-600 hover:bg-slate-400">
                                                                                 Print</button></a>
                                                                     </div>
