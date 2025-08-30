@@ -142,7 +142,7 @@
     
     <div class="bg-white rounded-xl space-y-1 divide-y-1 divide-zinc-200 p-4 mb-4 mt-1">
 
-        @foreach ($cashBankHistories->whereBetween('date_payment', [$paymenttgl->date . ' 00:00:00', $paymenttgl->date . ' 23:59:59']) as $transaksi)        
+        @foreach ($tglNya as $transaksi)        
         <div class="pb-2 grid grid-cols-3">
           <div class="flex items-center">
             <div class="text-sm line-clamp-2 pe-2">

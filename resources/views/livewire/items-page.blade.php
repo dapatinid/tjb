@@ -136,16 +136,16 @@
                 </thead>
                 <tbody>
 
-                  @foreach ($items as $item) 
+                  @foreach ($products as $product) 
                   @php
-                    $terbeli = $item->sum('p_quantity');
-                    $terjual = $item->sum('quantity');
-                    $status = (($terbeli - $terjual) > $products->where('id', $item->value('product_id'))->value('low_alert')) ? '<span class="px-3 py-1 text-white bg-blue-500 rounded shadow">aman</span>' : '<span class="px-3 py-1 text-white bg-red-500 rounded shadow">LOW</span>' ;
+                    $terbeli = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->sum('p_quantity');
+                    $terjual = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->sum('quantity');
+                    $status = (($terbeli - $terjual) > $product->low_alert) ? '<span class="px-3 py-1 text-white bg-blue-500 rounded shadow">aman</span>' : '<span class="px-3 py-1 text-white bg-red-500 rounded shadow">LOW</span>' ;
                   @endphp     
                   <tr class="odd:bg-white even:bg-gray-100 hover:bg-green-400 dark:odd:bg-neutral-800 dark:even:bg-neutral-700 dark:hover:bg-neutral-900">
-                    <td class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200"><a wire:navigate href="/admin/products/{{ $products->where('id', $item->value('product_id'))->value('id') }}/edit">{{ $products->where('id', $item->value('product_id'))->value('id') }}</a></td>
-                    <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap dark:text-gray-200"><a wire:navigate href="/admin/products/{{ $products->where('id', $item->value('product_id'))->value('id') }}/edit">{{ $products->where('id', $item->value('product_id'))->value('name') }}</a></td>
-                    <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $products->where('id', $item->value('product_id'))->value('variant') }}</td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200"><a wire:navigate href="/admin/products/{{ $product->id }}/edit">{{ $product->id }}</a></td>
+                    <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap dark:text-gray-200"><a wire:navigate href="/admin/products/{{ $product->id }}/edit">{{ $product->name }}</a></td>
+                    <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $product->variant }}</td>
                     <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-end dark:text-gray-200">{{ $terbeli - $terjual }}</td>
                     <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-end dark:text-gray-200">{!! $status !!}</td>
                   </tr>

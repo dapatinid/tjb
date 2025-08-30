@@ -21,15 +21,15 @@
     <div class="">
         {{-- <div style="text-align: center; margin-bottom: 12px;"><b>order items</b></div> --}}
         <div style="justify-content: space-between; display: flex;  margin-bottom: 12px;">
-            <span>No  |  Item Name</span> 
-            <span style="">QTY</span>
+            {{-- <span>No  |  QTY  |  Item Name</span>  --}}
+            <span>QTY  |  Item Name</span> 
             <span style="">W</span>
         </div>
         @foreach ($orderitems as $orderitem)
         <div class="items" style="margin-bottom: 12px;">
             <div style="justify-content: space-between; display: flex; ">
-                <span>#{{$loop->iteration}} {{ $orderitem->product->name }} {{ $orderitem->product->variant }}</span> 
-                <span style="font-size: 24px;">{{ $orderitem->quantity }}</span>
+                {{-- <span>#{{$loop->iteration}}  {{ $orderitem->quantity }} {{ $orderitem->product->name }} {{ $orderitem->product->variant }}</span>  --}}
+                <span><span style="font-size: 24px; margin-right: 5px">{{ $orderitem->quantity }}</span> <span style="font-size: 18px;">{{ $orderitem->product->name }} {{ $orderitem->product->variant }}</span> </span>
                 <span style="font-size: 24px;">{{ substr($orderitem->total_weight, 0, -3) }}</span>
             </div>
 

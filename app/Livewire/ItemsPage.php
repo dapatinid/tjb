@@ -34,7 +34,7 @@ class ItemsPage extends Component
     {
 
         if ($this->date_awal == '' || $this->date_akhir == '') {
-            $date_awal = Carbon::now()->firstOfMonth()->format('Y-m-d');
+            $date_awal = Carbon::now()->firstOfYear()->format('Y-m-d');
             $date_akhir = Carbon::now()->format('Y-m-d');
             // $date_awal = Carbon::now()->startOfMonth()->format('Y-m-d');
             // $date_akhir = Carbon::now()->endOfMonth()->format('Y-m-d');
@@ -45,8 +45,8 @@ class ItemsPage extends Component
             $this->date_akhir = $date_akhir;
         }
 
-        $orders = Order::all();
-        $products = Product::all();
+        $orders = Order::where('branch_id', auth()->user()->branch_id)->get();
+        $products = Product::where('branch_id', auth()->user()->branch_id)->get();
         $orderitems = OrderItem::where('branch_id', auth()->user()->branch_id)
             ->whereBetween('updated_at', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])
             ->whereNull('deleted_at')
