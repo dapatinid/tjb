@@ -1,4 +1,4 @@
-<div wire:poll class="w-full max-w-[85rem] pt-7 pb-10 px-4 sm:px-6 lg:px-8 mx-auto">
+<div class="w-full max-w-[85rem] pt-7 pb-10 px-4 sm:px-6 lg:px-8 mx-auto">
 
 {{-- {{ $paymentByDate }} --}}
 
@@ -28,7 +28,7 @@
 
   <!-- CARD CASH BANK End -->
 
-  <div wire:ignore class="flex justify-between mt-5 mb-3">
+  <div class="flex justify-between mt-5 mb-3">
     <h3 class="dark:text-white font-bold">Riwayat Terakhir</h3>
     <div class="flex flex-nowrap">
       <button type="button" class="scale-90 me-3 px-2 inline-flex items-center text-xs font-medium rounded-lg border-0 bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" 
