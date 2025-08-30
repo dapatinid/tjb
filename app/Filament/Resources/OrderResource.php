@@ -687,7 +687,8 @@ class OrderResource extends Resource
                     ->label('Updated by')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])->defaultSort('date_order', 'desc')
+            ])
+            // ->defaultSort('date_order', 'desc')
             // ->persistSortInSession()
             // ->persistFiltersInSession()
             // ->persistSearchInSession()
@@ -898,9 +899,9 @@ class OrderResource extends Resource
             ->recordUrl(null)
             ->query(function (Order $query) {
                 if (Auth::user()->id != 1) {
-                    return $query->where('branch_id', Auth::user()->branch_id);
+                    return $query->orderByDesc('date_order')->orderByDesc('q')->where('branch_id', Auth::user()->branch_id);
                 } else {
-                    return $query;
+                    return $query->orderByDesc('date_order')->orderByDesc('q');
                 };
             });
     }
