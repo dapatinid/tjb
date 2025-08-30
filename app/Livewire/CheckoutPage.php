@@ -224,7 +224,7 @@ class CheckoutPage extends Component
         $order = new Order();
         $order->q = Order::where('branch_id', Auth::user()->branch_id)->where('date_order', 'like', "%$date_order_this%")->count() + 1;
         $order->branch_id = $this->branch_id;
-        $order->code_tr = 'ORD' . date('YmdHis') . '-' . Auth::user()->id . '-' . Order::where('branch_id', Auth::user()->branch_id)->where('created_by', Auth::user()->id)->where('date_order', 'like', "%" . Carbon::now()->format('Y-m-d') . "%")->count() + 1;
+        $order->code_tr = 'ORD' . date('YmdHis') . '-' . Auth::user()->id . '-' . Order::where('branch_id', Auth::user()->branch_id)->where('created_by', Auth::user()->id)->where('created_at', 'like', "%" . Carbon::now()->format('Y-m-d') . "%")->count() + 1;
         $order->created_by = Auth::user()->id;
         $order->updated_by = Auth::user()->id;
         $order->total_weight = Cart::where('created_by', Auth::user()->id)->where('branch_id', $this->branch_id)->sum('total_weight');

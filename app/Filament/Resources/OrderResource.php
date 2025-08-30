@@ -85,7 +85,7 @@ class OrderResource extends Resource
 
                         TextInput::make('code_tr')
                             ->label('No. Transsaction')
-                            ->default('ORD' . date('YmdHis') . '-' . Auth::user()->id . '-' . Order::where('branch_id', auth()->user()->branch_id)->where('created_by', auth()->user()->id)->where('date_order', 'like', "%" . Carbon::now()->format('Y-m-d') . "%")->count() + 1) ## Jika ingin menggunakan OrderID otomatis
+                            ->default('ORD' . date('YmdHis') . '-' . Auth::user()->id . '-' . Order::where('branch_id', auth()->user()->branch_id)->where('created_by', auth()->user()->id)->where('created_at', 'like', "%" . Carbon::now()->format('Y-m-d') . "%")->count() + 1) ## Jika ingin menggunakan OrderID otomatis
                             ->readOnly()
                             ->columnSpan(6),
 
@@ -546,7 +546,7 @@ class OrderResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            // ->poll('10s')
+            ->poll('30s')
             ->modifyQueryUsing(function (Builder $query) {
                 return $query->addSelect([
                     'created' => User::query()->select('name')
@@ -688,10 +688,10 @@ class OrderResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])->defaultSort('date_order', 'desc')
-            // ->persistSortInSession()
-            // ->persistFiltersInSession()
-            // ->persistSearchInSession()
-            // ->deselectAllRecordsWhenFiltered(false)
+            ->persistSortInSession()
+            ->persistFiltersInSession()
+            ->persistSearchInSession()
+            ->deselectAllRecordsWhenFiltered(false)
             ->defaultPaginationPageOption(25)
             ->paginated([
                 10,
