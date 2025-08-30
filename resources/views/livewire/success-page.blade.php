@@ -107,21 +107,21 @@
           </div>
         </div>
         <div class="items-center block gap-4 px-4 mt-6 sm:flex ">
-          <a wire:navigate href="/my-orders"><button class="w-full px-4 py-2 mt-2 text-sm text-center bg-blue-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-gray-700 dark:bg-gray-800">
+          <a href="/my-orders"><button class="w-full px-4 py-2 mt-2 text-sm text-center bg-blue-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-gray-700 dark:bg-gray-800">
             View My Orders</button>
           </a>
-          <a wire:navigate href="/products"><button class="w-full px-4 py-2 mt-2 text-sm text-center text-blue-500 border border-blue-500 rounded-md md:w-auto hover:text-white hover:bg-blue-600 dark:border-gray-700 dark:hover:bg-gray-700 dark:text-gray-300">
+          <a href="/products"><button class="w-full px-4 py-2 mt-2 text-sm text-center text-blue-500 border border-blue-500 rounded-md md:w-auto hover:text-white hover:bg-blue-600 dark:border-gray-700 dark:hover:bg-gray-700 dark:text-gray-300">
             Go back shopping</button>
           </a>
           @auth
           @if (auth()->user()->is_admin == 1)
-          <a target="_blank" href="{{ route('printorder', [$order->id]) }}"><button class="w-full px-4 py-2 mt-2 text-sm text-center bg-gray-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-gray-700 dark:bg-gray-800">
+          <a target="_blank" href="{{ route('printorder', [$order->id]) }}" target="_blank"><button class="w-full px-4 py-2 mt-2 text-sm text-center bg-gray-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-gray-700 dark:bg-gray-800">
             <i class="fa fa-print" aria-hidden="true"></i> Print My Orders</button>
           </a>
-          <a target="_blank" href="{{ route('printorderprocess', [$order->id]) }}"><button class="w-full px-4 py-2 mt-2 text-sm text-center bg-gray-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-gray-700 dark:bg-gray-800">
+          <a target="_blank" href="{{ route('printorderprocess', [$order->id]) }}" target="_blank"><button class="w-full px-4 py-2 mt-2 text-sm text-center bg-gray-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-gray-700 dark:bg-gray-800">
             <i class="fa fa-coffee" aria-hidden="true"></i> Print Srt Jalan</button>
           </a>
-          <a wire:navigate href="/pos"><button class="w-full px-4 py-2 mt-2 text-sm text-center bg-green-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-green-600 dark:hover:bg-gray-700 dark:bg-gray-800">
+          <a href="/pos"><button class="w-full px-4 py-2 mt-2 text-sm text-center bg-green-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-green-600 dark:hover:bg-gray-700 dark:bg-gray-800">
             <i class="fa fa-fax" aria-hidden="true"></i> POS</button>
           </a>
           @endif

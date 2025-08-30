@@ -171,12 +171,12 @@
                                                                         Ganti Status</button>
                                                         </div>
                                                         <div class="py-1">
-                                                            <a href="{{ route('printorder', [$order->id]) }}"><button
+                                                            <a href="{{ route('printorder', [$order->id]) }}" target="_blank"><button
                                                                     class="w-full px-4 py-2 text-white rounded-md bg-slate-600 hover:bg-slate-400">
                                                                     Print</button></a>
                                                         </div>
                                                         <div class="py-1">
-                                                            <a href="{{ route('printorderprocess', [$order->id]) }}"><button
+                                                            <a href="{{ route('printorderprocess', [$order->id]) }}" target="_blank"><button
                                                                     class="w-full px-4 py-2 text-white rounded-md bg-slate-600 hover:bg-slate-400">
                                                                         Srt Jalan</button></a>
                                                         </div>
@@ -323,13 +323,13 @@
     
                                                                     @if (auth()->user()->is_admin == 1)
                                                                         <div class="py-1">
-                                                                            <a  href="{{ route('printorder', $payment->paymentable_id) }}"><button
+                                                                            <a  href="{{ route('printorder', $payment->paymentable_id) }}" target="_blank"><button
                                                                                     class="w-full px-4 py-2 text-white rounded-md bg-slate-600 hover:bg-slate-400">
                                                                                     Print</button></a>
                                                                         </div>
                                                                         <div class="py-1">
                                                                             <a
-                                                                                href="{{ route('printorderprocess', $payment->paymentable_id) }}"><button
+                                                                                href="{{ route('printorderprocess', $payment->paymentable_id) }}" target="_blank"><button
                                                                                     class="w-full px-4 py-2 text-white rounded-md bg-slate-600 hover:bg-slate-400">
                                                                                     Srt Jalan</button></a>
                                                                         </div>

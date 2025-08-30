@@ -11,7 +11,7 @@
 </style>
 
 </head>
-<body style="font-size: 18px; margin-bottom: 2em; padding-top: 2rem; padding-left: 1rem; padding-right: 1rem">
+<body style="font-family: Arial, Helvetica, sans-serif; font-size: 18px; margin-bottom: 2em; padding-top: 2rem; padding-left: 1rem; padding-right: 1rem">
             <div style="text-align: center;">
                 {{-- <img src="{{ url('storage/Taibah-FC-LOGO-bulat-aja-w-Stroke.png') }}" alt="ZaharaPOS" width="100" /> --}}
                 <h4>Transfer No. {{ $trSTK->code_tr }}</h4>

@@ -419,13 +419,13 @@
                         <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit
                     </button>
                 </a>
-                <a href="{{ route('printorder', [$order->id]) }}"
+                <a href="{{ route('printorder', [$order->id]) }}" target="_blank"
                     class="{{ auth()->user()->is_admin == 1 ? 'block' : 'hidden' }}">
                     <button class="w-full p-3 mt-4 text-sm text-white bg-gray-500 rounded-lg hover:bg-gray-600">
                         <i class="fa fa-print" aria-hidden="true"></i> Print
                     </button>
                 </a>
-                <a href="{{ route('printorderprocess', [$order->id]) }}"
+                <a href="{{ route('printorderprocess', [$order->id]) }}" target="_blank"
                     class="{{ auth()->user()->is_admin == 1 ? 'block' : 'hidden' }}">
                     <button class="w-full p-3 mt-4 text-sm text-white bg-gray-500 rounded-lg hover:bg-gray-600">
                         <i class="fa fa-coffee" aria-hidden="true"></i> Srt Jalan

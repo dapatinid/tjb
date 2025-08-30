@@ -367,9 +367,12 @@
                                 class="w-1/2 px-0 mb-0 xs:w-1/3 sm:w-1/3 md:w-1/4 lg:w-1/5">
                                 <div
                                     class="bg-white border-2 dark:bg-slate-900 group hover:bg-gray-800 dark:hover:bg-white focus:bg-gray-800 border-slate-200 dark:border-slate-700">
-                                    <div aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-focus-management-modal" data-hs-overlay="#hs-focus-management-modal"
+                                    <div 
+                                    @if ($product->is_active == true && $product->in_stock == true)
+                                        aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-focus-management-modal" data-hs-overlay="#hs-focus-management-modal"
                                         wire:click="cartEditModal({{ $product }})"
                                         onClick="showModalPro()" 
+                                    @endif
                                         class="relative {{ $product->is_active == 1 ? 'bg-gray-100 dark:bg-gray-800' : 'bg-gray-400' }} cursor-pointer scale-90">
                                             @if ($product->images != null || $product->images === "[]")
                                                 <img src="{{ Str::replace('%2F', '/',url('storage', $product->images[0])) }}"
