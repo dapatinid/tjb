@@ -54,7 +54,7 @@ class WalletPage extends Component
         $cashBankHistoriesLast = Payment::query()->where('branch_id', Auth::user()->branch_id)->whereNotNull('rekening')->where('rekening', 'LIKE', '%' . $this->rek . '%')->orderBy('date_payment', 'desc')->value('date_payment');
 
         return view('livewire.wallet-page', [
-            'paymentByDate' => $paymentByDate->paginate(5),
+            'paymentByDate' => $paymentByDate->paginate(2),
             'journal' => $journal,
             'paymentAll' => $paymentAll,
             'cashBankTotal' => $cashBankTotal,

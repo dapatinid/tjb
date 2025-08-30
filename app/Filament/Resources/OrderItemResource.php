@@ -282,10 +282,10 @@ class OrderItemResource extends Resource
 
             ])->defaultSort('date_order', 'desc')
             // ->persistSortInSession()
-            ->persistFiltersInSession()
-            ->persistSearchInSession()
-            ->deselectAllRecordsWhenFiltered(false)
-            ->defaultPaginationPageOption(100)
+            // ->persistFiltersInSession()
+            // ->persistSearchInSession()
+            // ->deselectAllRecordsWhenFiltered(false)
+            ->defaultPaginationPageOption(25)
             ->paginated([
                 10,
                 25,

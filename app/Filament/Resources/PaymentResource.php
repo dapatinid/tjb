@@ -237,12 +237,11 @@ class PaymentResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])->defaultSort('date_payment', 'desc')
-
             // ->persistSortInSession()
-            ->persistFiltersInSession()
-            ->persistSearchInSession()
-            ->deselectAllRecordsWhenFiltered(false)
-            ->defaultPaginationPageOption(100)
+            // ->persistFiltersInSession()
+            // ->persistSearchInSession()
+            // ->deselectAllRecordsWhenFiltered(false)
+            ->defaultPaginationPageOption(25)
             ->paginated([
                 10,
                 25,

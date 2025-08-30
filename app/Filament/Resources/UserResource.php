@@ -384,7 +384,7 @@ class UserResource extends Resource
             // ->persistFiltersInSession()
             // ->persistSearchInSession()
             // ->deselectAllRecordsWhenFiltered(false)
-            ->defaultPaginationPageOption(100)
+            ->defaultPaginationPageOption(25)
             ->paginated([
                 10,
                 25,

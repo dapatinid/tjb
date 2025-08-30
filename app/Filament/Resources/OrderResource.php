@@ -687,13 +687,12 @@ class OrderResource extends Resource
                     ->label('Updated by')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            // ->defaultSort('date_order', 'desc')
+            ])->defaultSort('date_order', 'desc')
             // ->persistSortInSession()
             // ->persistFiltersInSession()
             // ->persistSearchInSession()
             // ->deselectAllRecordsWhenFiltered(false)
-            ->defaultPaginationPageOption(100)
+            ->defaultPaginationPageOption(25)
             ->paginated([
                 10,
                 25,
@@ -899,9 +898,9 @@ class OrderResource extends Resource
             ->recordUrl(null)
             ->query(function (Order $query) {
                 if (Auth::user()->id != 1) {
-                    return $query->orderByDesc('date_order')->orderByDesc('q')->where('branch_id', Auth::user()->branch_id);
+                    return $query->where('branch_id', Auth::user()->branch_id);
                 } else {
-                    return $query->orderByDesc('date_order')->orderByDesc('q');
+                    return $query;
                 };
             });
     }
