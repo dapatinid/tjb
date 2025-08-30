@@ -899,9 +899,9 @@ class OrderResource extends Resource
             ->recordUrl(null)
             ->query(function (Order $query) {
                 if (Auth::user()->id != 1) {
-                    return $query->where('date_order', 'like', "%" . Carbon::today()->format('Y-m-d') . "%")->orderByDesc('q')->where('branch_id', Auth::user()->branch_id);
+                    return $query->orderByDesc('date_order')->orderByDesc('q')->where('branch_id', Auth::user()->branch_id);
                 } else {
-                    return $query->where('date_order', 'like', "%" . Carbon::today()->format('Y-m-d') . "%")->orderByDesc('q');
+                    return $query->orderByDesc('date_order')->orderByDesc('q');
                 };
             });
     }
