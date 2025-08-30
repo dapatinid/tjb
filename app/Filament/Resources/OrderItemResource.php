@@ -70,7 +70,7 @@ class OrderItemResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->poll('10s')
+            // ->poll('10s')
             ->modifyQueryUsing(function (Builder $query) {
                 return $query
                     ->addSelect([
