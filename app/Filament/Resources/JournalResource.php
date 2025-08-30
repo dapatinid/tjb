@@ -747,7 +747,7 @@ class JournalResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->poll('10s')
+            // ->poll('10s')
             ->columns([
                 TextColumn::make('id')
                     ->label('#')
@@ -794,6 +794,26 @@ class JournalResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->summarize(Sum::make()->numeric(locale: 'id')->prefix('Rp ')->label('Nominal')),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('userCre.name')
+                    ->label('Created by')
+                    ->numeric()
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('userUpd.name')
+                    ->label('Updated by')
+                    ->numeric()
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
             ])
             ->defaultSort('date_journal', 'desc')
