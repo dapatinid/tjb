@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -75,6 +76,11 @@ class Porder extends Model
             $model->payments()->withTrashed()->restore();
         });
         static::updating(function ($model) {
+            if ($model->isDirty('date_order')) {
+                $hari = Carbon::parse($model->date_order)->format('Y-m-d');
+                $antri = Order::where('branch_id', auth()->user()->branch_id)->where('date_order', 'like', "%$hari%")->count() + 1;
+                Order::where('id', $model->id)->update(['q' => $antri,]);
+            }
             // hitung Hutang Pembelian untuk jurnal
             // if ($model->isDirty('grand_total')) {
             Payment::where('paymentable_type', Porder::class)

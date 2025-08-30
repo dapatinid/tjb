@@ -83,7 +83,7 @@ class PorderResource extends Resource
 
                         TextInput::make('code_tr')
                             ->label('No. Transsaction')
-                            ->default('PRD' . date('YmdHis') . '-' . Auth::user()->id . '-' . Porder::where('branch_id', auth()->user()->branch_id)->where('created_by', auth()->user()->id)->where('date_order', 'like', "%" . Carbon::now()->format('Y-m-d') . "%")->count() + 1) ## Jika ingin menggunakan OrderID otomatis
+                            ->default('PRD' . date('YmdHis') . '-' . Auth::user()->id . '-' . Porder::where('branch_id', auth()->user()->branch_id)->where('created_by', auth()->user()->id)->where('created_at', 'like', "%" . Carbon::now()->format('Y-m-d') . "%")->count() + 1) ## Jika ingin menggunakan OrderID otomatis
                             ->readOnly()
                             ->columnSpan(6),
 
