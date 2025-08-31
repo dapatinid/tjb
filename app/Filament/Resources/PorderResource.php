@@ -654,14 +654,17 @@ class PorderResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('created')
+                TextColumn::make('userCre.name')
                     ->label('Created by')
+                    ->numeric()
                     ->sortable()
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
-
-                TextColumn::make('updated')
+                TextColumn::make('userUpd.name')
                     ->label('Updated by')
+                    ->numeric()
                     ->sortable()
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])->defaultSort('date_order', 'desc')
             // ->persistSortInSession()

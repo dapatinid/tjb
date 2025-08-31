@@ -41,6 +41,14 @@ class Order extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function userCre(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+    public function userUpd(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
     public function branch()
     {
         return $this->belongsTo(Branch::class);

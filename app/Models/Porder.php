@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -38,6 +39,14 @@ class Porder extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    public function userCre(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+    public function userUpd(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
     public function branch()
     {
