@@ -152,7 +152,7 @@ class AdjItemResource extends Resource
                                         $boughtqty = $orderitems->where('product_id', $get('product_id'))->sum('p_quantity');
                                         // ->whereTodayOrBefore('date_order')
                                         $soldqty = $orderitems->where('product_id', $get('product_id'))->sum('quantity');
-                                        dd($boughtqty - $soldqty);
+                                        // dd($boughtqty - $soldqty);
                                         $set('stock_before', $boughtqty - $soldqty);
                                     })
 
