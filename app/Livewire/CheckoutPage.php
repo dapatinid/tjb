@@ -239,7 +239,7 @@ class CheckoutPage extends Component
         }
         if ($isadmin == 1) {
             $order->date_order = $this->date_order;
-            $order->status = 'processing';
+            $order->status = 'new';
         } else {
             $order->date_order = date('Y-m-d H:i:s');
             $order->status = 'new';
