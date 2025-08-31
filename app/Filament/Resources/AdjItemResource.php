@@ -148,9 +148,11 @@ class AdjItemResource extends Resource
                                     ->afterStateUpdated(fn($state, Set $set, Get $get) => $set('p_total_amount', Product::find($state)?->cogs * $get('quantity') ?? 0))
 
                                     ->afterStateUpdated(function (Get $get, Set $set) {
-                                        $orderitems = OrderItem::leftJoin('orders', 'order_items.id', '=', 'orders.id')->leftJoin('porders', 'order_items.id', '=', 'porders.id')->get()->where('order.status', '!=', 'canceled')->where('porder.status', '!=', 'canceled');
+                                        $orderitems = OrderItem::leftJoin('orders', 'order_items.id', '=', 'orders.id')->leftJoin('porders', 'order_items.id', '=', 'porders.id')->get()->where('order.status', '!=', 'canceled')->where('porder.status', '!=', 'canceled')->where('order.status', '!=', 'new')->where('porder.status', '!=', 'new');
                                         $boughtqty = $orderitems->where('product_id', $get('product_id'))->sum('p_quantity');
+                                        // ->whereTodayOrBefore('date_order')
                                         $soldqty = $orderitems->where('product_id', $get('product_id'))->sum('quantity');
+                                        dd($boughtqty - $soldqty);
                                         $set('stock_before', $boughtqty - $soldqty);
                                     })
 
