@@ -637,8 +637,8 @@
             elemListItem.scrollTop = elemListItem.scrollHeight;
         }; 
         
-        function modalClose() {
-            document.getElementById("hs-focus-management-modal-close").click();
+        function modalClose(id) {
+            document.getElementById("closeButtonModalProduk-"+id).click();
         }; 
 
         function showModalPro(id) {

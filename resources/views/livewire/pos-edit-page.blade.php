@@ -1,4 +1,4 @@
-<div>
+<div wire:ignore>
 @foreach ($productsAllModal as $product)
   <!-- Start ModalProduk -->
                     <span id="modalProd-{{ $product->id }}" aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-focus-management-modal-{{ $product->id }}" data-hs-overlay="#hs-focus-management-modal-{{ $product->id }}"
@@ -42,6 +42,7 @@
                                     wire:keyup.enter='addToCart({{ $product->id }}); setTimeout(scrollBottom, 5000); soundBeep.play();'
                                     placeholder="1" 
                                     @endif 
+                                    @keyup.enter="modalClose({{ $product->id }})"
                                 autofocus="">
                                 <input type="alfanumeric" id="thisprice" name="thisprice" wire:model='thisprice' x-mask:dynamic="$money($input, ',', '.')"
                                     onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" 
@@ -53,6 +54,7 @@
                                     wire:keyup.enter='addToCart({{ $product->id }}); setTimeout(scrollBottom, 5000); soundBeep.play();'
                                     placeholder="@formatNumber($product->price)" 
                                     @endif 
+                                    @keyup.enter="modalClose({{ $product->id }})"
                                 >
                               </div>
                               </div>
@@ -64,8 +66,8 @@
                                 </button>
                                 @endif
                                 <div>
-                                <button x-on:click='$wire.thisqty="";$wire.thisprice=""'
-                                  type="button" class="closeButtonModalProduk inline-flex items-center px-3 py-2 text-sm font-medium text-gray-800 bg-white border border-gray-200 rounded-lg gap-x-2 hover:bg-gray-300 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled" data-hs-overlay="#hs-focus-management-modal-{{ $product->id }}">
+                                <button x-on:click='$wire.thisqty="";$wire.thisprice=""' id="closeButtonModalProduk-{{ $product->id }}"
+                                  type="button" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-800 bg-white border border-gray-200 rounded-lg gap-x-2 hover:bg-gray-300 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled" data-hs-overlay="#hs-focus-management-modal-{{ $product->id }}">
                                   Batal
                                 </button>
                                 <button type="button"
