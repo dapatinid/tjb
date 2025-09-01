@@ -100,4 +100,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/printpreviewtransferstock/{id}', [PrintController::class, 'printviewtransferstock'])->name('printtransferstock');
     Route::get('/exportproducts', [ExportController::class, 'exportProduct']);
     Route::get('/exportbrands', [ExportController::class, 'exportBrand']);
+    Route::get('/exportdompet/{byfilter}', [ExportController::class, 'exportDompet'])->name('exportdompet');
 });

@@ -9,6 +9,7 @@ use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 
 // use Livewire\WithPagination;
 
@@ -20,6 +21,8 @@ class WalletPage extends Component
 
     #[Url()]
     public $rek;
+
+    public $laporan_dompet_by_date;
 
     public function mount()
     {
@@ -34,7 +37,23 @@ class WalletPage extends Component
         if ($this->rek == null || $this->rek === '') {
             $this->rek = 'KAS KASIR';
         }
+
+        // $this->laporan_dompet_by_date = '02/09/2025';
     }
+
+    public function exportDompet()
+    {
+        if ($this->laporan_dompet_by_date == null || $this->laporan_dompet_by_date == '') {
+            LivewireAlert::title('Tanggal Kosong')
+                ->show();
+        } else {
+            return redirect()->route('exportdompet', http_build_query(array(
+                'bydate' => $this->laporan_dompet_by_date,
+                'rek' => $this->rek
+            )));
+        }
+    }
+
     public function render()
     {
         $paymentByDate = Payment::where('branch_id', Auth::user()->branch_id)->whereNotNull('rekening')->where('rekening', 'LIKE', '%' . $this->rek . '%')

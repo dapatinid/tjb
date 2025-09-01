@@ -29,7 +29,20 @@
   <!-- CARD CASH BANK End -->
 
   <div wire:ignore class="flex justify-between mt-5 mb-3">
-    <h3 class="dark:text-white font-bold">Riwayat Terakhir</h3>
+    
+    <x-filament::modal>
+        <x-slot name="trigger">
+            <h3 class="dark:text-white font-bold">Riwayat Terakhir &#128438;</h3>
+        </x-slot>
+            Export Laporan
+            <x-filament::input
+                type="date"
+                wire:model="laporan_dompet_by_date"
+            />
+            <x-filament::button wire:click="exportDompet" class="cursor-pointer bg-amber-300 hover:bg-amber-500" icon="heroicon-m-printer">
+                Export
+            </x-filament::button>
+    </x-filament::modal>
     <div class="flex flex-nowrap">
       <button type="button" class="scale-90 me-3 px-2 inline-flex items-center text-xs font-medium rounded-lg border-0 bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" 
       aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-scale-animation-modal" data-hs-overlay="#hs-scale-animation-modal">

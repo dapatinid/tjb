@@ -872,6 +872,7 @@ class JournalResource extends Resource
             'index' => Pages\ListJournals::route('/'),
             'create' => Pages\CreateJournal::route('/create'),
             'edit' => Pages\EditJournal::route('/{record}/edit'),
+            'view' => Pages\ViewJournal::route('/{record}'),
         ];
     }
 

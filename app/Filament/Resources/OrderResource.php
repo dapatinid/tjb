@@ -666,31 +666,31 @@ class OrderResource extends Resource
                 TextColumn::make('date_order')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
 
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
 
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
 
                 TextColumn::make('userCre.name')
                     ->label('Created by')
                     ->numeric()
                     ->sortable()
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('userUpd.name')
                     ->label('Updated by')
                     ->numeric()
                     ->sortable()
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])->defaultSort('date_order', 'desc')
+                    ->toggleable(isToggledHiddenByDefault: false),
+            ])->defaultSort('code_tr', 'desc')
             ->persistSortInSession()
             ->persistFiltersInSession()
             ->persistSearchInSession()
