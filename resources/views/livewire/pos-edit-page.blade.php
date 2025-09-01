@@ -41,7 +41,7 @@
                                     wire:keydown.enter='addToCart({{ $product->id }}); setTimeout(scrollBottom, 5000); soundBeep.play();'
                                     placeholder="1" 
                                     @endif 
-                                    @keyup.enter="modalClose({{ $product->id }})"
+                                    {{-- @keyup.enter="modalClose({{ $product->id }})" --}}
                                 autofocus="">
                                 <input type="alfanumeric" id="thisprice" name="thisprice" wire:model='thisprice' x-mask:dynamic="$money($input, ',', '.')"
                                     onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" 
@@ -53,7 +53,7 @@
                                     wire:keydown.enter='addToCart({{ $product->id }}); setTimeout(scrollBottom, 5000); soundBeep.play();'
                                     placeholder="@formatNumber($product->price)" 
                                     @endif 
-                                    @keyup.enter="modalClose({{ $product->id }})"
+                                    {{-- @keyup.enter="modalClose({{ $product->id }})" --}}
                                 >
                               </div>
                               </div>
