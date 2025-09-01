@@ -1,4 +1,4 @@
-<div wire:ignore>
+<div>
 @foreach ($productsAllModal as $product)
   <!-- Start ModalProduk -->
                     <span id="modalProd-{{ $product->id }}" aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-focus-management-modal-{{ $product->id }}" data-hs-overlay="#hs-focus-management-modal-{{ $product->id }}"
@@ -31,15 +31,14 @@
                                   <span>Qty</span> <span>Harga</span>
                                 </div>
                                 <div class="px-3 grid grid-cols-2">
-                                <input 
-                                    type="number" id="thisqty" name="thisqty" wire:model='thisqty' 
+                                <input type="number" id="thisqty" name="thisqty" wire:model='thisqty' 
                                     onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" 
                                     class="block w-full px-4 py-3 text-sm text-center border-gray-200 rounded-lg focus:border-green-400 focus:ring-green-400" 
                                     @if ($cartcek->where('product_id', $product->id)->where('created_by', auth()->user()->id)->value('quantity') > 0)
-                                    wire:keyup.enter='addToCart({{ $product->id }}); soundBeep.play();'
+                                    wire:keydown.enter='addToCart({{ $product->id }}); soundBeep.play();'
                                     placeholder="{{ $cartcek->where('product_id', $product->id)->where('created_by', auth()->user()->id)->value('quantity') }}" 
                                     @else
-                                    wire:keyup.enter='addToCart({{ $product->id }}); setTimeout(scrollBottom, 5000); soundBeep.play();'
+                                    wire:keydown.enter='addToCart({{ $product->id }}); setTimeout(scrollBottom, 5000); soundBeep.play();'
                                     placeholder="1" 
                                     @endif 
                                     @keyup.enter="modalClose({{ $product->id }})"
@@ -48,10 +47,10 @@
                                     onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" 
                                     class="block w-full px-4 py-3 ml-2 text-sm text-center bg-white border border-gray-200 rounded-lg focus:border-green-400 focus:ring-green-400" 
                                     @if ($cartcek->where('product_id', $product->id)->where('created_by', auth()->user()->id)->value('quantity') > 0)
-                                    wire:keyup.enter='addToCart({{ $product->id }}); soundBeep.play();'
+                                    wire:keydown.enter='addToCart({{ $product->id }}); soundBeep.play();'
                                     placeholder="@formatNumber($cartcek->where('product_id', $product->id)->where('created_by', auth()->user()->id)->value('unit_amount'))" 
                                     @else
-                                    wire:keyup.enter='addToCart({{ $product->id }}); setTimeout(scrollBottom, 5000); soundBeep.play();'
+                                    wire:keydown.enter='addToCart({{ $product->id }}); setTimeout(scrollBottom, 5000); soundBeep.play();'
                                     placeholder="@formatNumber($product->price)" 
                                     @endif 
                                     @keyup.enter="modalClose({{ $product->id }})"
