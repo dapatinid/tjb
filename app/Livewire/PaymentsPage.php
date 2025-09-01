@@ -33,7 +33,9 @@ class PaymentsPage extends Component
     public function render()
     {
         if ($this->date_awal == '' || $this->date_akhir == '') {
-            $date_awal = Carbon::now()->firstOfMonth()->format('Y-m-d');
+            // $date_awal = Carbon::now()->firstOfMonth()->format('Y-m-d');
+            // $date_akhir = Carbon::now()->format('Y-m-d');
+            $date_awal = Carbon::now()->format('Y-m-d');
             $date_akhir = Carbon::now()->format('Y-m-d');
             // $date_awal = Carbon::now()->startOfMonth()->format('Y-m-d');
             // $date_akhir = Carbon::now()->endOfMonth()->format('Y-m-d');
@@ -47,19 +49,18 @@ class PaymentsPage extends Component
         $orders = Order::all();
         $users = User::all();
 
-        $payments = Payment::whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])
-            ->where('paymentable_type', Order::class)
+        $payments = Payment::where('paymentable_type', Order::class)->where('mutation_type', "Sales")
+            ->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])
             ->whereNull('deleted_at')
             ->orderBy('id', 'desc')
             ->get()
             ->where('order.status', '!=', 'canceled')
             ->where('porder.status', '!=', 'canceled'); # berhasil join dan ambil nilai status
 
-        $ordersUnpaid = Order::whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])
-            ->whereNull('deleted_at')
+        $ordersUnpaid = Order::whereNull('deleted_at')
             ->where('status', '!=', 'canceled')
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(100);
 
 
         return view('livewire.payments-page', [

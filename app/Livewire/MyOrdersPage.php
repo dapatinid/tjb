@@ -111,7 +111,7 @@ class MyOrdersPage extends Component
 
         $payments = Payment::where('branch_id', auth()->user()->branch_id)->where('paymentable_type', Order::class)->where('mutation_type', 'Sales')
             ->where('date_payment', 'like', "%$today%")
-            ->orderBy('date_payment', 'desc')->get();
+            ->orderBy('id', 'desc')->get();
 
         $products = Product::all();
         $orderItems = OrderItem::whereNull('deleted_at');

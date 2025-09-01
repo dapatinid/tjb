@@ -237,7 +237,10 @@ class CheckoutPage extends Component
             $order->is_paid = 0;
             $order->paid_at = null;
         }
-        if ($isadmin == 1) {
+        if ($isadmin == 1 && Auth::user()->roles[0]->name !== 'Seller') {
+            $order->date_order = $this->date_order;
+            $order->status = 'processing';
+        } elseif ($isadmin == 1 && Auth::user()->roles[0]->name === 'Seller') {
             $order->date_order = $this->date_order;
             $order->status = 'new';
         } else {

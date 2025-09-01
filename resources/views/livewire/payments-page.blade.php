@@ -76,6 +76,9 @@
             </div> 
             
             <!-- pagination start -->
+            {{-- <div>
+              {{ $payments->links() }}
+            </div> --}}
             <!-- pagination end -->
     
           </div>
@@ -118,6 +121,9 @@
             </div> 
             
             <!-- pagination start -->
+            <div>
+              {{ $ordersUnpaid->links() }}
+            </div>
             <!-- pagination end -->
   
           </div>

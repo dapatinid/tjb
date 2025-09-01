@@ -58,10 +58,10 @@ class PosPage extends Component
     public $thisqty;
     public $kodeproduk = '';
 
-    public $modalIdProduk = '';
-    public $modalSlugProduk;
-    public $modalNamaProduk;
-    public $modalVariantProduk;
+    // public $modalIdProduk = '';
+    // public $modalSlugProduk;
+    // public $modalNamaProduk;
+    // public $modalVariantProduk;
 
 
     public function mount()
@@ -96,12 +96,14 @@ class PosPage extends Component
     // add product to cart method
     public function addToCart($product_id)
     {
-        if ($product_id == 0) {
+        if ($product_id == 0 || $product_id == null) {
             LivewireAlert::title('Gagal Input Produk')
                 ->warning()
                 ->toast()
                 ->position('center')
                 ->show();
+            $this->thisqty = '';
+            $this->thisprice = '';
         } else {
             if (Auth::check()) {
                 CartManagement::addItemToCartWithQtyOnPos($product_id, $this->thisqty, Str::replace('.', '', $this->thisprice));
@@ -113,6 +115,13 @@ class PosPage extends Component
             }
         }
     }
+
+    // reset modal QTY and PRICE
+    // public function resetModalQtyPrice()
+    // {
+    //     $this->thisqty = '';
+    //     $this->thisprice = '';
+    // }
 
     // add product to cart with code method
     public function addToCartWithCode()
@@ -261,41 +270,41 @@ class PosPage extends Component
         ]);
     }
 
-    public function cartEditModal($produkArray)
-    {
-        $cartcek = Cart::where('product_id', $produkArray['id'])->where('created_by', auth()->user()->id);
-        if ($cartcek->value('quantity') > 0) {
-            $this->thisqty = '';
-            $this->thisprice = Number::format($cartcek->value('unit_amount'), locale: 'de');
-        } else {
-            $this->thisqty = '';
-            $this->thisprice = Number::format($produkArray['price'], locale: 'de');
-        }
+    // public function cartEditModal($produkArray)
+    // {
+    //     $cartcek = Cart::where('product_id', $produkArray['id'])->where('created_by', auth()->user()->id);
+    //     if ($cartcek->value('quantity') > 0) {
+    //         $this->thisqty = '';
+    //         $this->thisprice = Number::format($cartcek->value('unit_amount'), locale: 'de');
+    //     } else {
+    //         $this->thisqty = '';
+    //         $this->thisprice = Number::format($produkArray['price'], locale: 'de');
+    //     }
 
-        $this->modalNamaProduk = $produkArray['name'];
-        $this->modalVariantProduk = $produkArray['variant'];
-        $this->modalSlugProduk = $produkArray['slug'];
-        $this->modalIdProduk = $produkArray['id'];
-    }
+    //     $this->modalNamaProduk = $produkArray['name'];
+    //     $this->modalVariantProduk = $produkArray['variant'];
+    //     $this->modalSlugProduk = $produkArray['slug'];
+    //     $this->modalIdProduk = $produkArray['id'];
+    // }
 
-    public function cartListEditModal($produkArray)
-    {
-        $cartcek = Cart::where('product_id', $produkArray['product_id'])->where('created_by', auth()->user()->id);
-        $unitHarga = (int)$cartcek->value('unit_amount');
-        $this->thisprice = Number::format($unitHarga, locale: 'de');
-        $this->thisqty = '';
-        $this->modalNamaProduk = $cartcek->value('name');
-        $this->modalVariantProduk = $cartcek->value('variant');
-        $this->modalSlugProduk = $cartcek->value('slug');
-        $this->modalIdProduk = $cartcek->value('product_id');
-    }
-    public function resetEditModal()
-    {
-        $this->thisprice = '';
-        $this->thisqty = '';
-        $this->modalNamaProduk = '';
-        $this->modalVariantProduk = '';
-        $this->modalSlugProduk = '';
-        $this->modalIdProduk = '';
-    }
+    // public function cartListEditModal($produkArray)
+    // {
+    //     $cartcek = Cart::where('product_id', $produkArray['product_id'])->where('created_by', auth()->user()->id);
+    //     $unitHarga = (int)$cartcek->value('unit_amount');
+    //     $this->thisprice = Number::format($unitHarga, locale: 'de');
+    //     $this->thisqty = '';
+    //     $this->modalNamaProduk = $cartcek->value('name');
+    //     $this->modalVariantProduk = $cartcek->value('variant');
+    //     $this->modalSlugProduk = $cartcek->value('slug');
+    //     $this->modalIdProduk = $cartcek->value('product_id');
+    // }
+    // public function resetEditModal()
+    // {
+    //     $this->thisprice = '';
+    //     $this->thisqty = '';
+    //     $this->modalNamaProduk = '';
+    //     $this->modalVariantProduk = '';
+    //     $this->modalSlugProduk = '';
+    //     $this->modalIdProduk = '';
+    // }
 }

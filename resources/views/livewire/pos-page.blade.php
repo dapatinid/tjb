@@ -1,4 +1,4 @@
-<div class="w-full h-screen mx-auto bg-slate-200"
+<div class="w-full h-screen mx-auto bg-slate-200 dark:bg-slate-700"
  {{-- onclick="full_screen_on()" --}}
 >
 
@@ -354,8 +354,14 @@
                         </div>
                     </div>
 
-                    <button wire:click='resetProductsTile()' class="cursor-pointer w-full sticky top-0 z-10 {{ $url == 0 ? ' hidden' : 'flex' }} py-1 pb-2 mx-auto justify-center items-center bg-slate-200 dark:bg-slate-700 dark:text-gray-400">
-                        reset
+                    <button wire:click='resetProductsTile()' 
+                     class="cursor-pointer w-full sticky top-0 z-10 {{ $url == 0 ? ' hidden' : 'flex' }} py-1 pb-2 mx-auto justify-center items-center bg-slate-200 dark:bg-slate-700 dark:text-gray-400">
+                        <span wire:loading.remove>reset</span>
+                        <span class="p-1" wire:loading>
+                            <div class="animate-spin inline-block size-3 border-[3px] border-current border-t-transparent text-green-500 rounded-full dark:text-green-400" role="status" aria-label="loading">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </span>
                     </button>
 
                     {{-- Product Card Start --}}
@@ -370,10 +376,10 @@
                                     <div 
                                     @if ($product->is_active == true && $product->in_stock == true)
                                         aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-focus-management-modal" data-hs-overlay="#hs-focus-management-modal"
-                                        wire:click="cartEditModal({{ $product }})"
-                                        onClick="showModalPro()" 
+                                        {{-- wire:click="cartEditModal({{ $product }})" --}}
+                                        onClick="showModalPro({{ $product->id }})" 
                                     @endif
-                                        class="relative {{ $product->is_active == 1 ? 'bg-gray-100 dark:bg-gray-800' : 'bg-gray-400' }} cursor-pointer scale-90">
+                                        class="relative {{ $product->is_active == 1 ? 'bg-gray-100 dark:bg-gray-800' : 'bg-gray-400' }} {{ $product->in_stock == 1 ? 'cursor-pointer' : 'cursor-not-allowed' }} scale-90">
                                             @if ($product->images != null || $product->images === "[]")
                                                 <img src="{{ Str::replace('%2F', '/',url('storage', $product->images[0])) }}"
                                                 onerror="this.src='{{ url('storage/food-packaging.png') }}';"    
@@ -429,10 +435,10 @@
                                         {{-- @if ($stock >= 1 && $product->in_stock == 1) --}}
                                         @if ($product->in_stock == 1)
                                             <span aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-focus-management-modal" data-hs-overlay="#hs-focus-management-modal"
-                                                wire:click="cartEditModal({{ $product }})"
-                                                onClick="showModalPro()" 
+                                                {{-- wire:click="cartEditModal({{ $product }})" --}}
+                                                onClick="showModalPro({{ $product->id }})" 
                                                 class="flex items-center text-gray-500 cursor-pointer dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-300">
-                                                <span wire:loading wire:target='addToCart({{ $product->id }})'>...</span>
+                                                {{-- <span wire:loading.remove wire:target='addToCart({{ $product->id }})'>...</span> --}}
                                                 @if ($cartcek->where('branch_id', auth()->user()->branch_id)->where('product_id', $product->id)->where('created_by', auth()->user()->id)->value('quantity') > 0)
                                                     <span class="w-full mr-2" wire:loading.remove wire:target='addToCart({{ $product->id }})'><x-fas-chevron-left class="w-5 h-5 mx-auto text-green-500 hover:text-red-400"/></span>
                                                     <span class="w-full px-5 bg-blue-200 rounded-md dark:text-blue-600" wire:loading.remove wire:target='addToCart({{ $product->id }})'>{{ $cartcek->where('product_id', $product->id)->where('created_by', auth()->user()->id)->value('quantity') }}</span>
@@ -442,7 +448,11 @@
                                                         +Cart
                                                     </span>
                                                 @endif 
-                                                <span wire:loading wire:target='addToCart({{ $product->id }})'>...</span>
+                                                <span wire:loading wire:target='addToCart({{ $product->id }})'>
+                                                    <div class="animate-spin inline-block size-3 border-[3px] border-current border-t-transparent text-lime-500 rounded-full dark:text-lime-400" role="status" aria-label="loading">
+                                                        <span class="sr-only">Loading...</span>
+                                                    </div>
+                                                </span>
                                             </span>
                                         @else
                                             <a class="flex items-center space-x-2 text-gray-500 cursor-not-allowed dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-300"><span>Habis</span></a>
@@ -509,8 +519,8 @@
                                             </div>
                                         </td>
                                         <td aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-focus-management-modal" data-hs-overlay="#hs-focus-management-modal"
-                                            wire:click="cartListEditModal({{ $item }})"
-                                            onClick="showModalPro()" 
+                                            {{-- wire:click="cartListEditModal({{ $item }})" --}}
+                                            onClick="showModalPro({{ $item['product_id'] }})" 
                                         class="
                                         {{ Str::length($panjangNama) > 27 ? 'xs:pt-8 pt-12' : 'pt-5' }} 
                                             sm:pt-0 cursor-pointer hover:bg-gray-300" 
@@ -631,8 +641,8 @@
             document.getElementById("hs-focus-management-modal-close").click();
         }; 
 
-        function showModalPro() {
-            let IDnya = "modalProd";
+        function showModalPro(id) {
+            let IDnya = "modalProd-"+id;
             let ProdID = document.getElementById(IDnya);
             ProdID.click();
         };
