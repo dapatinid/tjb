@@ -290,7 +290,7 @@
                 {{ $today }}
               </div> 
 
-              <div id="jadwalsholat" class="w-full aspect-[3/1] px-3">
+              {{-- <div id="jadwalsholat" class="w-full aspect-[3/1] px-3">
                 <div id="owl-jadwal-sholat" class="owl-carousel owl-theme"> 
                   <div class="item w-full aspect-[3/1] px-4 rounded-lg items-center flex justify-between text-white dark:text-zinc-800 bg-linear-to-br from-lime-500 to-lime-800 dark:from-lime-500 dark:to-lime-800">
                     <div class="text-lg font-bold"><span>Jadwal Sholat<br>Maghrib</span></div>
@@ -321,7 +321,7 @@
                     <div class="text-4xl font-bold">{{ $ashar ?? 'Unconnected' }}</div>
                   </div> 
                 </div>  
-              </div>  
+              </div>   --}}
   
 
                 {{-- <select wire:change='changeBranch()'
