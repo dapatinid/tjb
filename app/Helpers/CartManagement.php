@@ -15,7 +15,6 @@ class CartManagement
     static public function addItemToCart($product_id)
     {
         $cart_items = self::getCartItemsFromCart();
-
         $existing_item = null;
 
         foreach ($cart_items as $item) {
@@ -146,7 +145,6 @@ class CartManagement
     static public function addItemToCartWithQtyOnPos($product_id, $qty, $price)
     {
         $cart_items = self::getCartItemsFromCart();
-
         $existing_item = null;
 
         foreach ($cart_items as $key => $item) {

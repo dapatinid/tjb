@@ -11,13 +11,11 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Title;
-use Illuminate\Support\Number;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 
 #[Title('POS - TegarJaya')]
@@ -58,17 +56,12 @@ class PosPage extends Component
     public $thisqty;
     public $kodeproduk = '';
 
-    // public $modalIdProduk = '';
-    // public $modalSlugProduk;
-    // public $modalNamaProduk;
-    // public $modalVariantProduk;
-
 
     public function mount()
     {
         if (Auth::check()) {
-            if (auth()->user()->is_admin == 1) {
-                $this->cart_items = CartManagement::getCartItemsFromCart()->where('branch_id', auth()->user()->branch_id);
+            if (Auth::user()->is_admin == 1) {
+                $this->cart_items = CartManagement::getCartItemsFromCart()->where('branch_id', Auth::user()->branch_id);
                 $this->grand_total = CartManagement::calculateGrandTotalByBranch($this->cart_items);
             } else {
                 return redirect('/products');
@@ -78,61 +71,51 @@ class PosPage extends Component
         }
 
         if (Auth::check()) {
-            if (auth()->user()->branch != '') {
-                $this->branch = auth()->user()->branch_id;
+            if (Auth::user()->branch != '') {
+                $this->branch = Auth::user()->branch_id;
             } else {
                 $this->branch = '';
             }
         }
     }
 
-    #[On('pos-page-list')]
-    public function updateCartList()
-    {
-        $this->cart_items = CartManagement::getCartItemsFromCart()->where('branch_id', auth()->user()->branch_id);
-        $this->grand_total = CartManagement::calculateGrandTotalByBranch($this->cart_items);
-    }
-
     // add product to cart method
     public function addToCart($product_id)
     {
-        if ($product_id == 0 || $product_id == null) {
-            LivewireAlert::title('Gagal Input Produk')
-                ->warning()
-                ->toast()
-                ->position('center')
-                ->show();
+        // if ($product_id == 0 || $product_id == null) {
+        //     LivewireAlert::title('Gagal Input Produk')
+        //         ->warning()
+        //         ->toast()
+        //         ->position('center')
+        //         ->show();
+        //     $this->thisqty = '';
+        //     $this->thisprice = '';
+        // } else {
+        if (Auth::check()) {
+            CartManagement::addItemToCartWithQtyOnPos($product_id, $this->thisqty, Str::replace('.', '', $this->thisprice));
+            // $this->dispatch('pos-page-list');
             $this->thisqty = '';
             $this->thisprice = '';
+            $this->cart_items = CartManagement::getCartItemsFromCart()->where('branch_id', Auth::user()->branch_id);
+            $this->grand_total = CartManagement::calculateGrandTotalByBranch($this->cart_items);
         } else {
-            if (Auth::check()) {
-                CartManagement::addItemToCartWithQtyOnPos($product_id, $this->thisqty, Str::replace('.', '', $this->thisprice));
-                $this->dispatch('pos-page-list');
-                $this->thisqty = '';
-                $this->thisprice = '';
-            } else {
-                redirect('/login');
-            }
+            redirect('/login');
         }
+        // }
     }
-
-    // reset modal QTY and PRICE
-    // public function resetModalQtyPrice()
-    // {
-    //     $this->thisqty = '';
-    //     $this->thisprice = '';
-    // }
 
     // add product to cart with code method
     public function addToCartWithCode()
     {
         if (Auth::check()) {
             $product_code = $this->kodeproduk;
-            $product_id = Product::where('branch_id', auth()->user()->branch_id)->where('sku', $product_code)->value('id');
+            $product_id = Product::where('branch_id', Auth::user()->branch_id)->where('sku', $product_code)->value('id');
             if ($product_id) {
                 CartManagement::addItemToCart($product_id);
-                $this->dispatch('pos-page-list', items_list: CartManagement::getCartItemsFromCart()->where('branch_id', auth()->user()->branch_id));
+                // $this->dispatch('pos-page-list', items_list: CartManagement::getCartItemsFromCart()->where('branch_id', Auth::user()->branch_id));
                 // $this->kodeproduk = '';
+                $this->cart_items = CartManagement::getCartItemsFromCart()->where('branch_id', Auth::user()->branch_id);
+                $this->grand_total = CartManagement::calculateGrandTotalByBranch($this->cart_items);
             } else {
                 LivewireAlert::title('Item Error')
                     ->text('Kode Produk tidak ditemukan.')
@@ -146,17 +129,66 @@ class PosPage extends Component
         }
     }
 
+    // ChangeQTY productlist to cart method
+    public function addToCartChangeQTY($product_id, $qty, $price)
+    {
+        if (Auth::check()) {
+            CartManagement::addItemToCartWithQtyOnPos($product_id, $qty, $price);
+            $this->cart_items = CartManagement::getCartItemsFromCart()->where('branch_id', Auth::user()->branch_id);
+            $this->grand_total = CartManagement::calculateGrandTotalByBranch($this->cart_items);
+        } else {
+            redirect('/login');
+        }
+        // }
+    }
+    // ChangePRICE productlist to cart method
+    public function addToCartChangePRICE($product_id, $qty, $price)
+    {
+        $price = intval(Str::replace('.', '', $price));
+        if (Auth::check()) {
+            CartManagement::addItemToCartWithQtyOnPos($product_id, $qty, $price);
+            $this->cart_items = CartManagement::getCartItemsFromCart()->where('branch_id', Auth::user()->branch_id);
+            $this->grand_total = CartManagement::calculateGrandTotalByBranch($this->cart_items);
+        } else {
+            redirect('/login');
+        }
+        // }
+    }
+
+    // add product to cart method
+    public function addToCartIncrement($product_id)
+    {
+        if (Auth::check()) {
+            CartManagement::addItemToCart($product_id);
+
+            LivewireAlert::title('Ditambahkan ke Troli')
+                // ->text('Ditambahkan ke Troli')
+                ->success()
+                ->toast()
+                ->position('bottom-start')
+                ->timer(3000)
+                ->show();
+            $this->cart_items = CartManagement::getCartItemsFromCart()->where('branch_id', Auth::user()->branch_id);
+            $this->grand_total = CartManagement::calculateGrandTotalByBranch($this->cart_items);
+        } else {
+            redirect('/login');
+        }
+    }
+
     public function removeItem($product_id)
     {
         $this->cart_items = CartManagement::removeCartItem($product_id);
+        $this->cart_items = CartManagement::getCartItemsFromCart()->where('branch_id', Auth::user()->branch_id);
         $this->grand_total = CartManagement::calculateGrandTotalByBranch($this->cart_items);
-        $this->dispatch('pos-page-list', items_list: CartManagement::getCartItemsFromCart()->where('branch_id', auth()->user()->branch_id));
+        // $this->dispatch('pos-page-list', items_list: CartManagement::getCartItemsFromCart()->where('branch_id', Auth::user()->branch_id));
     }
 
     public function clearItemByBranch($branch_id)
     {
         $this->cart_items = CartManagement::clearCartItemsOnBranch($branch_id);
-        $this->redirect('/pos', navigate: true);
+        $this->cart_items = CartManagement::getCartItemsFromCart()->where('branch_id', Auth::user()->branch_id);
+        $this->grand_total = CartManagement::calculateGrandTotalByBranch($this->cart_items);
+        // $this->redirect('/pos', navigate: true);
     }
 
     public function refreshPage()
@@ -179,7 +211,7 @@ class PosPage extends Component
     public function render()
     {
         if (Auth::check()) {
-            $isadmin = auth()->user()->is_admin;
+            $isadmin = Auth::user()->is_admin;
         } else {
             $isadmin = 0;
         }
@@ -239,24 +271,24 @@ class PosPage extends Component
         $cartcek = Cart::all();
 
         if (Auth::check()) {
-            if (auth()->user()->is_admin == 0) {
+            if (Auth::user()->is_admin == 0) {
                 $branches = Branch::all()->where('is_active', 1)->get();
             } else {
-                $branches = Branch::all()->where('partner_id', auth()->user()->partner_id)->where('is_active', 1);
+                $branches = Branch::all()->where('partner_id', Auth::user()->partner_id)->where('is_active', 1);
             }
         } else {
             $branches = Branch::all()->where('is_active', 1);
         }
 
         $users = User::all();
-        $productsAllModal = Product::query()->where('branch_id', auth()->user()->branch_id)->get();
+        $productsAllModal = Product::query()->where('branch_id', Auth::user()->branch_id)->get();
 
         $productcek = Product::all();
         $orderitem = OrderItem::all();
 
         return view('livewire.pos-page', [
             'productsAllModal' => $productsAllModal,
-            'products' => $productQuery->paginate(1000000000)->withQueryString(),
+            'products' => $productQuery->paginate(30)->withQueryString(),
             'brands' => Brand::where('is_active', 1)->get(['id', 'name', 'slug']),
             'categories' => Category::where('is_active', 1)->get(['id', 'name', 'slug']),
             'branches' => $branches,
@@ -269,42 +301,4 @@ class PosPage extends Component
             'orderitem' => $orderitem,
         ]);
     }
-
-    // public function cartEditModal($produkArray)
-    // {
-    //     $cartcek = Cart::where('product_id', $produkArray['id'])->where('created_by', auth()->user()->id);
-    //     if ($cartcek->value('quantity') > 0) {
-    //         $this->thisqty = '';
-    //         $this->thisprice = Number::format($cartcek->value('unit_amount'), locale: 'de');
-    //     } else {
-    //         $this->thisqty = '';
-    //         $this->thisprice = Number::format($produkArray['price'], locale: 'de');
-    //     }
-
-    //     $this->modalNamaProduk = $produkArray['name'];
-    //     $this->modalVariantProduk = $produkArray['variant'];
-    //     $this->modalSlugProduk = $produkArray['slug'];
-    //     $this->modalIdProduk = $produkArray['id'];
-    // }
-
-    // public function cartListEditModal($produkArray)
-    // {
-    //     $cartcek = Cart::where('product_id', $produkArray['product_id'])->where('created_by', auth()->user()->id);
-    //     $unitHarga = (int)$cartcek->value('unit_amount');
-    //     $this->thisprice = Number::format($unitHarga, locale: 'de');
-    //     $this->thisqty = '';
-    //     $this->modalNamaProduk = $cartcek->value('name');
-    //     $this->modalVariantProduk = $cartcek->value('variant');
-    //     $this->modalSlugProduk = $cartcek->value('slug');
-    //     $this->modalIdProduk = $cartcek->value('product_id');
-    // }
-    // public function resetEditModal()
-    // {
-    //     $this->thisprice = '';
-    //     $this->thisqty = '';
-    //     $this->modalNamaProduk = '';
-    //     $this->modalVariantProduk = '';
-    //     $this->modalSlugProduk = '';
-    //     $this->modalIdProduk = '';
-    // }
 }

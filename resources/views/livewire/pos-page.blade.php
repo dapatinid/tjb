@@ -375,9 +375,10 @@
                                     class="bg-white border-2 dark:bg-slate-900 group hover:bg-gray-800 dark:hover:bg-white focus:bg-gray-800 border-slate-200 dark:border-slate-700">
                                     <div 
                                     @if ($product->is_active == true && $product->in_stock == true)
-                                        aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-focus-management-modal" data-hs-overlay="#hs-focus-management-modal"
+                                        {{-- aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-focus-management-modal" data-hs-overlay="#hs-focus-management-modal" --}}
                                         {{-- wire:click="cartEditModal({{ $product }})" --}}
-                                        onClick="showModalPro({{ $product->id }})" 
+                                        wire:click="addToCartIncrement({{ $product->id }}); setTimeout(scrollBottom, 5000);"
+                                        {{-- onClick="showModalPro({{ $product->id }})"  --}}
                                     @endif
                                         class="relative {{ $product->is_active == 1 ? 'bg-gray-100 dark:bg-gray-800' : 'bg-gray-400' }} {{ $product->in_stock == 1 ? 'cursor-pointer' : 'cursor-not-allowed' }} scale-90">
                                             @if ($product->images != null || $product->images === "[]")
@@ -434,15 +435,17 @@
 
                                         {{-- @if ($stock >= 1 && $product->in_stock == 1) --}}
                                         @if ($product->in_stock == 1)
-                                            <span aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-focus-management-modal" data-hs-overlay="#hs-focus-management-modal"
+                                            <span 
+                                            {{-- aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-focus-management-modal" data-hs-overlay="#hs-focus-management-modal" --}}
                                                 {{-- wire:click="cartEditModal({{ $product }})" --}}
-                                                onClick="showModalPro({{ $product->id }})" 
+                                                wire:click="addToCartIncrement({{ $product->id }}); setTimeout(scrollBottom, 5000);"
+                                                {{-- onClick="showModalPro({{ $product->id }})"  --}}
                                                 class="flex items-center text-gray-500 cursor-pointer dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-300">
                                                 {{-- <span wire:loading.remove wire:target='addToCart({{ $product->id }})'>...</span> --}}
                                                 @if ($cartcek->where('branch_id', auth()->user()->branch_id)->where('product_id', $product->id)->where('created_by', auth()->user()->id)->value('quantity') > 0)
-                                                    <span class="w-full mr-2" wire:loading.remove wire:target='addToCart({{ $product->id }})'><x-fas-chevron-left class="w-5 h-5 mx-auto text-green-500 hover:text-red-400"/></span>
+                                                    <span class="w-full mr-2" wire:loading.remove wire:target='addToCart({{ $product->id }})'><x-fas-ellipsis class="w-5 h-5 mx-auto text-green-500 hover:text-red-400"/></span>
                                                     <span class="w-full px-5 bg-blue-200 rounded-md dark:text-blue-600" wire:loading.remove wire:target='addToCart({{ $product->id }})'>{{ $cartcek->where('product_id', $product->id)->where('created_by', auth()->user()->id)->value('quantity') }}</span>
-                                                    <span class="w-full ml-2" wire:loading.remove wire:target='addToCart({{ $product->id }})'><x-fas-chevron-right class="w-5 h-5 mx-auto text-green-500 hover:text-blue-500"/></span>
+                                                    <span class="w-full ml-2" wire:loading.remove wire:target='addToCart({{ $product->id }})'><x-fas-ellipsis class="w-5 h-5 mx-auto text-green-500 hover:text-blue-500"/></span>
                                                 @else
                                                     <span class="flex items-center dark:group-hover:text-blue-500 flex-nowrap" wire:loading.remove wire:target='addToCart({{ $product->id }})'>
                                                         +Cart
@@ -474,13 +477,13 @@
                         }
                     </style> --}}
                     <div 
-                    class="mx-6"
+                    class="px-6 pb-4 bg-slate-200  dark:bg-slate-700"
                     >
                         {{ $products->links() }}
                     </div>
                     <!-- pagination end -->
 
-                    @include('livewire.pos-edit-page')
+                    {{-- @include('livewire.pos-edit-page') --}}
 
 
                 </div>
@@ -515,24 +518,31 @@
                                                     @else
                                                     {{ $item['name'] }} {{ $item['variant'] }}
                                                     @endif
-                                                </a>
+                                                </a><br>
+                                                <span class="ms-3">@</span><input type="number" wire:change="addToCartChangePRICE({{ $item['product_id'] }}, {{ $item['quantity'] }}, $event.target.value)" value="{{ $item['unit_amount'] }}"
+                                                class="text-xs text-end border-0 bg-transparent w-18 h-3 focus:outline-none focus:ring-transparent" x-mask:dynamic="$money($input, ',', '.')">
                                             </div>
                                         </td>
-                                        <td aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-focus-management-modal" data-hs-overlay="#hs-focus-management-modal"
+                                        <td 
+                                        {{-- aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-focus-management-modal" data-hs-overlay="#hs-focus-management-modal" --}}
                                             {{-- wire:click="cartListEditModal({{ $item }})" --}}
-                                            onClick="showModalPro({{ $item['product_id'] }})" 
+                                            {{-- onClick="showModalPro({{ $item['product_id'] }})"  --}}
                                         class="
                                         {{ Str::length($panjangNama) > 27 ? 'xs:pt-8 pt-12' : 'pt-5' }} 
-                                            sm:pt-0 cursor-pointer hover:bg-gray-300" 
+                                            sm:pt-0 pe-1 cursor-pointer"
                                             >
-                                            <div class="w-10 p-1 text-right">
-                                                    <b>{{ $item['quantity'] }}</b>
-                                                
+                                            <div class="w-5 p-1 relative me-4 text-right">
+                                                <input type="number" wire:change="addToCartChangeQTY({{ $item['product_id'] }}, $event.target.value, {{ $item['unit_amount'] }})" value="{{ $item['quantity'] }}"
+                                                class="text-end border-0 bg-transparent w-10 h-3 focus:outline-none focus:ring-transparent">
+                                                {{-- <b>{{ $item['quantity'] }}</b> --}}
                                             </div>
                                         </td>
                                         <td class="
                                         {{ Str::length($panjangNama) > 27 ? 'xs:pt-8 pt-12' : 'pt-5' }} 
-                                            sm:pt-0"><div class="p-1 text-end">@formatNumber($item['total_amount'])</div></td>
+                                            sm:pt-0"><div class="p-1 text-end">
+                                                @formatNumber($item['total_amount'])
+                                            </div>
+                                        </td>
                                         <td wire:click='removeItem({{ $item['product_id'] }})' class="text-center cursor-pointer hover:bg-red-400 group">
                                             <span class="p-1" wire:loading.remove wire:target='removeItem({{ $item['product_id'] }})'>X</span>
                                             <span class="py-1" wire:loading wire:target='removeItem({{ $item['product_id'] }})'>
@@ -722,5 +732,18 @@
 		// });
 
     </script>
+<style>
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+</style>
 
 </div>
