@@ -11,8 +11,12 @@
             </svg>			  --}}
 		{{-- </a>  --}}
 	{{-- </div> --}}
-	<h1 class="mb-4 text-2xl font-bold text-center text-gray-800 dark:text-white">
-		Checkout <span class="ml-2 text-blue-500">@currency($grand_total)</span>
+	<h1 class="mb-4 text-2xl font-bold text-center text-gray-800 dark:text-white relative">
+		<a href="/pos" class="left-2 mt-1 text-blue-500 absolute">
+			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+            </svg>	
+		</a><span>Checkout</span>
 	</h1>
 	<form wire:submit.prevent='placeOrder'>
 		<div class="grid grid-cols-12 gap-4">
@@ -134,7 +138,7 @@
 								Subtotal
 							</span>
 							<span>
-								@currency($subtotal)
+								@formatNumber($subtotal)
 							</span>
 						</div>
 						<div class="flex justify-between mb-2 font-bold text-gray-500 dark:text-gray-400">
@@ -142,7 +146,7 @@
 								Diskon*
 							</span>
 							<span>
-								@currency(intval($discount)*1000)
+								<input wire:model="discount" disabled class="border-0 text-end -me-3 bg-transparent"></input>
 							</span>
 						</div>
 						<div class="flex justify-between mb-2 font-bold text-gray-500 dark:text-gray-400">
@@ -150,7 +154,7 @@
 								Ongkir*
 							</span>
 							<span>
-								@currency(intval($shipping_amount)*1000)
+								<input wire:model="shipping_amount" disabled class="border-0 text-end -me-3 bg-transparent"></input>
 							</span>
 						</div>
 						<hr class="h-1 my-4 rounded bg-slate-400">
@@ -159,7 +163,7 @@
 								Grand Total
 							</span>
 							<span>
-								@currency($grand_total)
+								<input wire:model="grand_total" placeholder="@formatNumber($subtotal)" class="border-0 text-end -me-3 bg-transparent"></input>
 							</span>
 						</div>
 						</hr>
@@ -219,7 +223,9 @@
 									<label class="block mb-1 text-gray-700 dark:text-white" for="discount">
 										Diskon
 									</label>
-									<input wire:model.live='discount' placeholder="diskon" class="w-full rounded-lg border border-slate-200 py-2 px-3 dark:bg-gray-700 dark:text-white dark:border-none @error('discount') border-red-500 @enderror" id="discount" type="alfanumeric"
+									<input wire:model='discount' placeholder="diskon" 
+									x-on:keyup='$wire.total_cashback=($wire.total_payment.split(".").join("")-$wire.sub_total-$wire.shipping_amount.split(".").join("")-($wire.discount.split(".").join("")*-1)).toLocaleString().split(",").join(".");$wire.grand_total=($wire.sub_total-$wire.discount.split(".").join("")-($wire.shipping_amount.split(".").join("")*-1)).toLocaleString().split(",").join(".");'
+									class="text-end w-full rounded-lg border border-slate-200 py-2 px-3 dark:bg-gray-700 dark:text-white dark:border-none @error('discount') border-red-500 @enderror" id="discount" type="alfanumeric"
 									x-mask:dynamic="$money($input, ',', '.')">
 									</input>
 								</div>
@@ -272,7 +278,9 @@
 									<label class="block mb-1 text-gray-700 dark:text-white" for="shipping_amount">
 										Ongkir
 									</label>
-									<input wire:model.live='shipping_amount' placeholder="Ongkir" class="w-full rounded-lg border border-slate-200 py-2 px-3 dark:bg-gray-700 dark:text-white dark:border-none @error('shipping_amount') border-red-500 @enderror" id="shipping_amount" type="alfanumeric"
+									<input wire:model='shipping_amount' placeholder="Ongkir" 
+									x-on:keyup='$wire.total_cashback=($wire.total_payment.split(".").join("")-$wire.sub_total-$wire.shipping_amount.split(".").join("")-($wire.discount.split(".").join("")*-1)).toLocaleString().split(",").join(".");$wire.grand_total=($wire.sub_total-$wire.discount.split(".").join("")-($wire.shipping_amount.split(".").join("")*-1)).toLocaleString().split(",").join(".");'
+									class="text-end w-full rounded-lg border border-slate-200 py-2 px-3 dark:bg-gray-700 dark:text-white dark:border-none @error('shipping_amount') border-red-500 @enderror" id="shipping_amount" type="alfanumeric"
 									x-mask:dynamic="$money($input, ',', '.')">
 									</input>
 								</div>
@@ -288,8 +296,12 @@
 									<label class="block mb-1 font-bold text-blue-500 dark:text-blue-600" for="total_payment">
 										Bayar
 									</label>
-									<input wire:model.live='total_payment' class="text-blue-500 dark:text-white font-bold w-full rounded-lg border border-slate-200 py-2 px-3 dark:bg-gray-700 dark:border-none @error('total_payment') border-red-500 @enderror" id="total_payment" type="alfanumeric"
-									x-mask:dynamic="$money($input, ',', '.')">
+									<input wire:model='sub_total'  class="hidden text-blue-500 dark:text-white font-bold w-full rounded-lg border border-slate-200 py-2 px-3 dark:bg-gray-700 dark:border-none id="sub_total" type="number">
+									<input wire:model='total_payment' 
+									x-on:keyup='$wire.total_cashback=($wire.total_payment.split(".").join("")-$wire.sub_total-$wire.shipping_amount.split(".").join("")-($wire.discount.split(".").join("")*-1)).toLocaleString().split(",").join(".");$wire.grand_total=($wire.sub_total-$wire.discount.split(".").join("")-($wire.shipping_amount.split(".").join("")*-1)).toLocaleString().split(",").join(".");' 
+									class="text-end text-blue-500 dark:text-white font-bold w-full rounded-lg border border-slate-200 py-2 px-3 dark:bg-gray-700 dark:border-none @error('total_payment') border-red-500 @enderror" id="total_payment" type="alfanumeric"
+									x-mask:dynamic="$money($input, ',', '.')"
+									>
 									</input>
 								</div>
         						@error('total_payment')
@@ -300,11 +312,22 @@
 								<div>
 								<div class="w-full">
 									<label class="block mb-1 text-gray-700 dark:text-white" for="total_cashback">
+										Belum Bayar / Kembali
+									</label>
+									<input wire:model='total_cashback' disabled placeholder="@formatNumber($subtotal*-1)"
+									class="text-end w-full py-2 pl-3 rounded-lg border dark:border-gray-600 " 
+									x-mask:dynamic="$money($input, ',', '.')">
+								</input> 
+								</div>
+								</div>
+								{{-- <div>
+								<div class="w-full">
+									<label class="block mb-1 text-gray-700 dark:text-white" for="total_cashback">
 										{{ $total_cashback < 0 ? 'Belum Bayar' : 'Kembalian' }}
 									</label>
 									<div class="w-full py-2 pl-3 rounded-lg border dark:border-gray-600 {{ $total_cashback < 0 ? 'text-white bg-red-400 dark:bg-red-600' : 'text-black dark:text-white' }}">@currency($total_cashback)</div> 
 								</div>
-								</div>
+								</div> --}}								
 								
 							</div>
 
@@ -321,7 +344,7 @@
 										taskTime.addEventListener('input', (e) => {
 										taskTime.blur();
 										});
-									</script> --}}
+									</scrip> --}}
 								</div>
         						@error('date_order')
         							<div class="text-sm text-red-500">{{ $message }}</div>

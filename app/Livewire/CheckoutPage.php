@@ -42,9 +42,12 @@ class CheckoutPage extends Component
     #[Url()]
     public $shipping_method;
 
+    public $sub_total;
     public $discount = 0;
     public $shipping_amount = 0;
+    public $grand_total;
     public $total_payment = 0;
+    public $total_cashback;
     #[Url()]
     public $payment_method;
     #[Url()]
@@ -108,6 +111,9 @@ class CheckoutPage extends Component
         if (Auth::user()->is_admin == 0 && Auth::user()->zip_code != '') {
             $this->zip_code = Auth::user()->zip_code;
         }
+
+        $this->sub_total = Cart::where('created_by', Auth::user()->id)->where('branch_id', $this->branch_id)->sum('total_amount');
+        $this->total_cashback = $this->sub_total * -1;
     }
 
     public function selectUser()
@@ -267,14 +273,14 @@ class CheckoutPage extends Component
             } else {
                 $order->total_payment = Str::replace('.', '', $this->total_payment);
             }
-            $order->total_cashback = $order->total_payment - $order->grand_total;
+            $order->total_cashback = intval(Str::replace('.', '', $this->total_cashback));
         } else {
             $order->user_id = Auth::user()->id;
             $order->shipping_method = 'kurir_taibah';
             $order->shipping_amount = 0;
             $order->discount = 0;
             $order->total_payment = 0;
-            $order->total_cashback = $order->total_payment - $order->grand_total;
+            $order->total_cashback = intval(Str::replace('.', '', $this->total_cashback));
         }
 
         $payment = new Payment();
@@ -455,11 +461,11 @@ class CheckoutPage extends Component
     {
         $cart_items = CartManagement::getCartItemsFromCart()->where('branch_id', $this->branch_id);
         $subtotal = Cart::where('created_by', Auth::user()->id)->where('branch_id', $this->branch_id)->sum('total_amount');
-        $discount = intval(Str::replace('.', '', $this->discount));
-        $shipping_amount = intval(Str::replace('.', '', $this->shipping_amount));
-        $grand_total = $subtotal - $discount + $shipping_amount;
-        $total_payment =  intval(Str::replace('.', '', $this->total_payment));
-        $total_cashback = $total_payment - $grand_total;
+        // $discount = intval(Str::replace('.', '', $this->discount));
+        // $shipping_amount = intval(Str::replace('.', '', $this->shipping_amount));
+        // $grand_total = $subtotal - $discount + $shipping_amount;
+        // $total_payment =  intval(Str::replace('.', '', $this->total_payment));
+        // $total_cashback = $total_payment - $grand_total;
         $states = Province::all();
         $cities = City::all()->where('province_code', $this->state)->sortByDesc('name');
         $districts = District::all()->where('city_code', $this->city)->sortBy('name');
@@ -478,7 +484,7 @@ class CheckoutPage extends Component
         return view('livewire.checkout-page', [
             'cart_items' => $cart_items,
             'subtotal' => $subtotal,
-            'grand_total' => $grand_total,
+            // 'grand_total' => $grand_total,
             'states' => $states,
             'cities' => $cities,
             'districts' => $districts,
@@ -486,10 +492,10 @@ class CheckoutPage extends Component
             'users' => $users,
             'branchesCust' => $branchesCust,
             'branches' => $branches,
-            'discount' => $discount,
-            'shipping_amount' => $shipping_amount,
-            'total_cashback' => $total_cashback,
-            'total_payment' => $total_payment,
+            // 'discount' => $discount,
+            // 'shipping_amount' => $shipping_amount,
+            // 'total_cashback' => $total_cashback,
+            // 'total_payment' => $total_payment,
             'products' => $products,
         ]);
     }

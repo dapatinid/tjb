@@ -171,7 +171,7 @@
             </tbody>
           </table>
         </div>
-        <a href="/checkout?branch_id={{ $gr_item['branch_id'] }}&shipping_method=self_pickup&sales_type=self_pickup&payment_method=cash&rekening=KAS+KASIR&date_order={{ date('Y') }}-{{ date('m') }}-{{ date('d') }}T11%3A00"><button class="w-full px-4 py-2 mt-5 text-center text-white bg-blue-500 rounded-lg hover:bg-green-500">Checkout @currency($cart_items->where('branch_id', $gr_item['branch_id'])->sum('total_amount'))</button></a>
+        <a href="/checkout?branch_id={{ auth()->user()->branch_id }}&shipping_method=self_pickup&sales_type=self_pickup&payment_method=cash&rekening=KAS+KASIR&date_order={{ date('Y') }}-{{ date('m') }}-{{ date('d') }}T{{ Auth::user()->roles[0]->name === 'Seller' ? '11' : date('H') }}%3A{{ Auth::user()->roles[0]->name === 'Seller' ? '00' : date('i') }}"><button class="w-full px-4 py-2 mt-5 text-center text-white bg-blue-500 rounded-lg hover:bg-green-500">Checkout @currency($cart_items->where('branch_id', $gr_item['branch_id'])->sum('total_amount'))</button></a>
         </div>
         
       </div>
