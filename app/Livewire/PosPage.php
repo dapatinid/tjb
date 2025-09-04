@@ -174,6 +174,25 @@ class PosPage extends Component
             redirect('/login');
         }
     }
+    // decrement product to cart method
+    public function addToCartDecrement($product_id)
+    {
+        if (Auth::check()) {
+            CartManagement::decrementQuantityToCartItem($product_id);
+
+            LivewireAlert::title('Mengurangi QTY di Troli')
+                // ->text('Ditambahkan ke Troli')
+                ->success()
+                ->toast()
+                ->position('bottom-start')
+                ->timer(3000)
+                ->show();
+            $this->cart_items = CartManagement::getCartItemsFromCart()->where('branch_id', Auth::user()->branch_id);
+            $this->grand_total = CartManagement::calculateGrandTotalByBranch($this->cart_items);
+        } else {
+            redirect('/login');
+        }
+    }
 
     public function removeItem($product_id)
     {

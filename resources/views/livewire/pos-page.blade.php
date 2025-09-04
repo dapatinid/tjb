@@ -438,24 +438,35 @@
                                             <span 
                                             {{-- aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-focus-management-modal" data-hs-overlay="#hs-focus-management-modal" --}}
                                                 {{-- wire:click="cartEditModal({{ $product }})" --}}
-                                                wire:click="addToCartIncrement({{ $product->id }}); setTimeout(scrollBottom, 5000);"
+                                                
                                                 {{-- onClick="showModalPro({{ $product->id }})"  --}}
-                                                class="flex items-center text-gray-500 cursor-pointer dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-300">
+                                                class="flex justify-center relative items-center text-gray-500 cursor-pointer dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-300">
                                                 {{-- <span wire:loading.remove wire:target='addToCart({{ $product->id }})'>...</span> --}}
                                                 @if ($cartcek->where('branch_id', auth()->user()->branch_id)->where('product_id', $product->id)->where('created_by', auth()->user()->id)->value('quantity') > 0)
-                                                    <span class="w-full mr-2" wire:loading.remove wire:target='addToCart({{ $product->id }})'><x-fas-ellipsis class="w-5 h-5 mx-auto text-green-500 hover:text-red-400"/></span>
-                                                    <span class="w-full px-5 bg-blue-200 rounded-md dark:text-blue-600" wire:loading.remove wire:target='addToCart({{ $product->id }})'>{{ $cartcek->where('product_id', $product->id)->where('created_by', auth()->user()->id)->value('quantity') }}</span>
-                                                    <span class="w-full ml-2" wire:loading.remove wire:target='addToCart({{ $product->id }})'><x-fas-ellipsis class="w-5 h-5 mx-auto text-green-500 hover:text-blue-500"/></span>
+                                                    <span wire:click="addToCartDecrement({{ $product->id }})" class="w-full mr-2"><x-fas-circle-minus class="w-5 h-5 mx-auto text-green-500 hover:text-red-400"/></span>
+                                                    <span wire:loading wire:target='addToCartIncrement({{ $product->id }})' class="w-12 px-4.5 bg-blue-200 rounded-md dark:text-blue-600 absolute">
+                                                        <div class="animate-spin inline-block size-3 border-[3px] border-current border-t-transparent text-lime-500 rounded-full dark:text-lime-200" role="status" aria-label="loading">
+                                                            <span class="sr-only">Loading...</span>
+                                                        </div>
+                                                    </span>
+                                                    <span wire:loading wire:target='addToCartDecrement({{ $product->id }})' class="w-12 px-4.5 bg-blue-200 rounded-md dark:text-blue-600">
+                                                        <div class="animate-spin inline-block size-3 border-[3px] border-current border-t-transparent text-lime-500 rounded-full dark:text-lime-200" role="status" aria-label="loading">
+                                                            <span class="sr-only">Loading...</span>
+                                                        </div>
+                                                    </span>
+                                                    <span class="w-full px-5 bg-yellow-200 rounded-md dark:text-blue-600 absolute -z-50" wire:loading.remove wire:target='addToCartIncrement({{ $product->id }})'>{{ $cartcek->where('product_id', $product->id)->where('created_by', auth()->user()->id)->value('quantity') }}</span>
+                                                    <span class="w-full px-5 bg-blue-200 rounded-md dark:text-blue-600 " wire:loading.remove wire:target='addToCartDecrement({{ $product->id }})'>{{ $cartcek->where('product_id', $product->id)->where('created_by', auth()->user()->id)->value('quantity') }}</span>
+                                                    <span wire:click="addToCartIncrement({{ $product->id }})" class="w-full ml-2"><x-fas-circle-plus class="w-5 h-5 mx-auto text-green-500 hover:text-blue-500"/></span>
                                                 @else
-                                                    <span class="flex items-center dark:group-hover:text-blue-500 flex-nowrap" wire:loading.remove wire:target='addToCart({{ $product->id }})'>
+                                                    <span wire:click="addToCartIncrement({{ $product->id }}); setTimeout(scrollBottom, 5000);" class="flex items-center dark:group-hover:text-blue-500 flex-nowrap" wire:loading.remove wire:target='addToCartIncrement({{ $product->id }})'>
                                                         +Cart
                                                     </span>
+                                                    <span wire:loading wire:target='addToCartIncrement({{ $product->id }})'>
+                                                        <div class="animate-spin inline-block size-3 border-[3px] border-current border-t-transparent text-lime-500 rounded-full dark:text-lime-400" role="status" aria-label="loading">
+                                                            <span class="sr-only">Loading...</span>
+                                                        </div>
+                                                    </span>
                                                 @endif 
-                                                <span wire:loading wire:target='addToCart({{ $product->id }})'>
-                                                    <div class="animate-spin inline-block size-3 border-[3px] border-current border-t-transparent text-lime-500 rounded-full dark:text-lime-400" role="status" aria-label="loading">
-                                                        <span class="sr-only">Loading...</span>
-                                                    </div>
-                                                </span>
                                             </span>
                                         @else
                                             <a class="flex items-center space-x-2 text-gray-500 cursor-not-allowed dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-300"><span>Habis</span></a>
@@ -533,7 +544,7 @@
                                             >
                                             <div class="w-5 p-1 relative me-4 text-right">
                                                 <input type="number" wire:change="addToCartChangeQTY({{ $item['product_id'] }}, $event.target.value, {{ $item['unit_amount'] }})" value="{{ $item['quantity'] }}"
-                                                class="text-end border-0 bg-transparent w-10 h-3 focus:outline-none focus:ring-transparent">
+                                                class="text-end border-0 bg-transparent w-12 h-3 focus:outline-none focus:ring-transparent">
                                                 {{-- <b>{{ $item['quantity'] }}</b> --}}
                                             </div>
                                         </td>
