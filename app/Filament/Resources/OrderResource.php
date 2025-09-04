@@ -546,7 +546,7 @@ class OrderResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->poll('30s')
+            ->poll('55s')
             ->modifyQueryUsing(function (Builder $query) {
                 return $query->addSelect([
                     'created' => User::query()->select('name')

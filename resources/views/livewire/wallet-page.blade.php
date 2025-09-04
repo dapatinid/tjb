@@ -1,4 +1,4 @@
-<div wire:poll class="w-full max-w-[85rem] pt-7 pb-10 px-4 sm:px-6 lg:px-8 mx-auto">
+<div wire:poll.55s class="w-full max-w-[85rem] pt-7 pb-10 px-4 sm:px-6 lg:px-8 mx-auto">
 
 {{-- {{ $paymentByDate }} --}}
 

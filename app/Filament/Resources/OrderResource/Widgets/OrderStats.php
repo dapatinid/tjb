@@ -11,6 +11,7 @@ use Illuminate\Support\Number;
 
 class OrderStats extends BaseWidget
 {
+    protected static ?string $pollingInterval = '55s';
     protected function getStats(): array
     {
         $today = Carbon::today()->format('Y-m-d');
