@@ -70,6 +70,7 @@
     </div>
  <br>
     <div class="total">
+        <div style="justify-content: space-between; display: flex; "><span>Berat</span><span>{{ substr($order->total_weight, 0, -3) }}kg</span></div>
         <div style="justify-content: space-between; display: {{ $order->grand_total + $order->discount - $order->shipping_amount == $order->grand_total ? 'none' : 'flex'}}; "><span>Sub : </span><span>Rp @formatNumber($order->grand_total + $order->discount - $order->shipping_amount)</span></div>
         <div style="justify-content: space-between; display: {{ $order->discount == 0 ? 'none' : 'flex'}}; "><span>Diskon : </span><span>Rp @formatNumber($order->discount)</span></div>
         <div style="justify-content: space-between; display: {{ $order->shipping_amount == 0 ? 'none' : 'flex'}}; "><span>Ongkir : </span><span>Rp @formatNumber($order->shipping_amount)</span></div>
@@ -85,7 +86,6 @@
         @endif 
         <span>Rp @formatNumber($order->total_payment - $order->grand_total)</span>
     </div>
-    <div style="justify-content: space-between; display: flex; "><span>Berat</span><span>{{ substr($order->total_weight, 0, -3) }}kg</span></div>
     <div style="justify-content: space-between; display: {{ $order->notes == null ? 'none' : 'flex'}}; "><span>Catatan </span><span style="text-align: right;">{{ $order->notes }}</span></div>
  {{-- <br>
     <div style="text-align: center;">
