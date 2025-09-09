@@ -98,7 +98,7 @@ class PosCart extends Component
     public function getFilteredProductsProperty()
     {
         return collect($this->products)->filter(function ($product) {
-            return stripos($product['name'], $this->search) !== false;
+            return stripos($product['name'] . ' ' . $product['variant'] . ' ' . $product['price'], $this->search) !== false;
         })->values();
     }
 

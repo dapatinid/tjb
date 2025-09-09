@@ -4,6 +4,7 @@
  {{ request()->is('checkout') ? ' hidden' : '' }}
  {{ request()->is('my-account') ? ' hidden' : '' }}
  {{ request()->is('pos') ? ' hidden' : '' }}
+ {{ request()->is('poscart') ? ' hidden' : '' }}
       {{ request()->is('laba-rugi') ? ' hidden' : 'flex' }}
       {{ request()->is('laba-rugi-all') ? ' hidden' : 'flex' }}
     {{ request()->is('neraca') ? ' hidden' : 'flex' }}
