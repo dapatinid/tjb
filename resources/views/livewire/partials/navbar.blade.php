@@ -419,7 +419,7 @@
 
 
   <!-- Start Navbar Bottom --> 
-  <nav class="md:hidden {{ request()->is('pos') || Str::of(request()->fullUrl())->contains('/@') ? 'hidden' : 'fixed'}}
+  <nav class="md:hidden {{ request()->is('pos') || request()->is('poscart') || Str::of(request()->fullUrl())->contains('/@') ? 'hidden' : 'fixed'}}
     {{ request()->is('laba-rugi') ? ' hidden' : 'fixed' }}
     {{ request()->is('neraca') ? ' hidden' : 'fixed' }}
     bottom-0 left-0 z-50 w-full h-10 pb-4 rounded-tl-2xl rounded-tr-2xl bg-white border-gray-300 dark:bg-gray-800 dark:border-gray-900">

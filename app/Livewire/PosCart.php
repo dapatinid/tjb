@@ -25,6 +25,25 @@ class PosCart extends Component
 
         $this->products = Product::where('branch_id', Auth::user()->branch_id)->get(['id', 'name', 'variant', 'slug', 'unit_name', 'weight', 'contain', 'price', 'poin', 'images', 'branch_id']);
 
+        $cart = Cart::where('branch_id', Auth::user()->branch_id)->get(['product_id', 'name', 'variant', 'quantity', 'total_weight', 'unit_amount', 'total_amount', 'image']);
+        if ($cart->count() > 0) {
+            foreach ($cart as $key => $item) {
+                $item = [
+                    'id' => $item['product_id'],
+                    'name' => $item['name'],
+                    'variant' => $item['variant'],
+                    'price' => $item['unit_amount'],
+                    'weight' => $item['total_weight'] / $item['quantity'],
+                    'quantity' => $item['quantity'],
+                    'subtotal' => $item['total_amount'],
+                    'weighttotal' => $item['total_weight'],
+                ];
+                array_push($this->cartItems, $item);
+                $this->saveCartToLocalStorage();
+            }
+            Cart::where('branch_id', Auth::user()->branch_id)->delete();
+        }
+
         $this->loadCartFromLocalStorage();
     }
 
@@ -131,7 +150,7 @@ class PosCart extends Component
             $cart->quantity = $item['quantity'];
             $cart->unit_amount = $item['price'];
             $cart->total_amount = $item['subtotal'];
-            $cart->poin = Product::find($item['id'])->poin;
+            $cart->poin = Product::find($item['id'])->poin * $item['quantity'];
             $cart->mutation_type = 'Sales';
             $cart->created_by = Auth::user()->id;
             $cart->updated_by = Auth::user()->id;
