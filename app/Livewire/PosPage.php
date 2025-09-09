@@ -59,6 +59,9 @@ class PosPage extends Component
 
     public function mount()
     {
+        if (CartManagement::getCartItemsFromCart()->where('branch_id', Auth::user()->branch_id)->count() < 1) {
+            return redirect('/poscart');
+        }
         if (Auth::check()) {
             if (Auth::user()->is_admin == 1) {
                 $this->cart_items = CartManagement::getCartItemsFromCart()->where('branch_id', Auth::user()->branch_id);

@@ -26,6 +26,7 @@ use App\Livewire\MyOrdersPage;
 use App\Livewire\MyOrdersUnpaidPage;
 use App\Livewire\PartnersPage;
 use App\Livewire\PaymentsPage;
+use App\Livewire\PosCart;
 use App\Livewire\PosPage;
 use App\Livewire\PostDetailPage;
 use App\Livewire\PostsPage;
@@ -94,6 +95,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/neraca-all', BalanceSheetAllPage::class);
     Route::get('/payments', PaymentsPage::class);
     Route::get('/pos', PosPage::class);
+    Route::get('/poscart', PosCart::class);
 
     Route::get('/printprevieworder/{id}', [PrintController::class, 'printvieworder'])->name('printorder');
     Route::get('/printprevieworderprocess/{id}', [PrintController::class, 'printvieworderprocess'])->name('printorderprocess');
