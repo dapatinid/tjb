@@ -1,4 +1,4 @@
-<div class="container mx-auto flex gap-4">
+<div class="w-full flex gap-4">
 
     <div class="w-1/3 bg-white p-3 shadow-md">
         <div class="sticky top-5">
