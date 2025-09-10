@@ -25,7 +25,7 @@ class PosCart extends Component
 
         $this->products = Product::where('branch_id', Auth::user()->branch_id)->get(['id', 'name', 'variant', 'slug', 'unit_name', 'weight', 'contain', 'price', 'poin', 'images', 'branch_id']);
 
-        $cart = Cart::where('branch_id', Auth::user()->branch_id)->get(['product_id', 'name', 'variant', 'quantity', 'total_weight', 'unit_amount', 'total_amount', 'image']);
+        $cart = Cart::where('branch_id', Auth::user()->branch_id)->where('created_by', Auth::user()->id)->get(['product_id', 'name', 'variant', 'quantity', 'total_weight', 'unit_amount', 'total_amount', 'image']);
         if ($cart->count() > 0) {
             foreach ($cart as $key => $item) {
                 $item = [
