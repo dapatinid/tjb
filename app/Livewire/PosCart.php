@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use Illuminate\Support\Str;
 
 class PosCart extends Component
 {
@@ -90,7 +91,8 @@ class PosCart extends Component
     {
         $this->cartItems = collect($this->cartItems)->map(function ($item) use ($itemId, $field, $value) {
             if ($item['id'] == $itemId) {
-                $item[$field] = (int) $value;
+                // $item[$field] = (int) $value;
+                $item[$field] = intval(Str::replace('.', '', $value));;
                 $item['subtotal'] = $item['quantity'] * $item['price'];
                 $item['weighttotal'] = $item['quantity'] * $item['weight'];
             }

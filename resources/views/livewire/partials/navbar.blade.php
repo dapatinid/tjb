@@ -389,7 +389,10 @@
                       Admin Panel
                     </a>
                       <a class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" href="/pos">
-                        POS (Sales)
+                        POS (Safety Mode)
+                      </a>
+                      <a class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" href="/poscart">
+                        POS (Quick Mode)
                       </a>
                       <a class="{{ Auth::user()->roles[0]->name === 'Owner' || Auth::user()->roles[0]->name === 'Admin' || Auth::user()->roles[0]->name === 'Manager' || Auth::user()->roles[0]->name === 'Kasir' ? "flex" : "hidden" }} items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" href="/dompet">
                         Dompet
