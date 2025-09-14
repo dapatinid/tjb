@@ -44,14 +44,14 @@
       </div>
       <div id="hs-navbar-alignment" class="hs-collapse hidden overflow-hidden transition-all duration-300 basis-full grow sm:grow-0 sm:basis-auto sm:block sm:order-2" aria-labelledby="hs-navbar-alignment-collapse">
         <div class="flex flex-col gap-5 mt-5 sm:flex-row sm:items-center sm:mt-0 sm:ps-5">
-          <a  class="relative z-50 font-medium text-gray-300 hover:text-white focus:outline-hidden focus:text-gray-400 dark:text-neutral-400 dark:hover:text-white dark:focus:text-neutral-500" href="/">Beranda</a>
-          <a  class="relative z-50 font-medium text-gray-300 hover:text-white focus:outline-hidden focus:text-gray-400 dark:text-neutral-400 dark:hover:text-white dark:focus:text-neutral-500" href="/branches">Store</a>
+          <a wire:navigate.hover class="relative z-50 font-medium text-gray-300 hover:text-white focus:outline-hidden focus:text-gray-400 dark:text-neutral-400 dark:hover:text-white dark:focus:text-neutral-500" href="/">Beranda</a>
+          <a wire:navigate.hover class="relative z-50 font-medium text-gray-300 hover:text-white focus:outline-hidden focus:text-gray-400 dark:text-neutral-400 dark:hover:text-white dark:focus:text-neutral-500" href="/branches">Store</a>
           
           <div class="hs-dropdown relative z-50 inline-flex cursor-pointer">
             <span aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown" id="hs-dropdown-with-icons" class="font-medium text-gray-300 hover:text-white focus:outline-hidden focus:text-gray-400 dark:text-neutral-400 dark:hover:text-white dark:focus:text-neutral-500">Produk</span>
             <div class="z-80 hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 divide-y divide-gray-200 dark:bg-neutral-800 dark:border dark:border-neutral-700 dark:divide-neutral-700" role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown-with-icons">
               <div class="p-1 space-y-0.5">
-                <a  class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
+                <a wire:navigate.hover class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
                   @auth
                     href="/{{ '@'.$thisPartner->where('id', auth()->user()->partner_id)->value('slug') }}"
                   @endauth
@@ -62,12 +62,12 @@
                   <x-fas-home class="w-4 h-4 text-gray-800 dark:text-neutral-200"/>
                   Profil Toko
                 </a>
-                <a  class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
+                <a wire:navigate.hover class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
                  href="/categories">
                   <x-fas-tag class="w-4 h-4 text-gray-800 dark:text-neutral-200"/>
                   Ketegori
                 </a>
-                <a  class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
+                <a wire:navigate.hover class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
                  href="/products">
                   <x-fas-cubes class="w-4 h-4 text-gray-800 dark:text-neutral-200"/>
                   Produk (All)
@@ -76,12 +76,12 @@
             </div>
           </div>
 
-          <a  class="relative z-50 font-medium text-gray-300 hover:text-white focus:outline-hidden focus:text-gray-400 dark:text-neutral-400 dark:hover:text-white dark:focus:text-neutral-500" href="/cart">Troli 
+          <a wire:navigate.hover class="relative z-50 font-medium text-gray-300 hover:text-white focus:outline-hidden focus:text-gray-400 dark:text-neutral-400 dark:hover:text-white dark:focus:text-neutral-500" href="/cart">Troli 
             @if ($total_count > 0)
             <span class="inline-flex items-center gap-x-1.5 py-0.5 px-1 rounded-full text-xs font-medium bg-green-100/30 text-white dark:bg-green-800/30 dark:text-green-500"">{{ $total_count }}</span>
             @endif
           </a>
-          <a  class="relative z-50 font-medium text-gray-300 hover:text-white focus:outline-hidden focus:text-gray-400 dark:text-neutral-400 dark:hover:text-white dark:focus:text-neutral-500" href="/my-orders">Pesanan</a>
+          <a wire:navigate.hover class="relative z-50 font-medium text-gray-300 hover:text-white focus:outline-hidden focus:text-gray-400 dark:text-neutral-400 dark:hover:text-white dark:focus:text-neutral-500" href="/my-orders">Pesanan</a>
 
         </div>
       </div>
@@ -143,7 +143,7 @@
         <div class="relative flex flex-col h-[calc(100%-75px)]">
             <!-- Header -->
             {{-- <header class="p-4 flex justify-between items-center gap-x-2">
-              <a  class="flex-none font-semibold text-xl text-black focus:outline-hidden focus:opacity-80 dark:text-white" href="#" aria-label="Brand">Brand</a>
+              <a wire:navigate.hover class="flex-none font-semibold text-xl text-black focus:outline-hidden focus:opacity-80 dark:text-white" href="#" aria-label="Brand">Brand</a>
       
               <div class="lg:hidden -me-2">
                 <!-- Close Button -->
@@ -190,7 +190,7 @@
             </a>    
 
                       <li>
-                        <a  class="{{ request()->is('/') ? 'bg-linear-to-br from-green-400/50 to-green-700/50 dark:from-green-500/50 dark:to-green-800/50' : 'dark:bg-neutral-800' }} flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200" href="/">
+                        <a wire:navigate.hover class="{{ request()->is('/') ? 'bg-linear-to-br from-green-400/50 to-green-700/50 dark:from-green-500/50 dark:to-green-800/50' : 'dark:bg-neutral-800' }} flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200" href="/">
                           <x-fas-home class="size-4" />
                           Beranda
                         </a>
@@ -225,19 +225,19 @@
                               <div id="users-accordion-sub-1-collapse-1" class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden" role="region" aria-labelledby="users-accordion-sub-1">
                                 <ul class="pt-1 space-y-1 ps-2">
                                   <li>
-                                    <a  class="{{ request()->is('products') ? 'bg-linear-to-br from-green-400/50 to-green-700/50 dark:from-green-500/50 dark:to-green-800/50' : 'dark:bg-neutral-800' }} flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
+                                    <a wire:navigate.hover class="{{ request()->is('products') ? 'bg-linear-to-br from-green-400/50 to-green-700/50 dark:from-green-500/50 dark:to-green-800/50' : 'dark:bg-neutral-800' }} flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
                                     href="/products">
                                       <x-fas-cubes class="size-4" /> Semua Produk
                                     </a>
                                   </li>
                                   <li>
-                                    <a  class="{{ request()->is('categories') ? 'bg-linear-to-br from-green-400/50 to-green-700/50 dark:from-green-500/50 dark:to-green-800/50' : 'dark:bg-neutral-800' }} flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
+                                    <a wire:navigate.hover class="{{ request()->is('categories') ? 'bg-linear-to-br from-green-400/50 to-green-700/50 dark:from-green-500/50 dark:to-green-800/50' : 'dark:bg-neutral-800' }} flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
                                     href="/categories">
                                       <x-fas-tag class="size-4" /> Kategori
                                     </a>
                                   </li>
                                   {{-- <li>
-                                    <a  class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
+                                    <a wire:navigate.hover class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
                                     href="#">
                                       Buku
                                     </a>
@@ -246,33 +246,33 @@
                               </div>
                             </li>
                             <li>
-                              <a  class="{{ request()->is('cart') ? 'bg-linear-to-br from-green-400/50 to-green-700/50 dark:from-green-500/50 dark:to-green-800/50' : 'dark:bg-neutral-800' }} flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
+                              <a wire:navigate.hover class="{{ request()->is('cart') ? 'bg-linear-to-br from-green-400/50 to-green-700/50 dark:from-green-500/50 dark:to-green-800/50' : 'dark:bg-neutral-800' }} flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
                               href="/cart">
                                 <x-fas-cart-shopping class="size-4" /> Troli <span class="ms-auto py-0.5 px-1.5 inline-flex items-center gap-x-1.5 text-xs bg-gray-200 text-gray-800 rounded-full dark:bg-neutral-600 dark:text-neutral-200">{{ $total_count }} items</span>
                               </a>
                             </li>
                             @auth
                             <li>
-                              <a  class="{{ request()->is('my-orders-unpaid') ? 'bg-linear-to-br from-green-400/50 to-green-700/50 dark:from-green-500/50 dark:to-green-800/50' : 'dark:bg-neutral-800' }} flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
+                              <a wire:navigate.hover class="{{ request()->is('my-orders-unpaid') ? 'bg-linear-to-br from-green-400/50 to-green-700/50 dark:from-green-500/50 dark:to-green-800/50' : 'dark:bg-neutral-800' }} flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
                               href="/my-orders-unpaid">
                                 <x-fas-triangle-exclamation class="size-4" /> Belum Terbayar
                               </a>
                             </li>                      
                             <li>
-                              <a  class="{{ request()->is('my-orders') ? 'bg-linear-to-br from-green-400/50 to-green-700/50 dark:from-green-500/50 dark:to-green-800/50' : 'dark:bg-neutral-800' }} flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
+                              <a wire:navigate.hover class="{{ request()->is('my-orders') ? 'bg-linear-to-br from-green-400/50 to-green-700/50 dark:from-green-500/50 dark:to-green-800/50' : 'dark:bg-neutral-800' }} flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
                               href="/my-orders">
                                 <x-fas-envelope class="size-4" /> Pesanan
                               </a>
                             </li>                      
                             <li>
-                              <a  class="{{ request()->is('payments') ? 'bg-linear-to-br from-green-400/50 to-green-700/50 dark:from-green-500/50 dark:to-green-800/50' : 'dark:bg-neutral-800' }} flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
+                              <a wire:navigate.hover class="{{ request()->is('payments') ? 'bg-linear-to-br from-green-400/50 to-green-700/50 dark:from-green-500/50 dark:to-green-800/50' : 'dark:bg-neutral-800' }} flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
                               href="/payments">
                                 <x-fas-money-bill-wave class="size-4" /> Pembayaran
                               </a>
                             </li>                      
                             <li>
-                              <a  class="{{ request()->is('items') ? 'bg-linear-to-br from-green-400/50 to-green-700/50 dark:from-green-500/50 dark:to-green-800/50' : 'dark:bg-neutral-800' }} flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
-                              href="/items">
+                              <a wire:navigate.hover class="{{ request()->is('items') ? 'bg-linear-to-br from-green-400/50 to-green-700/50 dark:from-green-500/50 dark:to-green-800/50' : 'dark:bg-neutral-800' }} flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
+                              href="/items-sold">
                                 <x-fas-cube class="size-4" /> Barang Terjual
                               </a>
                             </li>    
@@ -388,20 +388,20 @@
                     <a class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" href="/admin">
                       Admin Panel
                     </a>
-                      <a class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" href="/pos">
+                      <a wire:navigate.hover class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" href="/pos">
                         POS (Safety Mode)
                       </a>
-                      <a class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" href="/poscart">
+                      <a wire:navigate.hover class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" href="/poscart">
                         POS (Quick Mode)
                       </a>
-                      <a class="{{ Auth::user()->roles[0]->name === 'Owner' || Auth::user()->roles[0]->name === 'Admin' || Auth::user()->roles[0]->name === 'Manager' || Auth::user()->roles[0]->name === 'Kasir' ? "flex" : "hidden" }} items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" href="/dompet">
+                      <a wire:navigate.hover class="{{ Auth::user()->roles[0]->name === 'Owner' || Auth::user()->roles[0]->name === 'Admin' || Auth::user()->roles[0]->name === 'Manager' || Auth::user()->roles[0]->name === 'Kasir' ? "flex" : "hidden" }} items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" href="/dompet">
                         Dompet
                       </a>
                     @else
                         
                     @endif          
                     @endauth
-                    <a  class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" href="/my-account">
+                    <a wire:navigate.hover class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" href="/my-account">
                       Akun Saya
                     </a>
                     <a  class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" 
@@ -444,7 +444,7 @@
       </a>  
       @endif
 
-      <a  href="/branches"
+      <a wire:navigate.hover href="/branches"
       class="inline-flex flex-col items-center justify-center px-5 hover:bg-transparent dark:hover:transparent group">
           <div class="w-5 h-5 -mb-3 mx-auto {{ request()->is('branches')?' text-amber-600' : 'text-gray-500'}} dark:text-gray-400 group-hover:text-amber-600 dark:group-hover:text-amber-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
             <x-fas-store class="text-gray-500 dark:text-white hover:text-gray-500 size-6" />
@@ -457,7 +457,7 @@
           <img src="{{ url('storage/TegarJayaBerkah-LogoAja.png') }}" alt="" class="ml-[0.65rem] size-7" />
 
           <div class="absolute z-10 invisible inline-block px-1 py-2 text-sm text-gray-600 transition-opacity bg-white border border-gray-200 rounded-lg shadow-md opacity-0 hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400" role="tooltip">
-              <a  class="justify-between w-40 flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
+              <a wire:navigate.hover class="justify-between w-40 flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
               @auth
                 href="/{{ '@'.$thisPartner->where('id', auth()->user()->partner_id)->value('slug') }}"
               @endauth
@@ -467,11 +467,11 @@
               >
                 <span>Profil Toko</span><x-fas-home class="size-5"/>
               </a>
-              <a  class="justify-between w-40 flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
+              <a wire:navigate.hover class="justify-between w-40 flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
               href="/categories">
                 <span>Kategori</span><x-fas-tag class="size-5"/>
               </a>
-              <a  class="justify-between w-40 flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
+              <a wire:navigate.hover class="justify-between w-40 flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
               href="/products">
                 <span>Produk</span><x-fas-cubes class="size-5"/>
               </a>
@@ -484,7 +484,7 @@
       </div>
       <!-- End Popover -->
 
-      <a  href="/cart" 
+      <a wire:navigate.hover href="/cart" 
       class="inline-flex flex-col items-center justify-center px-5 hover:bg-transparent dark:hover:transparent group">
         <div class="w-5 h-5 -mb-2 mx-auto {{ request()->is('cart')?' text-amber-600' : 'text-gray-500'}} dark:text-gray-400 group-hover:text-amber-600 dark:group-hover:text-amber-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
           <x-fas-bag-shopping class="text-gray-500 dark:text-white hover:text-gray-500 size-6" />
@@ -492,7 +492,7 @@
         </div>
       </a>
 
-      <a  href="/my-orders" 
+      <a wire:navigate.hover href="/my-orders" 
       class="inline-flex flex-col items-center justify-center px-5 hover:bg-transparent dark:hover:transparent group">
           <div class="w-5 h-5 -mb-3 mx-auto {{ request()->is('my-orders')?' text-amber-600' : 'text-gray-500'}} dark:text-gray-400 group-hover:text-amber-600 dark:group-hover:text-amber-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
             <x-fas-envelope class="text-gray-500 dark:text-white hover:text-gray-500 size-6" />

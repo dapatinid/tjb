@@ -12,7 +12,7 @@ use Carbon\Carbon;
 use Livewire\Attributes\Url;
 
 #[Title('Items')]
-class ItemsPage extends Component
+class ItemsReturnPage extends Component
 {
     use WithPagination;
     // protected $paginationTheme = 'bootstrap';
@@ -47,27 +47,17 @@ class ItemsPage extends Component
 
         $orders = Order::where('branch_id', auth()->user()->branch_id)->get();
         $products = Product::where('branch_id', auth()->user()->branch_id)->get();
-        $orderitems = OrderItem::where('branch_id', auth()->user()->branch_id)
-            ->whereBetween('updated_at', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])
-            ->whereNull('deleted_at')
-            ->orderBy('product_id', 'asc')
-            ->get()
-            ->where('order.status', '!=', 'canceled')
-            ->where('porder.status', '!=', 'canceled') # berhasil join dan ambil nilai status
-            ->groupBy('product_id');
         $itemsreturn = OrderItem::where('branch_id', auth()->user()->branch_id)
             ->where('quantity', '<', '0')
             ->whereBetween('updated_at', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])
             ->whereNull('deleted_at')
             ->orderBy('id', 'desc')
             ->get()
-            ->where('order.status', '!=', 'canceled')
-            ->where('porder.status', '!=', 'canceled');
+            ->where('status', '!=', 'canceled');
 
-        return view('livewire.items-page', [
+        return view('livewire.items-return-page', [
             'orders' => $orders,
             'products' => $products,
-            'items' => $orderitems,
             'itemsreturn' => $itemsreturn
         ]);
     }

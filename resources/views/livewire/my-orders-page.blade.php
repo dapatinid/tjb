@@ -21,7 +21,7 @@
                 <div
                     class="flex p-1 mx-auto transition bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-neutral-700 dark:hover:bg-neutral-600">
                     <nav class="flex gap-x-1" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
-                        <a  href="/my-orders-unpaid">
+                        <a wire:navigate.hover href="/my-orders-unpaid">
                             <button type="button"
                                 class="inline-flex items-center px-2 py-1 text-sm font-medium text-gray-500 bg-transparent rounded-lg hs-tab-active:bg-white hs-tab-active:text-gray-700 hs-tab-active:dark:text-neutral-400 dark:hs-tab-active:bg-gray-800 gap-x-2 hover:text-gray-700 focus:outline-none focus:text-gray-700 hover:hover:text-yellow-600 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-white dark:focus:text-white"
                                 id="segment-item-4" aria-selected="false" data-hs-tab="#segment-4" aria-controls="segment-4"

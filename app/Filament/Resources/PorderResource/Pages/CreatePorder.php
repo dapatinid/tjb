@@ -161,4 +161,10 @@ class CreatePorder extends CreateRecord
         ];
         $dataOrder->update($updatePaid);
     }
+
+    protected function getRedirectUrl(): string
+    {
+        // return $this->previousUrl;
+        return $this->getResource()::getUrl('index');
+    }
 }

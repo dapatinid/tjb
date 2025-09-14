@@ -95,7 +95,7 @@
                                                 <x-fas-money-bill-wave class="text-gray-500 size-4 dark:group-hover:text-white"/>
                                                 Pembayaran
                                               </a>
-                                              <a wire:navigate class="group flex items-center gap-x-3.5 py-2 px-3 rounded-b-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-white dark:focus:bg-neutral-700" href="/items">
+                                              <a wire:navigate class="group flex items-center gap-x-3.5 py-2 px-3 rounded-b-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-white dark:focus:bg-neutral-700" href="/items-sold">
                                                 <x-fas-cube class="text-gray-500 size-4 dark:group-hover:text-white"/>
                                                 Barang Terjual
                                               </a>
