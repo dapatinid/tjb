@@ -45,7 +45,7 @@ class ItemsLowPage extends Component
             $this->date_akhir = $date_akhir;
         }
 
-        $products = Product::where('branch_id', auth()->user()->branch_id)->orderBy('name', 'asc')->paginate(100);
+        $products = Product::where('branch_id', auth()->user()->branch_id)->orderBy('name', 'asc')->paginate(25);
 
         return view('livewire.items-low-page', [
             'products' => $products,
