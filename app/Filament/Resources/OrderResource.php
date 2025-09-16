@@ -586,7 +586,6 @@ class OrderResource extends Resource
             ->columns([
                 TextColumn::make('id')
                     ->label('#')
-
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('q')
                     ->label('Q')

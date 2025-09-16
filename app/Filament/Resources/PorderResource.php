@@ -543,7 +543,6 @@ class PorderResource extends Resource
             ->columns([
                 TextColumn::make('id')
                     ->label('#')
-                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('q')
                     ->label('Q')
