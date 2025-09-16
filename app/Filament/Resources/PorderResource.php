@@ -220,7 +220,7 @@ class PorderResource extends Resource
                                     //     return $boughtqty - $soldqty;
                                     // }) #ini untuk membatasi quantity sesuai stok yang ada
                                     // ->minValue(1)
-                                    ->live() //->live(debounce: 1000) ## ini untuk delay 1000 milidetik lalu ada perubahan
+                                    ->live(onBlur: true) //->live(debounce: 1000) ## ini untuk delay 1000 milidetik lalu ada perubahan
                                     ->afterStateUpdated(fn($state, Set $set, Get $get) => $set('p_total_amount', $state * $get('p_unit_amount')))
                                     ->afterStateUpdated(fn(Set $set) => $set('updated_by', Auth::user()->id))
                                     ->afterStateUpdated(fn(Set $set, Get $get) => $set('poin', (Product::find($get('product_id'))?->poin ?? 0) * $get('p_quantity')))
@@ -236,7 +236,7 @@ class PorderResource extends Resource
                                     ->required()
                                     ->dehydrated()
                                     ->numeric()
-                                    ->live() //->live(debounce: 1000)
+                                    ->live(onBlur: true) //->live(debounce: 1000)
                                     ->afterStateUpdated(fn($state, Set $set, Get $get) => $set('p_total_amount', $state * $get('p_quantity')))
                                     ->afterStateUpdated(fn(Set $set) => $set('updated_by', Auth::user()->id))
                                     ->columnSpan(['default' => 4, 'sm' => 2, 'md' => 2, 'lg' => 2, 'xl' => 2]),
