@@ -147,13 +147,13 @@ class ProductionResource extends Resource
                                     ->afterStateUpdated(fn($state, Set $set, Get $get) => $set('total_amount', Product::find($state)?->cogs * $get('p_quantity') ?? 0))
 
                                     ->afterStateUpdated(function (Get $get, Set $set) {
-                                        $orderitems = OrderItem::leftJoin('orders', 'order_items.id', '=', 'orders.id')->leftJoin('porders', 'order_items.id', '=', 'porders.id')->get()->where('order.status', '!=', 'canceled')->where('porder.status', '!=', 'canceled');
+                                        $orderitems = OrderItem::where('status', '!=', 'canceled')->get();
                                         $boughtqty = $orderitems->where('product_id', $get('product_id'))->sum('p_quantity');
                                         $soldqty = $orderitems->where('product_id', $get('product_id'))->sum('quantity');
                                         $set('stock_before', $boughtqty - $soldqty);
                                     })
                                     ->afterStateUpdated(function (Get $get, Set $set) {
-                                        $orderitems = OrderItem::leftJoin('orders', 'order_items.id', '=', 'orders.id')->leftJoin('porders', 'order_items.id', '=', 'porders.id')->get()->where('order.status', '!=', 'canceled')->where('porder.status', '!=', 'canceled');
+                                        $orderitems = OrderItem::where('status', '!=', 'canceled')->get();
                                         $boughtqty = $orderitems->where('product_id', $get('product_id'))->sum('p_quantity');
                                         $soldqty = $orderitems->where('product_id', $get('product_id'))->sum('quantity');
                                         $set('stock_after', $boughtqty - $soldqty - $get('quantity') - $get('p_quantity'));
