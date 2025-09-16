@@ -44,6 +44,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Number;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 
@@ -531,14 +532,14 @@ class PorderResource extends Resource
     {
         return $table
             // ->poll('10s')
-            ->modifyQueryUsing(function (Builder $query) {
-                return $query->addSelect([
-                    'created' => User::query()->select('name')
-                        ->whereColumn('id', 'created_by'),
-                    'updated' => User::query()->select('name')
-                        ->whereColumn('id', 'updated_by'),
-                ]);
-            })
+            // ->modifyQueryUsing(function (Builder $query) {
+            //     return $query->addSelect([
+            //         'created' => User::query()->select('name')
+            //             ->whereColumn('id', 'created_by'),
+            //         'updated' => User::query()->select('name')
+            //             ->whereColumn('id', 'updated_by'),
+            //     ]);
+            // })
 
             ->columns([
                 TextColumn::make('id')
@@ -705,6 +706,17 @@ class PorderResource extends Resource
                 Filter::make('Unpaid')
                     ->label('Unpaid')
                     ->query(fn(Builder $query): Builder => $query->where('is_paid', false)->where('status', '!=', 'canceled')),
+
+                SelectFilter::make('created_by')
+                ->relationship('userCre', 'name', fn (Builder $query) => $query->where('is_admin', true))
+                    // ->relationship('userCre', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('updated_by')
+                ->relationship('userUpd', 'name', fn (Builder $query) => $query->where('is_admin', true))
+                    // ->relationship('userCre', 'name')
+                    ->searchable()
+                    ->preload(),
 
                 Tables\Filters\TrashedFilter::make()
             ])

@@ -46,6 +46,7 @@ use Illuminate\Support\Number;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Str;
 use Illuminate\Contracts\Support\Htmlable;
 
@@ -574,14 +575,14 @@ class OrderResource extends Resource
     {
         return $table
             ->poll('55s')
-            ->modifyQueryUsing(function (Builder $query) {
-                return $query->addSelect([
-                    'created' => User::query()->select('name')
-                        ->whereColumn('id', 'created_by'),
-                    'updated' => User::query()->select('name')
-                        ->whereColumn('id', 'updated_by'),
-                ]);
-            })
+            // ->modifyQueryUsing(function (Builder $query) {
+            //     return $query->addSelect([
+            //         'created' => User::query()->select('name')
+            //             ->whereColumn('id', 'created_by'),
+            //         'updated' => User::query()->select('name')
+            //             ->whereColumn('id', 'updated_by'),
+            //     ]);
+            // })
 
             ->columns([
                 TextColumn::make('id')
@@ -757,6 +758,17 @@ class OrderResource extends Resource
                 Filter::make('Unpaid')
                     ->label('Unpaid')
                     ->query(fn(Builder $query): Builder => $query->where('is_paid', false)->where('status', '!=', 'canceled')),
+
+                SelectFilter::make('created_by')
+                ->relationship('userCre', 'name', fn (Builder $query) => $query->where('is_admin', true))
+                    // ->relationship('userCre', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('updated_by')
+                ->relationship('userUpd', 'name', fn (Builder $query) => $query->where('is_admin', true))
+                    // ->relationship('userCre', 'name')
+                    ->searchable()
+                    ->preload(),
 
                 Tables\Filters\TrashedFilter::make()
 
