@@ -47,6 +47,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Columns\IconColumn;
 use Illuminate\Support\Str;
+use Illuminate\Contracts\Support\Htmlable;
 
 class OrderResource extends Resource
 {
@@ -57,6 +58,32 @@ class OrderResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
 
     protected static ?int $navigationSort = 5;
+
+
+    protected static ?string $recordTitleAttribute = 'code_tr';
+    public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
+    {
+        return $record->code_tr;
+    }
+    // public static function getGloballySearchableAttributes(): array
+    // {
+    //     return ['code_tr', 'grand_total'];
+    // }
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'name' => $record->user->name,
+            'grand_total' => @number_format($record->grand_total),
+        ];
+    }
+
+
+
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['code_tr'];
+    }
 
 
     public static function form(Form $form): Form
@@ -559,12 +586,11 @@ class OrderResource extends Resource
             ->columns([
                 TextColumn::make('id')
                     ->label('#')
-                    ->searchable()
+
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('q')
                     ->label('Q')
-                    ->sortable()
-                    ->searchable(),
+                    ->sortable(),
 
                 IconColumn::make('is_paid')
                     ->label('Paid')
@@ -579,7 +605,7 @@ class OrderResource extends Resource
                     ->label('Customer')
                     ->sortable()
                     ->searchable(),
-                // ->searchable(isIndividual:true),
+                // ->searchable(isIndividual: true),
 
                 TextColumn::make('grand_total')
                     ->numeric(locale: 'id')->prefix('Rp ')
@@ -603,14 +629,14 @@ class OrderResource extends Resource
                     ->label('Mtd')
                     ->listWithLineBreaks()
                     ->bulleted()
-                    // ->sortable()
-                    ->searchable(),
+                // ->sortable()
+                ,
                 TextColumn::make('payments.rekening')
                     ->label('Rek')
                     ->listWithLineBreaks()
                     ->bulleted()
-                    // ->sortable()
-                    ->searchable(),
+                // ->sortable()
+                ,
 
                 SelectColumn::make('status')
                     ->options([
@@ -623,16 +649,16 @@ class OrderResource extends Resource
                     ->afterStateUpdated(function ($record, $state) {
                         OrderItem::where('order_id', $record->id)->update(['status' => $state]);
                     })
-                    ->searchable()
+
                     ->sortable()
                     ->selectablePlaceholder(false),
 
                 TextColumn::make('courier.name')
-                    ->searchable()
+
                     ->sortable(),
                 TextColumn::make('user.rute')
                     ->label('Rute')
-                    ->searchable()
+
                     ->sortable(),
                 TextColumn::make('total_weight')
                     ->numeric()->suffix(' kg')
@@ -645,19 +671,19 @@ class OrderResource extends Resource
                 //     ->sortable(),
                 TextColumn::make('address.first_name')
                     ->label('FName')
-                    ->searchable()
-                    ->sortable(),
+                    // ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('address.last_name')
                     ->label('LName')
-                    ->searchable()
-                    ->sortable(),
+                    // ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('address.phone')
                     ->label('phone')
                     ->copyable()
                     ->copyMessage('Number phone copied')
                     ->copyMessageDuration(1500)
-                    ->searchable()
-                    ->sortable(),
+                    // ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('code_tr')
                     ->searchable()
@@ -666,30 +692,30 @@ class OrderResource extends Resource
                 TextColumn::make('date_order')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('userCre.name')
                     ->label('Created by')
                     ->numeric()
                     ->sortable()
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('userUpd.name')
                     ->label('Updated by')
                     ->numeric()
                     ->sortable()
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])->defaultSort('code_tr', 'desc')
             ->persistSortInSession()
             ->persistFiltersInSession()

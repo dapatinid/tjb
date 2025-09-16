@@ -34,47 +34,52 @@ class OrdersRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('id')
                     ->label('Order ID')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('code_tr')
+                    ->label('Code')
+                    ->searchable()
+                    ->sortable(),
 
                 TextColumn::make('grand_total')
-                ->money('IDR'),
+                    ->money('IDR'),
 
                 TextColumn::make('status')
                     ->badge()
-                    ->color(fn (string $state):string => match($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'new' => 'info',
                         'processing' => 'warning',
                         'shipped' => 'gray',
                         'delivered' => 'success',
-                        'canceled' => 'danger'                        
+                        'canceled' => 'danger'
                     })
-                    ->icon(fn (string $state):string => match($state) {
+                    ->icon(fn(string $state): string => match ($state) {
                         'new' => 'heroicon-m-sparkles',
                         'processing' => 'heroicon-m-arrow-path',
                         'shipped' => 'heroicon-m-truck',
                         'delivered' => 'heroicon-m-check-badge',
-                        'canceled' => 'heroicon-m-x-circle'                        
+                        'canceled' => 'heroicon-m-x-circle'
                     })
                     ->sortable(),
 
-                TextColumn::make('payment_method')
-                    ->sortable()
-                    ->searchable(),
- 
+                // TextColumn::make('payment_method')
+                //     ->sortable()
+                //     ->searchable(),
+
                 IconColumn::make('is_paid')
-                ->label('Paid')
-                ->boolean()
-                ->trueColor('info')
-                ->falseColor('danger')
-                ->trueIcon('heroicon-o-check-badge')
-                ->falseIcon('heroicon-o-x-mark')
-                ->sortable(),
+                    ->label('Paid')
+                    ->boolean()
+                    ->trueColor('info')
+                    ->falseColor('danger')
+                    ->trueIcon('heroicon-o-check-badge')
+                    ->falseIcon('heroicon-o-x-mark')
+                    ->sortable(),
 
                 TextColumn::make('created_at')
                     ->label('Order Date')
                     ->dateTime()
             ])
-
+            ->defaultSort('code_tr', 'desc')
             ->filters([
                 //
             ])
@@ -84,9 +89,9 @@ class OrdersRelationManager extends RelationManager
             ->actions([
                 // Tables\Actions\EditAction::make(),
                 Action::make('View Order')
-                ->url(fn (Order $record):string => OrderResource::getUrl('view', ['record' => $record]))
-                ->color('info')
-                ->icon('heroicon-o-eye'),
+                    ->url(fn(Order $record): string => OrderResource::getUrl('view', ['record' => $record]))
+                    ->color('info')
+                    ->icon('heroicon-o-eye'),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

@@ -220,8 +220,7 @@ class PorderResource extends Resource
                                     //     return $boughtqty - $soldqty;
                                     // }) #ini untuk membatasi quantity sesuai stok yang ada
                                     // ->minValue(1)
-                                    // ->live(debounce: 1000) ## ini untuk klik di luar field lalu ada perubahan
-                                    ->live(onBlur: true) //->live(debounce: 1000) ## ini untuk delay 1000 milidetik lalu ada perubahan
+                                    ->live() //->live(debounce: 1000) ## ini untuk delay 1000 milidetik lalu ada perubahan
                                     ->afterStateUpdated(fn($state, Set $set, Get $get) => $set('p_total_amount', $state * $get('p_unit_amount')))
                                     ->afterStateUpdated(fn(Set $set) => $set('updated_by', Auth::user()->id))
                                     ->afterStateUpdated(fn(Set $set, Get $get) => $set('poin', (Product::find($get('product_id'))?->poin ?? 0) * $get('p_quantity')))
@@ -237,7 +236,7 @@ class PorderResource extends Resource
                                     ->required()
                                     ->dehydrated()
                                     ->numeric()
-                                    ->live(onBlur: true) //->live(debounce: 1000)
+                                    ->live() //->live(debounce: 1000)
                                     ->afterStateUpdated(fn($state, Set $set, Get $get) => $set('p_total_amount', $state * $get('p_quantity')))
                                     ->afterStateUpdated(fn(Set $set) => $set('updated_by', Auth::user()->id))
                                     ->columnSpan(['default' => 4, 'sm' => 2, 'md' => 2, 'lg' => 2, 'xl' => 2]),
@@ -296,12 +295,12 @@ class PorderResource extends Resource
                                 ->default(0)
                                 ->required()
                                 ->numeric()
-                                ->live(debounce: 1000),
+                                ->live(onBlur: true),
                             TextInput::make(name: 'shipping_amount')
                                 ->default(0)
                                 ->required()
                                 ->numeric()
-                                ->live(debounce: 1000),
+                                ->live(onBlur: true),
 
                             Placeholder::make('grand_total_placeholder')
                                 ->label('Grand Total')
@@ -363,7 +362,7 @@ class PorderResource extends Resource
                                 DateTimePicker::make('date_payment')
                                     ->default(now())
                                     ->required()
-                                    ->live(debounce: 1000) ## ini untuk delay 1000 milidetik lalu ada perubahan
+                                    ->live(onBlur: true) ## ini untuk delay 1000 milidetik lalu ada perubahan
                                     ->afterStateUpdated(fn(Set $set) => $set('updated_by', Auth::user()->id))
                                     ->columnSpan(['sm' => 8, 'md' => 8, 'lg' => 8, 'xl' => 8]),
 
@@ -375,7 +374,7 @@ class PorderResource extends Resource
                                         'usd' => 'USD',
                                         'eur' => 'EUR'
                                     ])
-                                    ->live(debounce: 1000) ## ini untuk delay 1000 milidetik lalu ada perubahan
+                                    ->live()
                                     ->afterStateUpdated(fn(Set $set) => $set('updated_by', Auth::user()->id))
                                     ->columnSpan(['sm' => 4, 'md' => 4, 'lg' => 4, 'xl' => 4]),
 
@@ -386,7 +385,7 @@ class PorderResource extends Resource
                                     ])
                                     ->required()
                                     ->grouped()
-                                    ->live(debounce: 1000) ## ini untuk delay 1000 milidetik lalu ada perubahan
+                                    ->live() ## ini untuk delay 1000 milidetik lalu ada perubahan
                                     ->afterStateUpdated(fn(Set $set) => $set('updated_by', Auth::user()->id))
                                     ->afterStateUpdated(fn(Set $set) => $set('rekening', null))
                                     ->columnSpan(['sm' => 5, 'md' => 5, 'lg' => 5, 'xl' => 5]),
@@ -426,7 +425,7 @@ class PorderResource extends Resource
                                     ->default(0)
                                     ->required()
                                     ->numeric()
-                                    ->live(debounce: 1000) ## ini untuk delay 1000 milidetik lalu ada perubahan
+                                    ->live(onBlur: true) ## ini untuk delay 1000 milidetik lalu ada perubahan
                                     ->afterStateUpdated(fn(Set $set) => $set('updated_by', Auth::user()->id))
                                     ->columnSpan(['sm' => 3, 'md' => 3, 'lg' => 3, 'xl' => 3]),
 
@@ -548,8 +547,7 @@ class PorderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('q')
                     ->label('Q')
-                    ->sortable()
-                    ->searchable(),
+                    ->sortable(),
 
                 IconColumn::make('is_paid')
                     ->label('Paid')
@@ -588,14 +586,14 @@ class PorderResource extends Resource
                     ->label('Mtd')
                     ->listWithLineBreaks()
                     ->bulleted()
-                    // ->sortable()
-                    ->searchable(),
+                // ->sortable()
+                ,
                 TextColumn::make('payments.rekening')
                     ->label('Rek')
                     ->listWithLineBreaks()
                     ->bulleted()
-                    // ->sortable()
-                    ->searchable(),
+                // ->sortable()
+                ,
 
                 SelectColumn::make('status')
                     ->options([
@@ -608,12 +606,12 @@ class PorderResource extends Resource
                     ->afterStateUpdated(function ($record, $state) {
                         OrderItem::where('porder_id', $record->id)->update(['status' => $state]);
                     })
-                    ->searchable()
+
                     ->sortable()
                     ->selectablePlaceholder(false),
 
                 TextColumn::make('shipping_method')
-                    ->searchable()
+
                     ->sortable(),
 
                 // TextColumn::make('address.fullname')
@@ -621,18 +619,18 @@ class PorderResource extends Resource
                 //     ->sortable(),
                 TextColumn::make('address.first_name')
                     ->label('FName')
-                    ->searchable()
+
                     ->sortable(),
                 TextColumn::make('address.last_name')
                     ->label('LName')
-                    ->searchable()
+
                     ->sortable(),
                 TextColumn::make('address.phone')
                     ->label('phone')
                     ->copyable()
                     ->copyMessage('Number phone copied')
                     ->copyMessageDuration(1500)
-                    ->searchable()
+
                     ->sortable(),
 
                 TextColumn::make('code_tr')
@@ -658,13 +656,13 @@ class PorderResource extends Resource
                     ->label('Created by')
                     ->numeric()
                     ->sortable()
-                    ->searchable()
+
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('userUpd.name')
                     ->label('Updated by')
                     ->numeric()
                     ->sortable()
-                    ->searchable()
+
                     ->toggleable(isToggledHiddenByDefault: false),
             ])->defaultSort('code_tr', 'desc')
             // ->persistSortInSession()
