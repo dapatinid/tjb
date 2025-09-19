@@ -72,6 +72,12 @@ class PrintController extends Controller
             'date' => date('d/m/Y'),
             'order' => $order,
             'orderitems' => $orderitems,
+            'user' => User::where('id', $order->user_id)->get(),
+            'address' => Address::where('order_id', $id)->take(1),
+            'states' => Province::all(),
+            'cities' => City::all(),
+            'districts' => District::all(),
+            'villages' => Village::all(),
         ];
         return view('printorder-process', $data);
     }

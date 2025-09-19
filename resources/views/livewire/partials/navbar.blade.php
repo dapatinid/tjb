@@ -424,7 +424,9 @@
   <!-- Start Navbar Bottom --> 
   <nav class="md:hidden {{ request()->is('pos') || request()->is('poscart') || Str::of(request()->fullUrl())->contains('/@') ? 'hidden' : 'fixed'}}
     {{ request()->is('laba-rugi') ? ' hidden' : 'fixed' }}
+    {{ request()->is('laba-rugi-all') ? ' hidden' : 'fixed' }}
     {{ request()->is('neraca') ? ' hidden' : 'fixed' }}
+    {{ request()->is('neraca-all') ? ' hidden' : 'fixed' }}
     bottom-0 left-0 z-50 w-full h-10 pb-4 rounded-tl-2xl rounded-tr-2xl bg-white border-gray-300 dark:bg-gray-800 dark:border-gray-900">
     <div class="grid h-full max-w-lg grid-cols-5 mx-auto font-medium">
       
