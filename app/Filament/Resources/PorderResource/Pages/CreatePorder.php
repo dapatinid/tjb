@@ -160,6 +160,8 @@ class CreatePorder extends CreateRecord
             'created_by' => auth()->user()->id,
         ];
         $dataOrder->update($updatePaid);
+
+        $this->data = null; // untuk mereset form agar tombol tidak double click
     }
 
     protected function getRedirectUrl(): string
@@ -167,4 +169,6 @@ class CreatePorder extends CreateRecord
         // return $this->previousUrl;
         return $this->getResource()::getUrl('index');
     }
+
+    protected static bool $canCreateAnother = false;
 }
