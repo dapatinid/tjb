@@ -151,17 +151,17 @@ class AdjItemResource extends Resource
                                         // $orderitems = OrderItem::leftJoin('orders', 'order_items.id', '=', 'orders.id')->leftJoin('porders', 'order_items.id', '=', 'porders.id')->get()->where('order.status', '!=', 'canceled')->where('porder.status', '!=', 'canceled')->where('order.status', '!=', 'new')->where('porder.status', '!=', 'new')->where('porder.status', '!=', 'processing')->where('porder.status', '!=', 'shipped');
                                         $itemsBoughtP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('porder_id')->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('p_quantity');
                                         $itemsSoldP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('order_id')->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('p_quantity');
-                                        $itemsAdjP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('adj_item_id')->sum('p_quantity');
-                                        $itemsProdP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('production_id')->sum('p_quantity');
-                                        $itemsTfOutP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('tr_stk_out_id')->sum('p_quantity');
-                                        $itemsTfInP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('tr_stk_in_id')->sum('p_quantity');
+                                        $itemsAdjP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('adj_item_id')->where('status', '!=', 'new')->sum('p_quantity');
+                                        $itemsProdP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('production_id')->where('status', '!=', 'new')->sum('p_quantity');
+                                        $itemsTfOutP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('tr_stk_out_id')->where('status', '!=', 'new')->sum('p_quantity');
+                                        $itemsTfInP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('tr_stk_in_id')->where('status', '!=', 'new')->sum('p_quantity');
                                         
                                         $itemsBought = OrderItem::where('product_id', $get('product_id'))->whereNotNull('porder_id')->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('quantity');
                                         $itemsSold = OrderItem::where('product_id', $get('product_id'))->whereNotNull('order_id')->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('quantity');
-                                        $itemsAdj = OrderItem::where('product_id', $get('product_id'))->whereNotNull('adj_item_id')->sum('quantity');
-                                        $itemsProd = OrderItem::where('product_id', $get('product_id'))->whereNotNull('production_id')->sum('quantity');
-                                        $itemsTfOut = OrderItem::where('product_id', $get('product_id'))->whereNotNull('tr_stk_out_id')->sum('quantity');
-                                        $itemsTfIn = OrderItem::where('product_id', $get('product_id'))->whereNotNull('tr_stk_in_id')->sum('quantity');
+                                        $itemsAdj = OrderItem::where('product_id', $get('product_id'))->whereNotNull('adj_item_id')->where('status', '!=', 'new')->sum('quantity');
+                                        $itemsProd = OrderItem::where('product_id', $get('product_id'))->whereNotNull('production_id')->where('status', '!=', 'new')->sum('quantity');
+                                        $itemsTfOut = OrderItem::where('product_id', $get('product_id'))->whereNotNull('tr_stk_out_id')->where('status', '!=', 'new')->sum('quantity');
+                                        $itemsTfIn = OrderItem::where('product_id', $get('product_id'))->whereNotNull('tr_stk_in_id')->where('status', '!=', 'new')->sum('quantity');
 
                                         $orderitems = $itemsBoughtP + $itemsSoldP + $itemsAdjP + $itemsProdP + $itemsTfOutP + $itemsTfInP - $itemsBought - $itemsSold - $itemsAdj - $itemsProd - $itemsTfOut - $itemsTfIn ;
 

@@ -136,5 +136,7 @@ class CreateOrder extends CreateRecord
             'created_by' => auth()->user()->id,
         ];
         $dataOrder->update($updatePaid);
+
+        $this->data = null; // untuk mereset form agar tombol tidak double click
     }
 }
