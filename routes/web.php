@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\PrintController;
 use App\Livewire\Auth\ForgotPasswordPage;
@@ -94,6 +95,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/payments', PaymentsPage::class);
     Route::get('/pos', PosPage::class);
     Route::get('/poscart', PosCart::class);
+
+    Route::get('/cartalpine', function () {return view('cartalpine');});
+    Route::get('/api/products', [ProductController::class, 'index']);
 
     Route::get('/printprevieworder/{id}', [PrintController::class, 'printvieworder'])->name('printorder');
     Route::get('/printprevieworderprocess/{id}', [PrintController::class, 'printvieworderprocess'])->name('printorderprocess');

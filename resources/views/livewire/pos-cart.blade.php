@@ -188,6 +188,7 @@
                 {{-- TOMBOL FULLSCREEN END --}}
             </button>
         </div>
+        
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
             @foreach ($this->filteredProducts as $product)
             <div wire:click="addToCart({{ $product['id'] }})"
@@ -230,16 +231,16 @@
     </script>
 
     <style>
-/* Chrome, Safari, Edge, Opera */
- .arrownyahidden::-webkit-outer-spin-button,
- .arrownyahidden::-webkit-inner-spin-button{
-  -webkit-appearance: none;
-  margin: 0;
-}
+        /* Chrome, Safari, Edge, Opera */
+        .arrownyahidden::-webkit-outer-spin-button,
+        .arrownyahidden::-webkit-inner-spin-button{
+        -webkit-appearance: none;
+        margin: 0;
+        }
 
-/* Firefox */
- .arrownyahidden{
-  -moz-appearance: textfield;
-}
-</style>
+        /* Firefox */
+        .arrownyahidden{
+        -moz-appearance: textfield;
+        }
+    </style>
 </div>
