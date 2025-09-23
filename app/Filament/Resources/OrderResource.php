@@ -592,6 +592,11 @@ class OrderResource extends Resource
                     ->label('Q')
                     ->sortable(),
 
+                TextColumn::make('date_order')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 IconColumn::make('is_paid')
                     ->label('Paid')
                     ->boolean()
@@ -688,11 +693,6 @@ class OrderResource extends Resource
                 TextColumn::make('code_tr')
                     ->searchable()
                     ->sortable(),
-
-                TextColumn::make('date_order')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('created_at')
                     ->dateTime()

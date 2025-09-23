@@ -21,6 +21,7 @@ class WalletPage extends Component
 
     #[Url()]
     public $rek;
+    public $date_option;
 
     public $laporan_dompet_by_date;
 
@@ -56,11 +57,18 @@ class WalletPage extends Component
 
     public function render()
     {
+        if ($this->date_option === 'created_at') {
+        $paymentByDate = Payment::where('branch_id', Auth::user()->branch_id)->whereNotNull('rekening')->where('rekening', 'LIKE', '%' . $this->rek . '%')
+            ->selectRaw("COUNT(*) created_at, DATE_FORMAT(created_at, '%Y-%m-%d') date")
+            ->orderByDesc('date')
+            ->groupBy('date');
+        } else {
         $paymentByDate = Payment::where('branch_id', Auth::user()->branch_id)->whereNotNull('rekening')->where('rekening', 'LIKE', '%' . $this->rek . '%')
             ->selectRaw("COUNT(*) date_payment, DATE_FORMAT(date_payment, '%Y-%m-%d') date")
             ->orderByDesc('date')
             ->groupBy('date');
-
+        }
+        
         // dd($paymentByDate);
 
         $journal = Journal::all();
@@ -69,8 +77,13 @@ class WalletPage extends Component
         $cashBankKr = Payment::where('branch_id', Auth::user()->branch_id)->where('kredit', 'NR-DB-B-1100 CASH / BANK')->where('rekening', $this->rek)->sum('nominal');
         $cashBankTotal = $cashBankDb - $cashBankKr;
 
+        if ($this->date_option === 'created_at') {
+        $cashBankHistories = Payment::query()->where('branch_id', Auth::user()->branch_id)->whereNotNull('rekening')->where('rekening', 'LIKE', '%' . $this->rek . '%')->orderBy('created_at', 'desc');
+        $cashBankHistoriesLast = Payment::query()->where('branch_id', Auth::user()->branch_id)->whereNotNull('rekening')->where('rekening', 'LIKE', '%' . $this->rek . '%')->orderBy('created_at', 'desc')->value('created_at');
+        } else {
         $cashBankHistories = Payment::query()->where('branch_id', Auth::user()->branch_id)->whereNotNull('rekening')->where('rekening', 'LIKE', '%' . $this->rek . '%')->orderBy('date_payment', 'desc');
         $cashBankHistoriesLast = Payment::query()->where('branch_id', Auth::user()->branch_id)->whereNotNull('rekening')->where('rekening', 'LIKE', '%' . $this->rek . '%')->orderBy('date_payment', 'desc')->value('date_payment');
+        }
 
         return view('livewire.wallet-page', [
             'paymentByDate' => $paymentByDate->paginate(2),

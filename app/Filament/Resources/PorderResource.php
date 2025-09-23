@@ -549,6 +549,11 @@ class PorderResource extends Resource
                     ->label('Q')
                     ->sortable(),
 
+                TextColumn::make('date_order')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+
                 IconColumn::make('is_paid')
                     ->label('Paid')
                     ->boolean()
@@ -636,11 +641,6 @@ class PorderResource extends Resource
                 TextColumn::make('code_tr')
                     ->searchable()
                     ->sortable(),
-
-                TextColumn::make('date_order')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
 
                 TextColumn::make('created_at')
                     ->dateTime()

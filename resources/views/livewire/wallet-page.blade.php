@@ -28,13 +28,30 @@
 
   <!-- CARD CASH BANK End -->
 
-  <div wire:ignore class="flex justify-between mt-5 mb-3">
+  <div class="flex justify-between mt-5 mb-3">
+    <select name="date_option" id="date_option" wire:model.live="date_option"
+        class="py-1 px-2 pe-9 block w-40 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">                      
+        <option value="date_payment">Sort Tgl Trans</option>  
+        <option value="created_at">Sort Tgl Dibuat</option>  
+    </select>
+
+    <select name="rek" id="rek" wire:model.live="rek"
+        class="py-1 px-2 pe-9 block w-40 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">                      
+        <option value="KAS UTAMA">KAS UTAMA</option>  
+        <option value="KAS KASIR">KAS KASIR</option>  
+        <option value="KAS KECIL">KAS KECIL</option>  
+        <option value="BANK BCA">BANK BCA</option>
+        <option value="BANK BRI">BANK BRI</option>
+    </select>
+  </div>
+
+  <div wire:ignore class="flex justify-between mb-3">
     
     <x-filament::modal>
         <x-slot name="trigger">
-            <h3 class="dark:text-white font-bold">Riwayat Terakhir &#128438;</h3>
+            <h3 class="dark:text-white font-bold">Riwayat Terakhir  &#128438;</h3>
         </x-slot>
-            Export Laporan
+            Export Laporan by Date Transaksi
             <x-filament::input
                 type="date"
                 wire:model="laporan_dompet_by_date"
@@ -44,7 +61,7 @@
             </x-filament::button>
     </x-filament::modal>
     <div class="flex flex-nowrap">
-      <button type="button" class="scale-90 me-3 px-2 inline-flex items-center text-xs font-medium rounded-lg border-0 bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" 
+      <button type="button" class="scale-90 px-2 inline-flex items-center text-xs font-medium rounded-lg border-0 bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" 
       aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-scale-animation-modal" data-hs-overlay="#hs-scale-animation-modal">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
           <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
@@ -133,25 +150,28 @@
         </div>
       </div>
 
-      <select name="rek" id="rek" wire:model.live="rek"
-      class="py-1 px-2 pe-9 block w-40 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">                      
-      <option value="KAS UTAMA">KAS UTAMA</option>  
-      <option value="KAS KASIR">KAS KASIR</option>  
-      <option value="KAS KECIL">KAS KECIL</option>  
-      <option value="BANK BCA">BANK BCA</option>
-      <option value="BANK BRI">BANK BRI</option>
-      </select>
+
     </div>
   </div>
+
+
 
   <div class="">
 
     @foreach ($paymentByDate as $paymenttgl)
 
     @php
-    $tglNya = $cashBankHistories->whereBetween('date_payment', [$paymenttgl->date . ' 00:00:00', $paymenttgl->date . ' 23:59:59'])       
+    if ($this->date_option === 'created_at') {
+    $tglNya = $cashBankHistories->whereBetween('created_at', [$paymenttgl->date . ' 00:00:00', $paymenttgl->date . ' 23:59:59'])     ;  
+    } else {
+    $tglNya = $cashBankHistories->whereBetween('date_payment', [$paymenttgl->date . ' 00:00:00', $paymenttgl->date . ' 23:59:59'])     ;    
+    }
     @endphp
-    <span class="dark:text-zinc-300">{{ $tglNya->first()->date_payment->translatedFormat('l') }}, {{ $tglNya->first()->date_payment->translatedFormat('d') }} {{ $tglNya->first()->date_payment->translatedFormat('M') }}</span>
+    @if ($this->date_option === 'created_at')
+    <span class="dark:text-zinc-300">{{ $tglNya->first()->created_at->translatedFormat('l') }}, {{ $tglNya->first()->created_at->translatedFormat('d') }} {{ $tglNya->first()->created_at->translatedFormat('M') }}</span>        
+    @else
+    <span class="dark:text-zinc-300">{{ $tglNya->first()->date_payment->translatedFormat('l') }}, {{ $tglNya->first()->date_payment->translatedFormat('d') }} {{ $tglNya->first()->date_payment->translatedFormat('M') }}</span>                
+    @endif
     
     <div class="bg-white rounded-xl space-y-1 divide-y-1 divide-zinc-200 p-4 mb-4 mt-1">
 
@@ -207,7 +227,12 @@
             @formatNumber($transaksi->nominal)
           </div>
             <div class="flex items-center justify-end text-xs text-gray-500">
-              {{ $transaksi->date_payment->format('H:i') }}
+                  @if ($this->date_option === 'created_at')
+                  {{ $transaksi->created_at->format('H:i') }}
+                  @else
+                  {{ $transaksi->date_payment->format('H:i') }}
+                  @endif
+              
             </div>
           </div>
 
