@@ -96,7 +96,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/pos', PosPage::class);
     Route::get('/poscart', PosCart::class);
 
-    Route::get('/cartalpine', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/cartalpine', function () {return view('cartalpine');});
+    Route::get('/api/products', [ProductController::class, 'index']);
 
     Route::get('/printprevieworder/{id}', [PrintController::class, 'printvieworder'])->name('printorder');
     Route::get('/printprevieworderprocess/{id}', [PrintController::class, 'printvieworderprocess'])->name('printorderprocess');
