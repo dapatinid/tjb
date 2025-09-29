@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\PrintController;
 use App\Livewire\Auth\ForgotPasswordPage;
@@ -34,6 +33,11 @@ use App\Livewire\ProfitLossPage;
 use App\Livewire\SuccessPage;
 use App\Livewire\WalletPage;
 use Illuminate\Support\Facades\Route;
+
+    use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\CheckoutController;
+use App\Models\Cart;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', HomePage::class);
 // Route::get('/@{slug}', PartnersPage::class);
@@ -96,7 +100,32 @@ Route::middleware('auth')->group(function () {
     Route::get('/pos', PosPage::class);
     Route::get('/poscart', PosCart::class);
 
-    Route::get('/productscart', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/api/products', [ProductController::class, 'index']);
+    Route::get('/api/products/{id}', [ProductController::class, 'show']);
+
+    Route::post('/api/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
+
+Route::get('/mypos', function () {
+    $lastCart = Cart::where('branch_id', Auth::user()->branch_id)->get();
+    // siapkan array sederhana yang mudah di-JSON-kan
+    $initialCart = [];
+    if ($lastCart) {
+        $initialCart = $lastCart->map(function($it) {
+                return [
+                    'id' => $it->product_id,
+                    'name' => $it->name ?? '',
+                    'variant' => $it->variant ?? '',
+                    'weight' => (float) $it->total_weight / $it->quantity ?? '',
+                    'quantity' => (int) $it->quantity,
+                    'price' => (float) $it->unit_amount,
+                    'subtotal' => (float) $it->total_amount,
+                    'subtotalweight' => (float) $it->total_weight,
+                ];
+        })->toArray();
+    }
+    Cart::where('branch_id', Auth::user()->branch_id)->delete();
+    return view('my-pos', compact('initialCart'));
+});
 
     Route::get('/printprevieworder/{id}', [PrintController::class, 'printvieworder'])->name('printorder');
     Route::get('/printprevieworderprocess/{id}', [PrintController::class, 'printvieworderprocess'])->name('printorderprocess');

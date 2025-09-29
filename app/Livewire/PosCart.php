@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Illuminate\Support\Str;
+use Illuminate\Support\Number;
 
 class PosCart extends Component
 {
@@ -34,6 +35,7 @@ class PosCart extends Component
                     'name' => $item['name'],
                     'variant' => $item['variant'],
                     'price' => $item['unit_amount'],
+                    'price_display' => Number::format($item['unit_amount'], locale: 'de'),
                     'weight' => $item['total_weight'] / $item['quantity'],
                     'quantity' => $item['quantity'],
                     'subtotal' => $item['total_amount'],
@@ -75,10 +77,11 @@ class PosCart extends Component
                     'name' => $product['name'],
                     'variant' => $product['variant'],
                     'price' => $product['price'],
-                    'weight' => $product['weight'],
+                    'price_display' => Number::format($product['price'], locale: 'de'),
+                    'weight' => intval($product['weight']),
                     'quantity' => 1,
-                    'subtotal' => $product['price'],
-                    'weighttotal' => $product['weight'],
+                    'subtotal' => intval($product['price']),
+                    'weighttotal' => intval($product['weight']),
                 ];
                 array_push($this->cartItems, $item);
             }
@@ -93,6 +96,7 @@ class PosCart extends Component
             if ($item['id'] == $itemId) {
                 // $item[$field] = (int) $value;
                 $item[$field] = intval(Str::replace('.', '', $value));;
+                $item['price_display'] = Number::format($item['price'], locale: 'de') ;
                 $item['subtotal'] = $item['quantity'] * $item['price'];
                 $item['weighttotal'] = $item['quantity'] * $item['weight'];
             }
@@ -132,10 +136,11 @@ class PosCart extends Component
         return collect($this->cartItems)->sum('weighttotal');
     }
 
-    public function refreshPage()
+    public function refreshCart()
     {
-        // $this->dispatch('pos-page');
-        $this->redirect('/poscart', navigate: true);
+        $this->cartItems = [];
+        $this->dispatch('resetCart');
+        // $this->redirect('/poscart', navigate: true);
     }
     public function saveCart()
     {
@@ -159,6 +164,7 @@ class PosCart extends Component
             $cart->branch_id = Auth::user()->branch_id;
             $cart->save();
         }
+        $this->dispatch('resetCart');
         $this->redirect("/checkout?branch_id=" . Auth::user()->branch_id . "&shipping_method=self_pickup&sales_type=self_pickup&payment_method=cash&rekening=KAS+KASIR&date_order=" . date('Y') . "-" . date('m') . "-" . date('d') . "T" . date('H') . "%3A" . date('i'), navigate: true);
     }
 }

@@ -34,7 +34,7 @@
                     </li>
                     @endforeach
 
-                    <button wire:dblclick="refreshPage" class="w-full mx-auto mt-5 mb-2 text-red-500 cursor-pointer"><span>Clear Cart</span></button>
+                    <button wire:dblclick="refreshCart" class="w-full mx-auto mt-5 mb-2 text-red-500 cursor-pointer"><span>Clear Cart</span></button>
                 </ul>
 
                 @else
@@ -226,6 +226,11 @@
             // Menyimpan data ke localStorage
             posComponent.on('saveCart', (event) => {
                 localStorage.setItem('pos_cart', JSON.stringify(event.items));
+            });
+
+            // Menyimpan data ke localStorage
+            posComponent.on('resetCart', (event) => {
+                localStorage.setItem('pos_cart', []);
             });
         });
     </script>
