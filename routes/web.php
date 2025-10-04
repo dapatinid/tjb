@@ -36,6 +36,8 @@ use Illuminate\Support\Facades\Route;
 
     use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\CheckoutController;
+use App\Livewire\MyPos;
+use App\Livewire\PosSale;
 use App\Models\Cart;
 use Illuminate\Support\Facades\Auth;
 
@@ -105,27 +107,29 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/api/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
 
-Route::get('/mypos', function () {
-    $lastCart = Cart::where('branch_id', Auth::user()->branch_id)->get();
-    // siapkan array sederhana yang mudah di-JSON-kan
-    $initialCart = [];
-    if ($lastCart) {
-        $initialCart = $lastCart->map(function($it) {
-                return [
-                    'id' => $it->product_id,
-                    'name' => $it->name ?? '',
-                    'variant' => $it->variant ?? '',
-                    'weight' => (float) $it->total_weight / $it->quantity ?? '',
-                    'quantity' => (int) $it->quantity,
-                    'price' => (float) $it->unit_amount,
-                    'subtotal' => (float) $it->total_amount,
-                    'subtotalweight' => (float) $it->total_weight,
-                ];
-        })->toArray();
-    }
-    Cart::where('branch_id', Auth::user()->branch_id)->delete();
-    return view('my-pos', compact('initialCart'));
-});
+    Route::get('/my-pos', function () {
+        $lastCart = Cart::where('branch_id', Auth::user()->branch_id)->get();
+        // siapkan array sederhana yang mudah di-JSON-kan
+        $initialCart = [];
+        if ($lastCart) {
+            $initialCart = $lastCart->map(function($it) {
+                    return [
+                        'id' => $it->product_id,
+                        'name' => $it->name ?? '',
+                        'variant' => $it->variant ?? '',
+                        'weight' => (float) $it->total_weight / $it->quantity ?? '',
+                        'quantity' => (int) $it->quantity,
+                        'price' => (float) $it->unit_amount,
+                        'subtotal' => (float) $it->total_amount,
+                        'subtotalweight' => (float) $it->total_weight,
+                    ];
+            })->toArray();
+        }
+        Cart::where('branch_id', Auth::user()->branch_id)->delete();
+        return view('my-pos', compact('initialCart'));
+    });
+
+    Route::get('/mypos', MyPos::class);
 
     Route::get('/printprevieworder/{id}', [PrintController::class, 'printvieworder'])->name('printorder');
     Route::get('/printprevieworderprocess/{id}', [PrintController::class, 'printvieworderprocess'])->name('printorderprocess');

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 
-class CheckoutController extends Controller
+class CheckoutController extends Controller 
 {
     public function checkout(Request $request)
     {
@@ -74,6 +74,7 @@ class CheckoutController extends Controller
                 'totalcount' => $totalcount,
                 'total' => $total
             ]);
+
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);

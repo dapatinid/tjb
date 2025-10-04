@@ -6,6 +6,7 @@
     {{ request()->is('my-account') ? ' hidden' : 'flex' }}
     {{ request()->is('pos') ? ' hidden' : 'flex' }}
     {{ request()->is('poscart') ? ' hidden' : 'flex' }}
+    {{ request()->is('mypos') ? ' hidden' : 'flex' }}
     {{ request()->is('laba-rugi') ? ' hidden' : 'flex' }}
     {{ request()->is('laba-rugi-all') ? ' hidden' : 'flex' }}
     {{ request()->is('neraca') ? ' hidden' : 'flex' }}
@@ -394,6 +395,9 @@
                       <a wire:navigate.hover class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" href="/poscart">
                         POS (Quick Mode)
                       </a>
+                      <a class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" href="/mypos">
+                        POS (Uji Coba)
+                      </a>
                       <a wire:navigate.hover class="{{ Auth::user()->roles[0]->name === 'Owner' || Auth::user()->roles[0]->name === 'Admin' || Auth::user()->roles[0]->name === 'Manager' || Auth::user()->roles[0]->name === 'Kasir' ? "flex" : "hidden" }} items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" href="/dompet">
                         Dompet
                       </a>
@@ -422,7 +426,7 @@
 
 
   <!-- Start Navbar Bottom --> 
-  <nav class="md:hidden {{ request()->is('pos') || request()->is('poscart') || Str::of(request()->fullUrl())->contains('/@') ? 'hidden' : 'fixed'}}
+  <nav class="md:hidden {{ request()->is('pos') || request()->is('poscart') || request()->is('mypos') || Str::of(request()->fullUrl())->contains('/@') ? 'hidden' : 'fixed'}}
     {{ request()->is('laba-rugi') ? ' hidden' : 'fixed' }}
     {{ request()->is('laba-rugi-all') ? ' hidden' : 'fixed' }}
     {{ request()->is('neraca') ? ' hidden' : 'fixed' }}

@@ -17,7 +17,12 @@ class ProductController extends Controller
 
     $query = Product::query()->where('branch_id',Auth::user()->branch_id)->where('is_active',true);
     if ($q) {
-    $query->where('name', 'like', "%{$q}%");
+    $query->where(function ($query) use ($q) {
+                    $query->where('name', 'LIKE', '%' . $q . '%');
+                    $query->orWhere('sku', 'LIKE', '%' . $q . '%');
+                    $query->orWhere('variant', 'LIKE', '%' . $q . '%');
+                    $query->orWhere('tags', 'LIKE', '%' . $q . '%');
+                });
     }
 
 

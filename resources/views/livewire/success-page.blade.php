@@ -127,6 +127,9 @@
           <a href="/poscart"><button class="w-full px-4 py-2 mt-2 text-sm text-center bg-green-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-green-600 dark:hover:bg-gray-700 dark:bg-gray-800">
             <i class="fa fa-fax" aria-hidden="true"></i> POS - Quick Mode</button>
           </a>
+          <a href="/mypos"><button class="w-full px-4 py-2 mt-2 text-sm text-center bg-green-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-green-600 dark:hover:bg-gray-700 dark:bg-gray-800">
+            <i class="fa fa-fax" aria-hidden="true"></i> POS - Uji Coba</button>
+          </a>
           @endif
           @endauth
         </div>
