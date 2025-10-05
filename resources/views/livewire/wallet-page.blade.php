@@ -157,12 +157,21 @@
   <div class="">
     
     <div class=" space-y-2  mb-4 mt-1">
+      
         @php $previousDate = null; @endphp
         @foreach ($cashBankHistories as $transaksi)
-          @if ($transaksi->date_payment->format('Ymd') != $previousDate)     
-            <div class="pt-3">{{ $transaksi->date_payment->translatedFormat('l') }}, {{ $transaksi->date_payment->translatedFormat('d') }} {{ $transaksi->date_payment->translatedFormat('M') }}</div> 
-            @php $previousDate = $transaksi->date_payment->format('Ymd'); @endphp
-          @endif       
+          @if ($this->date_option === 'created_at')
+              @if ($transaksi->created_at->format('Ymd') != $previousDate)     
+                <div class="pt-3">{{ $transaksi->created_at->translatedFormat('l') }}, {{ $transaksi->created_at->translatedFormat('d') }} {{ $transaksi->created_at->translatedFormat('M') }}</div> 
+                @php $previousDate = $transaksi->created_at->format('Ymd'); @endphp
+              @endif     
+          @else
+              @if ($transaksi->date_payment->format('Ymd') != $previousDate)     
+                <div class="pt-3">{{ $transaksi->date_payment->translatedFormat('l') }}, {{ $transaksi->date_payment->translatedFormat('d') }} {{ $transaksi->date_payment->translatedFormat('M') }}</div> 
+                @php $previousDate = $transaksi->date_payment->format('Ymd'); @endphp
+              @endif     
+          @endif
+  
         <div class="p-4 grid grid-cols-3 bg-white rounded-xl">
           <div class="flex items-center">
             <div class="text-sm line-clamp-2 pe-2">
