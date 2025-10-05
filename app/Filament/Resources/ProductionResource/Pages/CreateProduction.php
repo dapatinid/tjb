@@ -56,5 +56,7 @@ class CreateProduction extends CreateRecord
         $barangproduksi->updated_by = Auth::user()->id;
         $barangproduksi->branch_id  = Auth::user()->branch_id;
         $barangproduksi->save();
+        
+        $this->data = null; // untuk mereset form agar tombol tidak double click
     }
 }

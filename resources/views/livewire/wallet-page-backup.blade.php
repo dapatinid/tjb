@@ -154,16 +154,29 @@
     </div>
   </div>
 
+
+
   <div class="">
+
+    @foreach ($paymentByDate as $paymenttgl)
+
+    @php
+    if ($this->date_option === 'created_at') {
+    $tglNya = $cashBankHistories->whereBetween('created_at', [$paymenttgl->date . ' 00:00:00', $paymenttgl->date . ' 23:59:59'])     ;  
+    } else {
+    $tglNya = $cashBankHistories->whereBetween('date_payment', [$paymenttgl->date . ' 00:00:00', $paymenttgl->date . ' 23:59:59'])     ;    
+    }
+    @endphp
+    @if ($this->date_option === 'created_at')
+    <span class="dark:text-zinc-300">{{ $tglNya->first()->created_at->translatedFormat('l') }}, {{ $tglNya->first()->created_at->translatedFormat('d') }} {{ $tglNya->first()->created_at->translatedFormat('M') }}</span>        
+    @else
+    <span class="dark:text-zinc-300">{{ $tglNya->first()->date_payment->translatedFormat('l') }}, {{ $tglNya->first()->date_payment->translatedFormat('d') }} {{ $tglNya->first()->date_payment->translatedFormat('M') }}</span>                
+    @endif
     
-    <div class=" space-y-2  mb-4 mt-1">
-        @php $previousDate = null; @endphp
-        @foreach ($cashBankHistories as $transaksi)
-          @if ($transaksi->date_payment->format('Ymd') != $previousDate)     
-            <div class="pt-3">{{ $transaksi->date_payment->translatedFormat('l') }}, {{ $transaksi->date_payment->translatedFormat('d') }} {{ $transaksi->date_payment->translatedFormat('M') }}</div> 
-            @php $previousDate = $transaksi->date_payment->format('Ymd'); @endphp
-          @endif       
-        <div class="p-4 grid grid-cols-3 bg-white rounded-xl">
+    <div class="bg-white rounded-xl space-y-1 divide-y-1 divide-zinc-200 p-4 mb-4 mt-1">
+
+        @foreach ($tglNya as $transaksi)        
+        <div class="pb-2 grid grid-cols-3">
           <div class="flex items-center">
             <div class="text-sm line-clamp-2 pe-2">
               {{ $transaksi->user->name }}
@@ -226,7 +239,9 @@
         </div>
         @endforeach
         </div>
+    @endforeach
 
+  </div>
                       <!-- pagination start -->
                     {{-- <style>
                         nav div div p {
@@ -237,12 +252,9 @@
                     <div 
                     class="mt-3"
                     >
-                        {{ $cashBankHistories->links() }}
+                        {{ $paymentByDate->links() }}
                     </div>
                     <!-- pagination end -->
-
-  </div>
-
 
 </div>
   

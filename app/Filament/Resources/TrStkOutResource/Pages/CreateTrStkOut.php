@@ -107,5 +107,7 @@ class CreateTrStkOut extends CreateRecord
         $barangtransferOut->updated_by = auth()->user()->id;
         $barangtransferOut->branch_id  = auth()->user()->branch_id;
         $barangtransferOut->save();
+
+        $this->data = null; // untuk mereset form agar tombol tidak double click
     }
 }

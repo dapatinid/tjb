@@ -56,5 +56,7 @@ class CreateAdjItem extends CreateRecord
         $barangsesuaikan->updated_by = Auth::user()->id;
         $barangsesuaikan->branch_id  = Auth::user()->branch_id;
         $barangsesuaikan->save();
+
+        $this->data = null; // untuk mereset form agar tombol tidak double click
     }
 }
