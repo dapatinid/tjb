@@ -79,7 +79,7 @@ class AdjItemResource extends Resource
                             ->label('Date Adj.')
                             ->default(now())
                             ->required()
-                            ->readOnly()
+                            // ->readOnly()
                             ->columnSpan(4),
 
                         Hidden::make('user_id')

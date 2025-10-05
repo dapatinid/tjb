@@ -21,7 +21,7 @@ class MyPos extends Component
     public function render()
     {
 
-        $lastCart = Cart::where('branch_id', Auth::user()->branch_id)->get();
+        $lastCart = Cart::where('branch_id', Auth::user()->branch_id)->where('created_by', Auth::user()->id)->get();
         // siapkan array sederhana yang mudah di-JSON-kan
         $initialCart = [];
         if ($lastCart) {
@@ -38,7 +38,7 @@ class MyPos extends Component
                     ];
             })->toArray();
         }
-        Cart::where('branch_id', Auth::user()->branch_id)->delete();
+        Cart::where('branch_id', Auth::user()->branch_id)->where('created_by', Auth::user()->id)->delete();
 
         return view('livewire.my-pos', compact('initialCart'));
     }

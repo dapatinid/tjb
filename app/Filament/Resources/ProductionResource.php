@@ -78,7 +78,7 @@ class ProductionResource extends Resource
                             ->label('Date Tr.')
                             ->default(now())
                             ->required()
-                            ->readOnly()
+                            // ->readOnly()
                             ->columnSpan(4),
 
                         Hidden::make('user_id')
