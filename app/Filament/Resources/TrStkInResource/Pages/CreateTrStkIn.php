@@ -23,7 +23,7 @@ class CreateTrStkIn extends CreateRecord
         OrderItem::where('tr_stk_out_id', $outID)->update(['updated_by' => Auth::user()->id, 'status' => $record->status, 'date_order' => $record->date_order]);
         // Payment::where('paymentable_type', TrStkIn::class)->where('paymentable_id', $record->id)->update([
         //     'debit' => 'NR-DB-B-2000 Persediaan Barang Dagang',
-        //     'kredit' => 'NR-KR-D-2500 Barang Transfer',
+        //     'kredit' => 'NR-KR-D-3500 Barang Transfer',
         // ]);
     }
 }

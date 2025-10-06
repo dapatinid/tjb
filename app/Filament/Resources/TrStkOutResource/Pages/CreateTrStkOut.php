@@ -97,7 +97,7 @@ class CreateTrStkOut extends CreateRecord
         $barangtransferOut->date_payment = $record->date_order;
         $barangtransferOut->currency = 'idr';
         $barangtransferOut->mutation_type = 'Barang Transfer Keluar';
-        $barangtransferOut->debit = 'NR-KR-D-2500 Barang Transfer';
+        $barangtransferOut->debit = 'NR-KR-D-3500 Barang Transfer';
         $barangtransferOut->kredit = 'NR-DB-B-2000 Persediaan Barang Dagang';
         $barangtransferOut->nominal_plus = 0;
         $barangtransferOut->nominal_mins = $barang_transfer;

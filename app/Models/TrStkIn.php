@@ -109,7 +109,7 @@ class TrStkIn extends Model
                         'date_payment' => $model->updated_at,
                         'mutation_type' => 'Barang Transfer Masuk',
                         'debit' => 'NR-DB-B-2000 Persediaan Barang Dagang',
-                        'kredit' => 'NR-KR-D-2500 Barang Transfer',
+                        'kredit' => 'NR-KR-D-3500 Barang Transfer',
                         'nominal_plus' => abs($dataOutGrandTotal),
                         'nominal_mins' => 0,
                         'nominal' => abs($dataOutGrandTotal),
@@ -124,7 +124,7 @@ class TrStkIn extends Model
                 $barangtransferIn->currency = 'idr';
                 $barangtransferIn->mutation_type = 'Barang Transfer Masuk';
                 $barangtransferIn->debit = 'NR-DB-B-2000 Persediaan Barang Dagang';
-                $barangtransferIn->kredit = 'NR-KR-D-2500 Barang Transfer';
+                $barangtransferIn->kredit = 'NR-KR-D-3500 Barang Transfer';
                 $barangtransferIn->nominal_plus = abs($dataOutGrandTotal);
                 $barangtransferIn->nominal_mins = 0;
                 $barangtransferIn->nominal = abs($dataOutGrandTotal);
