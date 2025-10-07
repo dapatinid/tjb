@@ -42,7 +42,7 @@ class CreateOrder extends CreateRecord
             'user_id' => $user_id,
             'debit' => 'NR-DB-B-1100 CASH / BANK',
             'kredit' => 'NR-DB-B-3000 Piutang Penjualan Barang',
-            'rekening' => 'KAS KASIR',
+            // 'rekening' => 'KAS KASIR',
         ]);
 
         // Tanggal Pelunasan

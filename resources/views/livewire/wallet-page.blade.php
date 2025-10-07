@@ -51,14 +51,21 @@
         <x-slot name="trigger">
             <h3 class="dark:text-white font-bold">Riwayat Terakhir  &#128438;</h3>
         </x-slot>
-            Export Laporan by Date Transaksi
-            <x-filament::input
-                type="date"
-                wire:model="laporan_dompet_by_date"
-            />
-            <x-filament::button wire:click="exportDompet" class="cursor-pointer bg-amber-300 hover:bg-amber-500" icon="heroicon-m-printer">
-                Export
-            </x-filament::button>
+            Export Laporan
+            <x-filament::input.wrapper>
+                  <x-filament::input
+                      type="date"
+                      wire:model="laporan_dompet_by_date"
+                  />
+            </x-filament::input.wrapper>
+            <div class="grid grid-cols-2 gap-3">
+              <x-filament::button wire:click="exportDompetbyDateTransaksi" class="cursor-pointer text-xs bg-amber-300 hover:bg-amber-500" icon="heroicon-m-printer">
+                by Date Transaksi
+              </x-filament::button>
+              <x-filament::button wire:click="exportDompetbyDateDibuat" class="cursor-pointer text-xs bg-amber-300 hover:bg-amber-500" icon="heroicon-m-printer">
+                by Date Dibuat
+              </x-filament::button>
+            </div>
     </x-filament::modal>
     <div class="flex flex-nowrap">
       <button type="button" class="scale-90 px-2 inline-flex items-center text-xs font-medium rounded-lg border-0 bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" 

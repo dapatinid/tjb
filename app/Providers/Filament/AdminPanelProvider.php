@@ -59,7 +59,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-home'),
                 MenuItem::make()
                     ->label('POS')
-                    ->url('/pos')
+                    ->url('/mypos')
                     ->icon('heroicon-o-calculator'),
                 MenuItem::make()
                     ->label('Dompet')

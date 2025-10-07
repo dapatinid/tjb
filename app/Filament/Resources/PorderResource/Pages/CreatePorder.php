@@ -66,7 +66,7 @@ class CreatePorder extends CreateRecord
             'user_id' => $user_id,
             'debit' => 'NR-KR-C-2000 Hutang_Pembelian_Barang',
             'kredit' => 'NR-DB-B-1100 CASH / BANK',
-            'rekening' => 'KAS KASIR',
+            // 'rekening' => 'KAS KASIR',
         ]);
 
         // Tanggal Pelunasan

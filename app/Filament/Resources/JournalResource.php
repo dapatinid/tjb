@@ -842,6 +842,16 @@ class JournalResource extends Resource
                         'ps' => 'PS',
                         'sa' => 'SA',
                     ]),
+                SelectFilter::make('userCre')
+                    ->label('Dibuat oleh')
+                    ->relationship('userCre', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('userUpd')
+                    ->label('Diedit oleh')
+                    ->relationship('userUpd', 'name')
+                    ->searchable()
+                    ->preload(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             // ->actions([

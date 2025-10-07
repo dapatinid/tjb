@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Exports\BrandsExport;
 use App\Exports\ProductsExport;
-use App\Exports\DompetExport;
+use App\Exports\DompetExportByDateTrans;
+use App\Exports\DompetExportByDateDibuat;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -28,9 +29,14 @@ class ExportController extends Controller
 
         // return "Hello Export : $bySearch";
     }
-    public function exportDompet($byfilter)
+    public function exportDompetDateTrans($byfilter)
     {
         // return "Hello Export : " . $byfilter;
-        return Excel::download(new DompetExport($byfilter), 'dompet.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+        return Excel::download(new DompetExportByDateTrans($byfilter), 'dompet-bydate-Transaksi.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+    }
+    public function exportDompetDateDibuat($byfilter)
+    {
+        // return "Hello Export : " . $byfilter;
+        return Excel::download(new DompetExportByDateDibuat($byfilter), 'dompet-bydate-Dibuat.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 }

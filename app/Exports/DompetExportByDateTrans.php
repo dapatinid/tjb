@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class DompetExport implements FromCollection, WithMapping, WithHeadings
+class DompetExportByDateTrans implements FromCollection, WithMapping, WithHeadings
 {
     protected $bydate;
     protected $rek;

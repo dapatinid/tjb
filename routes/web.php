@@ -136,5 +136,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/printpreviewtransferstock/{id}', [PrintController::class, 'printviewtransferstock'])->name('printtransferstock');
     Route::get('/exportproducts', [ExportController::class, 'exportProduct']);
     Route::get('/exportbrands', [ExportController::class, 'exportBrand']);
-    Route::get('/exportdompet/{byfilter}', [ExportController::class, 'exportDompet'])->name('exportdompet');
+    Route::get('/exportdompetbydatetransaksi/{byfilter}', [ExportController::class, 'exportDompetDateTrans'])->name('exportdompetbydatetransaksi');
+    Route::get('/exportdompetbydatedibuat/{byfilter}', [ExportController::class, 'exportDompetDateDibuat'])->name('exportdompetbydatedibuat');
 });

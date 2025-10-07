@@ -42,13 +42,25 @@ class WalletPage extends Component
         // $this->laporan_dompet_by_date = '02/09/2025';
     }
 
-    public function exportDompet()
+    public function exportDompetbyDateTransaksi()
     {
         if ($this->laporan_dompet_by_date == null || $this->laporan_dompet_by_date == '') {
             LivewireAlert::title('Tanggal Kosong')
                 ->show();
         } else {
-            return redirect()->route('exportdompet', http_build_query(array(
+            return redirect()->route('exportdompetbydatetransaksi', http_build_query(array(
+                'bydate' => $this->laporan_dompet_by_date,
+                'rek' => $this->rek
+            )));
+        }
+    }
+    public function exportDompetbyDateDibuat()
+    {
+        if ($this->laporan_dompet_by_date == null || $this->laporan_dompet_by_date == '') {
+            LivewireAlert::title('Tanggal Kosong')
+                ->show();
+        } else {
+            return redirect()->route('exportdompetbydatedibuat', http_build_query(array(
                 'bydate' => $this->laporan_dompet_by_date,
                 'rek' => $this->rek
             )));

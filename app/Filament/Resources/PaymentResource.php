@@ -323,6 +323,16 @@ class PaymentResource extends Resource
                         'BANK MANDIRI' => 'BANK MANDIRI',
                         'BANK JATENG' => 'BANK JATENG',
                     ]),
+                SelectFilter::make('userCre')
+                    ->label('Dibuat oleh')
+                    ->relationship('userCre', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('userUpd')
+                    ->label('Diedit oleh')
+                    ->relationship('userUpd', 'name')
+                    ->searchable()
+                    ->preload(),
                 Tables\Filters\TrashedFilter::make()
             ])
             // ->recordUrl(fn(Model $record): string => url('/admin/orders/' . $record->order_id . '/edit'))
