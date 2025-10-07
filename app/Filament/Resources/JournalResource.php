@@ -179,7 +179,6 @@ class JournalResource extends Resource
                                 'sedekahkan' => 'sedekahkan',
 
                                 'bayar hutang nominal' => 'bayar hutang nominal',
-                                'bayar hutang usaha' => 'bayar hutang usaha',
                                 'bayar hutang operasional' => 'bayar hutang operasional',
                                 'bayar hutang aset tetap' => 'bayar hutang aset tetap',
                                 'bayar hutang pajak' => 'bayar hutang pajak',
@@ -288,9 +287,6 @@ class JournalResource extends Resource
                                 $set("kredit", "NR-DB-B-1100 CASH / BANK");
                             } elseif ($state === "bayar hutang nominal") {
                                 $set("debit", "NR-KR-C-1000 Hutang_Nominal");
-                                $set("kredit", "NR-DB-B-1100 CASH / BANK");
-                            } elseif ($state === "bayar hutang usaha") {
-                                $set("debit", "NR-KR-C-3000 Hutang_Usaha");
                                 $set("kredit", "NR-DB-B-1100 CASH / BANK");
                             } elseif ($state === "bayar hutang operasional") {
                                 $set("debit", "NR-KR-C-4000 Hutang_Operasional");
