@@ -355,6 +355,7 @@ class CheckoutPage extends Component
                     'poin' => $item['poin'],
                     'status' => $order->status,
                     'mutation_type' => 'Sales',
+                    'date_order' => $order->date_order,
                     'created_by' => Auth::user()->id,
                     'updated_by' => Auth::user()->id,
                     'branch_id' => $this->branch_id,

@@ -44,16 +44,31 @@
                     <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase dark:text-white text-end">Stock tanpa New</th>
                     <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase dark:text-white text-end">Stock</th>
                     <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase dark:text-white text-end">Status</th>
+                    <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase dark:text-white text-end">Beli</th>
+                    <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase dark:text-white text-end">Jual</th>
+                    <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase dark:text-white text-end">Prod</th>
+                    <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase dark:text-white text-end">Adj</th>
+                    <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase dark:text-white text-end">Tf-Out</th>
+                    <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase dark:text-white text-end">Tf-In</th>
                   </tr>
                 </thead>
                 <tbody>
 
                   @foreach ($products as $product) 
                   @php
-                    $terbeli = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->where('status', '!=', 'new')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('p_quantity');
-                    $terjual = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('quantity');
-                    $terjualTanpaNew = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->where('status', '!=', 'new')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('quantity');
-                    $status = (($terbeli - $terjual) > $product->low_alert) ? '<span class="px-3 py-1 text-white bg-blue-500 rounded shadow">aman</span>' : '<span class="px-3 py-1 text-white bg-red-500 rounded shadow">LOW</span>' ;
+                    $stIN = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->where('status', '!=', 'new')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('p_quantity');
+                    $stOUT = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('quantity');
+                    $stOUTTanpaNew = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->where('status', '!=', 'new')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('quantity');
+                    $status = (($stIN - $stOUT) > $product->low_alert) ? '<span class="px-3 py-1 text-white bg-blue-500 rounded shadow">aman</span>' : '<span class="px-3 py-1 text-white bg-red-500 rounded shadow">LOW</span>' ;
+                    
+                    $belinya = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->whereNotNull('porder_id')->where('status', '!=', 'new')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('p_quantity');
+                    $jualnya = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->whereNotNull('order_id')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('quantity');
+                    $bikinnyaP = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->whereNotNull('production_id')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('p_quantity');
+                    $bikinnyaM = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->whereNotNull('production_id')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('quantity');
+                    $sesuainyaP = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->whereNotNull('adj_item_id')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('p_quantity');
+                    $sesuainyaM = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->whereNotNull('adj_item_id')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('quantity');
+                    $transferoutnya = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->whereNotNull('tr_stk_out_id')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('quantity');
+                    $transferinnya = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->whereNotNull('tr_stk_in_id')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('p_quantity');
                   @endphp     
                   <tr class="odd:bg-white even:bg-gray-100 hover:bg-green-400 dark:odd:bg-neutral-800 dark:even:bg-neutral-700 dark:hover:bg-neutral-900">
                     <td class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200"><a wire:navigate href="/admin/products/{{ $product->id }}/edit">{{ $product->id }}</a></td>
@@ -61,9 +76,15 @@
                     @if (Auth::user()->roles[0]->name === 'Admin' || Auth::user()->roles[0]->name === 'Owner')       
                     <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-end dark:text-gray-200">{{ $product->cogs }}</td>
                     @endif
-                    <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-end dark:text-gray-200">{{ $terbeli - $terjualTanpaNew }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-end dark:text-gray-200">{{ $terbeli - $terjual }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-end dark:text-gray-200">{{ $stIN - $stOUTTanpaNew }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-end dark:text-gray-200">{{ $stIN - $stOUT }}</td>
                     <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-end dark:text-gray-200">{!! $status !!}</td>
+                    <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-end dark:text-gray-200">{{ $belinya }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-end dark:text-gray-200">{{ ($jualnya)*-1 }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-end dark:text-gray-200">{{ $bikinnyaP - $bikinnyaM }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-end dark:text-gray-200">{{ $sesuainyaP - $sesuainyaM }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-end dark:text-gray-200">{{ ($transferoutnya)*-1 }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-end dark:text-gray-200">{{ $transferinnya }}</td>
                   </tr>
                   @endforeach
     
