@@ -326,7 +326,8 @@ class OrderItemResource extends Resource
                     }),
                 Filter::make('status')
                     ->label('without Canceled')
-                    ->query(fn(Builder $query): Builder => $query->where('status', '!=', 'canceled')),
+                    ->query(fn(Builder $query): Builder => $query->where('status', '!=', 'canceled'))
+                    ->default(true),
                 Tables\Filters\TrashedFilter::make()
             ])
             ->actions([
