@@ -97,7 +97,7 @@
                                               </a>
                                               <a wire:navigate class="group flex items-center gap-x-3.5 py-2 px-3 rounded-b-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-white dark:focus:bg-neutral-700" href="/items-sold">
                                                 <x-fas-cube class="text-gray-500 size-4 dark:group-hover:text-white"/>
-                                                Barang Terjual
+                                                Stok
                                               </a>
                                           </div>
 
@@ -426,9 +426,9 @@
                                                 @endif --}}
                                                 </p>
                                                 @php
-                                                    $boughtqty = $orderitem->where('branch_id', auth()->user()->branch_id)->where('product_id', $product->id)->sum('p_quantity');
-                                                    $soldqty = $orderitem->where('branch_id', auth()->user()->branch_id)->where('product_id', $product->id)->sum('quantity');
-                                                    $stock = $boughtqty - $soldqty;
+                                                    $plusqty = $orderitem->where('product_id',$product->id)->sum('p_quantity');
+                                                    $minsqty = $orderitem->where('product_id', $product->id)->sum('quantity');
+                                                    $stock = $plusqty - $minsqty;
                                                 @endphp
                                                 <span class="ms-auto py-0.25 px-0.75 rounded-md text-xs font-normal text-gray-500 dark:text-gray-500 border border-gray-500">
                                                     {{ $stock }}

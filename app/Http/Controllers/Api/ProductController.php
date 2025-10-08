@@ -12,7 +12,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
     $q = $request->query('q');
-    $perPage = (int) $request->query('per_page', 10);
+    $perPage = (int) $request->query('per_page', 50);
 
 
     $query = Product::query()->where('branch_id',Auth::user()->branch_id)->where('is_active',true);

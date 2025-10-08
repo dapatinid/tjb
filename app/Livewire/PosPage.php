@@ -306,7 +306,7 @@ class PosPage extends Component
         $productsAllModal = Product::query()->where('branch_id', Auth::user()->branch_id)->get();
 
         $productcek = Product::all();
-        $orderitem = OrderItem::all();
+        $orderitem = OrderItem::whereNowOrPast('date_order')->where('branch_id', auth()->user()->branch_id)->where('status', '!=', 'canceled')->get();
 
         return view('livewire.pos-page', [
             'productsAllModal' => $productsAllModal,

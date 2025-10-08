@@ -33,7 +33,7 @@
               <a href="/my-orders-unpaid" class="px-2 py-1 text-white bg-blue-500 rounded cursor-pointer">Order (Unpaid)</a>
               <a href="/my-orders" class="px-2 py-1 text-white bg-blue-500 rounded cursor-pointer">Order (Paid)</a>
               <a href="/payments" class="px-2 py-1 text-white bg-blue-500 rounded cursor-pointer">Payments</a>
-              <a href="/items-sold" class="px-2 py-1 text-white bg-blue-500 rounded cursor-pointer">Items Sold</a>
+              <a href="/items-sold" class="px-2 py-1 text-white bg-blue-500 rounded cursor-pointer">Stock</a>
             </div>
 
             <div class="flex justify-end gap-2 p-3 border-t border-gray-200">
@@ -140,8 +140,8 @@
             </button>     
             <button class="md:hidden text-red-500" @click="showCart = false">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="25" height="25">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg> 
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                </svg>
             </button>
           </div>       
         </div>
@@ -313,8 +313,8 @@
       <div class="mt-4 flex items-center justify-between p-4">
         <div x-text="`Total: ${products.total || 0}`"></div>
         <div class="flex gap-2">
-          <button :disabled="!products.prev_page_url" @click="fetchProducts(products.prev_page_url)" class="px-3 py-1 border border-gray-200 rounded">Prev</button>
-          <button :disabled="!products.next_page_url" @click="fetchProducts(products.next_page_url)" class="px-3 py-1 border border-gray-200 rounded">Next</button>
+          <button :disabled="!products.prev_page_url" @click="fetchProducts(products.prev_page_url)" class="px-3 py-1 border border-gray-100 bg-blue-100 hover:bg-blue-400 disabled:bg-gray-200 rounded">Prev</button>
+          <button :disabled="!products.next_page_url" @click="fetchProducts(products.next_page_url)" class="px-3 py-1 border border-gray-100 bg-blue-100 hover:bg-blue-400 disabled:bg-gray-200 rounded">Next</button>
         </div>
       </div>
     </div>
