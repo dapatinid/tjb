@@ -49,8 +49,8 @@
 
                   @foreach ($products as $product) 
                   @php
-                    $terbeli = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->where('status', '!=', 'canceled')->whereBetween('updated_at', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('p_quantity');
-                    $terjual = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->where('status', '!=', 'canceled')->whereBetween('updated_at', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('quantity');
+                    $terbeli = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('p_quantity');
+                    $terjual = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('quantity');
                   @endphp     
                   <tr class="odd:bg-white even:bg-gray-100 hover:bg-green-400 dark:odd:bg-neutral-800 dark:even:bg-neutral-700 dark:hover:bg-neutral-900">
                     <td class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200"><a wire:navigate href="/admin/products/{{ $product->id }}/edit">{{ $product->id }}</a></td>
@@ -69,7 +69,7 @@
           </div> 
           
           <!-- pagination start -->
-                    <div class="flex justify-center my-5">
+                    <div class="mx-2">
                         {{ $products->links() }}
                     </div>
           <!-- pagination end -->
