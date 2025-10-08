@@ -149,21 +149,9 @@ class AdjItemResource extends Resource
 
                                     ->afterStateUpdated(function (Get $get, Set $set) {
                                         // $orderitems = OrderItem::leftJoin('orders', 'order_items.id', '=', 'orders.id')->leftJoin('porders', 'order_items.id', '=', 'porders.id')->get()->where('order.status', '!=', 'canceled')->where('porder.status', '!=', 'canceled')->where('order.status', '!=', 'new')->where('porder.status', '!=', 'new')->where('porder.status', '!=', 'processing')->where('porder.status', '!=', 'shipped');
-                                        $itemsBoughtP = OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id', $get('product_id'))->whereNotNull('porder_id')->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('p_quantity');
-                                        $itemsSoldP = OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id', $get('product_id'))->whereNotNull('order_id')->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('p_quantity');
-                                        $itemsAdjP = OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id', $get('product_id'))->whereNotNull('adj_item_id')->where('status', '!=', 'new')->sum('p_quantity');
-                                        $itemsProdP = OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id', $get('product_id'))->whereNotNull('production_id')->where('status', '!=', 'new')->sum('p_quantity');
-                                        $itemsTfOutP = OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id', $get('product_id'))->whereNotNull('tr_stk_out_id')->where('status', '!=', 'new')->sum('p_quantity');
-                                        $itemsTfInP = OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id', $get('product_id'))->whereNotNull('tr_stk_in_id')->where('status', '!=', 'new')->sum('p_quantity');
-                                        
-                                        $itemsBought = OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id', $get('product_id'))->whereNotNull('porder_id')->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('quantity');
-                                        $itemsSold = OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id', $get('product_id'))->whereNotNull('order_id')->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('quantity');
-                                        $itemsAdj = OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id', $get('product_id'))->whereNotNull('adj_item_id')->where('status', '!=', 'new')->sum('quantity');
-                                        $itemsProd = OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id', $get('product_id'))->whereNotNull('production_id')->where('status', '!=', 'new')->sum('quantity');
-                                        $itemsTfOut = OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id', $get('product_id'))->whereNotNull('tr_stk_out_id')->where('status', '!=', 'new')->sum('quantity');
-                                        $itemsTfIn = OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id', $get('product_id'))->whereNotNull('tr_stk_in_id')->where('status', '!=', 'new')->sum('quantity');
-
-                                        $orderitems = $itemsBoughtP + $itemsSoldP + $itemsAdjP + $itemsProdP + $itemsTfOutP + $itemsTfInP - $itemsBought - $itemsSold - $itemsAdj - $itemsProd - $itemsTfOut - $itemsTfIn ;
+                                        $itemsPlus = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id', $get('product_id'))->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('p_quantity');                                                                                
+                                        $itemsMins = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id', $get('product_id'))->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('quantity');                                        
+                                        $orderitems = $itemsPlus - $itemsMins ;
 
                                         $set('stock_before', $orderitems);
                                     })
