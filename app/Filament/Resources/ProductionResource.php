@@ -387,7 +387,7 @@ class ProductionResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])->defaultSort('created_at', 'desc')
             ->filters([
-                Filter::make('created_at')
+                Filter::make('date_order')
                     ->form([
                         DatePicker::make('date_order_from'),
                         DatePicker::make('date_order_until'),

@@ -369,6 +369,7 @@ class TrStkInResource extends Resource
                         OrderItem::where('tr_stk_in_id', $record->id)->update(['status' => $state]);
                         $outID = TrStkOut::where('code_tr', Str::replace('TRI', 'TRO', $record->code_tr))->value('id');
                         OrderItem::where('tr_stk_out_id', $outID)->update(['updated_by' => Auth::user()->id, 'status' => $record->status]);
+                        TrStkOut::where('code_tr', Str::replace('TRI', 'TRO', $record->code_tr))->update(['updated_by' => Auth::user()->id, 'status' => $record->status]);
                     })
                     ->searchable()
                     ->sortable()
@@ -425,6 +426,7 @@ class TrStkInResource extends Resource
                                 OrderItem::where('tr_stk_in_id', $record->id)->update(['status' => $data['status']]);
                                 $outID = TrStkOut::where('code_tr', Str::replace('TRI', 'TRO', $record->code_tr))->value('id');
                                 OrderItem::where('tr_stk_out_id', $outID)->update(['updated_by' => Auth::user()->id, 'status' => $record->status]);
+                                TrStkOut::where('code_tr', Str::replace('TRI', 'TRO', $record->code_tr))->update(['updated_by' => Auth::user()->id, 'status' => $record->status]);
                             }
                         })
                         ->form([

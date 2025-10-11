@@ -177,41 +177,31 @@ class TrStkOutResource extends Resource
 
                                     ->afterStateUpdated(function (Get $get, Set $set) {
                                         // $orderitems = OrderItem::leftJoin('orders', 'order_items.id', '=', 'orders.id')->leftJoin('porders', 'order_items.id', '=', 'porders.id')->get()->where('order.status', '!=', 'canceled')->where('porder.status', '!=', 'canceled')->where('order.status', '!=', 'new')->where('porder.status', '!=', 'new')->where('porder.status', '!=', 'processing')->where('porder.status', '!=', 'shipped');
-                                        $itemsBoughtP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('porder_id')->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('p_quantity');
-                                        $itemsSoldP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('order_id')->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('p_quantity');
-                                        $itemsAdjP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('adj_item_id')->where('status', '!=', 'new')->sum('p_quantity');
-                                        $itemsProdP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('production_id')->where('status', '!=', 'new')->sum('p_quantity');
-                                        $itemsTfOutP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('tr_stk_out_id')->where('status', '!=', 'new')->sum('p_quantity');
-                                        $itemsTfInP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('tr_stk_in_id')->where('status', '!=', 'new')->sum('p_quantity');
-                                        
-                                        $itemsBought = OrderItem::where('product_id', $get('product_id'))->whereNotNull('porder_id')->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('quantity');
-                                        $itemsSold = OrderItem::where('product_id', $get('product_id'))->whereNotNull('order_id')->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('quantity');
-                                        $itemsAdj = OrderItem::where('product_id', $get('product_id'))->whereNotNull('adj_item_id')->where('status', '!=', 'new')->sum('quantity');
-                                        $itemsProd = OrderItem::where('product_id', $get('product_id'))->whereNotNull('production_id')->where('status', '!=', 'new')->sum('quantity');
-                                        $itemsTfOut = OrderItem::where('product_id', $get('product_id'))->whereNotNull('tr_stk_out_id')->where('status', '!=', 'new')->sum('quantity');
-                                        $itemsTfIn = OrderItem::where('product_id', $get('product_id'))->whereNotNull('tr_stk_in_id')->where('status', '!=', 'new')->sum('quantity');
 
-                                        $orderitems = $itemsBoughtP + $itemsSoldP + $itemsAdjP + $itemsProdP + $itemsTfOutP + $itemsTfInP - $itemsBought - $itemsSold - $itemsAdj - $itemsProd - $itemsTfOut - $itemsTfIn ;
+                                        $belinya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('porder_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->where('status', '!=', 'canceled')->sum('p_quantity');
+                                        $jualnya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('order_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->where('status', '!=', 'canceled')->sum('quantity');
+                                        $bikinnyaP = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('production_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('p_quantity');
+                                        $bikinnyaM = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('production_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('quantity');
+                                        $sesuainyaP = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('adj_item_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('p_quantity');
+                                        $sesuainyaM = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('adj_item_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('quantity');
+                                        $transferoutnya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('tr_stk_out_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('quantity');
+                                        $transferinnya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('tr_stk_in_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->where('status', '!=', 'transfering')->sum('p_quantity');
+                                        $orderitems = $belinya - $jualnya + $bikinnyaP - $bikinnyaM + $sesuainyaP - $sesuainyaM - $transferoutnya + $transferinnya;                                        
 
                                         $set('stock_before', $orderitems);
                                     })
                                     ->afterStateUpdated(function (Get $get, Set $set) {
                                           // $orderitems = OrderItem::leftJoin('orders', 'order_items.id', '=', 'orders.id')->leftJoin('porders', 'order_items.id', '=', 'porders.id')->get()->where('order.status', '!=', 'canceled')->where('porder.status', '!=', 'canceled')->where('order.status', '!=', 'new')->where('porder.status', '!=', 'new')->where('porder.status', '!=', 'processing')->where('porder.status', '!=', 'shipped');
-                                        $itemsBoughtP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('porder_id')->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('p_quantity');
-                                        $itemsSoldP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('order_id')->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('p_quantity');
-                                        $itemsAdjP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('adj_item_id')->where('status', '!=', 'new')->sum('p_quantity');
-                                        $itemsProdP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('production_id')->where('status', '!=', 'new')->sum('p_quantity');
-                                        $itemsTfOutP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('tr_stk_out_id')->where('status', '!=', 'new')->sum('p_quantity');
-                                        $itemsTfInP = OrderItem::where('product_id', $get('product_id'))->whereNotNull('tr_stk_in_id')->where('status', '!=', 'new')->sum('p_quantity');
                                         
-                                        $itemsBought = OrderItem::where('product_id', $get('product_id'))->whereNotNull('porder_id')->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('quantity');
-                                        $itemsSold = OrderItem::where('product_id', $get('product_id'))->whereNotNull('order_id')->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('quantity');
-                                        $itemsAdj = OrderItem::where('product_id', $get('product_id'))->whereNotNull('adj_item_id')->where('status', '!=', 'new')->sum('quantity');
-                                        $itemsProd = OrderItem::where('product_id', $get('product_id'))->whereNotNull('production_id')->where('status', '!=', 'new')->sum('quantity');
-                                        $itemsTfOut = OrderItem::where('product_id', $get('product_id'))->whereNotNull('tr_stk_out_id')->where('status', '!=', 'new')->sum('quantity');
-                                        $itemsTfIn = OrderItem::where('product_id', $get('product_id'))->whereNotNull('tr_stk_in_id')->where('status', '!=', 'new')->sum('quantity');
-
-                                        $orderitems = $itemsBoughtP + $itemsSoldP + $itemsAdjP + $itemsProdP + $itemsTfOutP + $itemsTfInP - $itemsBought - $itemsSold - $itemsAdj - $itemsProd - $itemsTfOut - $itemsTfIn ;
+                                        $belinya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('porder_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->where('status', '!=', 'canceled')->sum('p_quantity');
+                                        $jualnya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('order_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->where('status', '!=', 'canceled')->sum('quantity');
+                                        $bikinnyaP = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('production_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('p_quantity');
+                                        $bikinnyaM = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('production_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('quantity');
+                                        $sesuainyaP = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('adj_item_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('p_quantity');
+                                        $sesuainyaM = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('adj_item_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('quantity');
+                                        $transferoutnya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('tr_stk_out_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('quantity');
+                                        $transferinnya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('tr_stk_in_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->where('status', '!=', 'transfering')->sum('p_quantity');
+                                        $orderitems = $belinya - $jualnya + $bikinnyaP - $bikinnyaM + $sesuainyaP - $sesuainyaM - $transferoutnya + $transferinnya;                                          
                                         
                                         $set('stock_after', $orderitems - $get('quantity'));
                                     })

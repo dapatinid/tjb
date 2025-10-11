@@ -544,6 +544,7 @@ class PorderResource extends Resource
             ->columns([
                 TextColumn::make('id')
                     ->label('ID')
+                    ->sortable()
                     ->searchable(isIndividual: true)
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('q')
@@ -666,10 +667,10 @@ class PorderResource extends Resource
 
                     ->toggleable(isToggledHiddenByDefault: false),
             ])->defaultSort('code_tr', 'desc')
-            // ->persistSortInSession()
-            // ->persistFiltersInSession()
-            // ->persistSearchInSession()
-            // ->deselectAllRecordsWhenFiltered(false)
+            ->persistSortInSession()
+            ->persistFiltersInSession()
+            ->persistSearchInSession()
+            ->deselectAllRecordsWhenFiltered(false)
             ->defaultPaginationPageOption(25)
             ->paginated([
                 10,
@@ -683,7 +684,7 @@ class PorderResource extends Resource
 
             ->filters([
 
-                Filter::make('created_at')
+                Filter::make('date_order')
                     ->form([
                         DatePicker::make('date_order_from'),
                         DatePicker::make('date_order_until'),

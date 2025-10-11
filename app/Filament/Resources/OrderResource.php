@@ -587,6 +587,7 @@ class OrderResource extends Resource
             ->columns([
                 TextColumn::make('id')
                     ->label('ID')
+                    ->sortable()
                     ->searchable(isIndividual: true)
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('q')
@@ -735,7 +736,7 @@ class OrderResource extends Resource
 
             ->filters([
 
-                Filter::make('created_at')
+                Filter::make('date_order')
                     ->form([
                         DatePicker::make('date_order_from'),
                         DatePicker::make('date_order_until'),

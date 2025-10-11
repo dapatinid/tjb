@@ -153,10 +153,10 @@ class OrderItemResource extends Resource
                                 return url("/admin/productions/{$Mut_ID}");
                             } elseif ($state === 'Transfer Out') {
                                 $Mut_ID = OrderItem::where('id', $record->id)->value('tr_stk_out_id');
-                                return url("/admin/tr-stk-outs/{$Mut_ID}");
+                                return url("/admin/tr-stk-outs/{$Mut_ID}/edit");
                             } elseif ($state === 'Transfer In') {
                                 $Mut_ID = OrderItem::where('id', $record->id)->value('tr_stk_in_id');
-                                return url("/admin/tr-stk-ins/{$Mut_ID}");
+                                return url("/admin/tr-stk-ins/{$Mut_ID}/edit");
                             }
                         }
                     })

@@ -99,8 +99,10 @@ class PaymentResource extends Resource
                 //     ->sortable()
                 //     ->url(fn(Model $record): string => url('/admin/orders/' . $record->order_id . '/edit')),
                 Tables\Columns\TextColumn::make('id')
-                    ->label('#')
-                    ->sortable(),
+                    ->label('ID')
+                    ->sortable()
+                    ->searchable(isIndividual: true)
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('date_payment')
                     ->label('Tgl Transaksi')
                     ->dateTime()
@@ -237,10 +239,10 @@ class PaymentResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])->defaultSort('date_payment', 'desc')
-            // ->persistSortInSession()
-            // ->persistFiltersInSession()
-            // ->persistSearchInSession()
-            // ->deselectAllRecordsWhenFiltered(false)
+            ->persistSortInSession()
+            ->persistFiltersInSession()
+            ->persistSearchInSession()
+            ->deselectAllRecordsWhenFiltered(false)
             ->defaultPaginationPageOption(25)
             ->paginated([
                 10,

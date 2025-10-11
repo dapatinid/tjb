@@ -133,7 +133,7 @@ class TrStkOut extends Model
 
 
             // $record = $this->record;
-            TrStkOut::where('code_tr', $model->code_tr)->update(['status' => 'new']);
+            TrStkOut::where('code_tr', $model->code_tr)->update(['status' => $model->status]);
 
             $tfIN = new TrStkIn();
             $tfIN->branch_id = $model->to_branch_id;
@@ -146,7 +146,7 @@ class TrStkOut extends Model
             $tfIN->date_order = $model->date_order;
             // $tfIN->user_id = $model->user_id;
             $tfIN->currency = $model->currency;
-            $tfIN->status = 'new';
+            $tfIN->status = $model->status;
             $tfIN->notes = $model->notes;
             // $tfIN->grand_total = $model->grand_total;
             $tfIN->created_at = $model->created_at;

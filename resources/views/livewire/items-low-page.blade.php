@@ -56,7 +56,7 @@
 
                   @foreach ($products as $product) 
                   @php
-                    $stIN = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->where('status', '!=', 'new')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('p_quantity');
+                    $stIN = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->where('status', '!=', 'new')->where('status', '!=', 'transfering')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('p_quantity');
                     $stOUT = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('quantity');
                     $stOUTTanpaNew = App\Models\OrderItem::where('branch_id', auth()->user()->branch_id)->where('product_id',$product->id)->where('status', '!=', 'new')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->sum('quantity');
                     $status = (($stIN - $stOUT) > $product->low_alert) ? '<span class="px-3 py-1 text-white bg-blue-500 rounded shadow">aman</span>' : '<span class="px-3 py-1 text-white bg-red-500 rounded shadow">LOW</span>' ;

@@ -159,7 +159,7 @@ class AdjItemResource extends Resource
                                         $sesuainyaP = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('adj_item_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('p_quantity');
                                         $sesuainyaM = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('adj_item_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('quantity');
                                         $transferoutnya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('tr_stk_out_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('quantity');
-                                        $transferinnya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('tr_stk_in_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('p_quantity');
+                                        $transferinnya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('tr_stk_in_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->where('status', '!=', 'transfering')->sum('p_quantity');
                                         $orderitems = $belinya - $jualnya + $bikinnyaP - $bikinnyaM + $sesuainyaP - $sesuainyaM - $transferoutnya + $transferinnya;
 
                                         $set('stock_before', $orderitems);
@@ -429,7 +429,7 @@ class AdjItemResource extends Resource
             ])->defaultSort('created_at', 'desc')
 
             ->filters([
-                Filter::make('created_at')
+                Filter::make('date_order')
                     ->form([
                         DatePicker::make('date_order_from'),
                         DatePicker::make('date_order_until'),

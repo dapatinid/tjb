@@ -9,6 +9,7 @@ use App\Models\Journal;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
@@ -30,6 +31,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Filament\Tables\Filters\Filter;
 
 class JournalResource extends Resource
 {
@@ -746,9 +748,10 @@ class JournalResource extends Resource
             // ->poll('10s')
             ->columns([
                 TextColumn::make('id')
-                    ->label('#')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->label('ID')
+                    ->sortable()
+                    ->searchable(isIndividual: true)
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('date_journal')
                     ->dateTime()
                     ->sortable()
@@ -813,10 +816,10 @@ class JournalResource extends Resource
 
             ])
             ->defaultSort('date_journal', 'desc')
-            // ->persistSortInSession()
-            // ->persistFiltersInSession()
-            // ->persistSearchInSession()
-            // ->deselectAllRecordsWhenFiltered(false)
+            ->persistSortInSession()
+            ->persistFiltersInSession()
+            ->persistSearchInSession()
+            ->deselectAllRecordsWhenFiltered(false)
             ->defaultPaginationPageOption(25)
             ->paginated([
                 10,
@@ -829,6 +832,24 @@ class JournalResource extends Resource
             ])
 
             ->filters([
+
+                Filter::make('date_journal')
+                    ->form([
+                        DatePicker::make('date_journal_from'),
+                        DatePicker::make('date_journal_until'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['date_journal_from'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('date_journal', '>=', $date),
+                            )
+                            ->when(
+                                $data['date_journal_until'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('date_journal', '<=', $date),
+                            );
+                    }),
+
                 SelectFilter::make('journal_type')
                     ->multiple()
                     ->options([
