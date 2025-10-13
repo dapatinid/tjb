@@ -121,14 +121,14 @@
           <a target="_blank" href="{{ route('printorderprocess', [$order->id]) }}" target="_blank"><button class="w-full px-4 py-2 mt-2 text-sm text-center bg-gray-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-gray-700 dark:bg-gray-800">
             <i class="fa fa-coffee" aria-hidden="true"></i> Print Srt Jalan</button>
           </a>
-          <a href="/pos"><button class="w-full px-4 py-2 mt-2 text-sm text-center bg-green-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-green-600 dark:hover:bg-gray-700 dark:bg-gray-800">
+          {{-- <a href="/pos"><button class="w-full px-4 py-2 mt-2 text-sm text-center bg-green-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-green-600 dark:hover:bg-gray-700 dark:bg-gray-800">
             <i class="fa fa-fax" aria-hidden="true"></i> POS - Safety Mode</button>
           </a>
           <a href="/poscart"><button class="w-full px-4 py-2 mt-2 text-sm text-center bg-green-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-green-600 dark:hover:bg-gray-700 dark:bg-gray-800">
             <i class="fa fa-fax" aria-hidden="true"></i> POS - Quick Mode</button>
-          </a>
+          </a> --}}
           <a href="/mypos"><button class="w-full px-4 py-2 mt-2 text-sm text-center bg-green-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-green-600 dark:hover:bg-gray-700 dark:bg-gray-800">
-            <i class="fa fa-fax" aria-hidden="true"></i> POS - Uji Coba</button>
+            <i class="fa fa-fax" aria-hidden="true"></i> POS</button>
           </a>
           @endif
           @endauth

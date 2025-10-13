@@ -369,11 +369,11 @@ class TrStkOutResource extends Resource
                     ->searchable(),
                 TextColumn::make('from_branch.name')
                     ->label('From')
-                    ->searchable()
+                    ->searchable(isIndividual: true)
                     ->sortable(),
                 TextColumn::make('to_branch.name')
                     ->label('To')
-                    ->searchable()
+                    ->searchable(isIndividual: true)
                     ->sortable(),
 
                 TextColumn::make('user.name')
