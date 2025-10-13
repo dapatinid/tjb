@@ -148,7 +148,7 @@ class TrStkOut extends Model
             $tfIN->currency = $model->currency;
             $tfIN->status = $model->status;
             $tfIN->notes = $model->notes;
-            $tfIN->grand_total = $model->grand_total;
+            // $tfIN->grand_total = $model->grand_total;
             $tfIN->created_at = $model->created_at;
             $tfIN->updated_at = $model->updated_at;
             $tfIN->save();

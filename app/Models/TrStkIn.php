@@ -74,7 +74,7 @@ class TrStkIn extends Model
         });
         static::updated(function ($model) {
             $dataOut = TrStkOut::withTrashed()->where('code_tr', Str::replace('TRI', 'TRO', $model->code_tr));
-            $dataOutGrandTotal = TrStkOut::withTrashed()->where('code_tr', Str::replace('TRI', 'TRO', $model->code_tr))->value('grand_total');
+            $dataOutGrandTotal = TrStkOut::where('code_tr', Str::replace('TRI', 'TRO', $model->code_tr))->value('grand_total');
             $dataIn = TrStkIn::withTrashed()->where('code_tr', $model->code_tr);
             if ($model->isDirty('status')) {
                 $dataOut->update(['status' => $model->status, 'date_order' => now()]);
