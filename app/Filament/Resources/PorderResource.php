@@ -790,10 +790,7 @@ class PorderResource extends Resource
                             foreach ($records as $record) {
                                 if ($data['is_paid'] == 1) {
                                     if ($record->total_cashback < 0) {
-                                        $paymentsNull = Payment::where('paymentable_id', $record->id)->where('paymentable_type', Porder::class)->where('mutation_type', "Purchase")->where('nominal_mins', 0)->get();
-                                        foreach ($paymentsNull as $payment) {
-                                            $payment->delete();
-                                        }
+                                        Payment::where('paymentable_id', $record->id)->where('paymentable_type', Porder::class)->where('mutation_type', "Purchase")->where('nominal', 0)->delete();
 
                                         $payment = new Payment();
                                         $payment->date_payment = $data['date_payment'];
@@ -804,10 +801,10 @@ class PorderResource extends Resource
                                         $payment->mutation_type = 'Purchase';
                                         // $payment->debit = 'NR-KR-C-2000 Hutang_Pembelian_Barang';
                                         // $payment->kredit = 'NR-DB-B-1100 CASH / BANK';
-                                        $payment->created_by = auth()->user()->id;
-                                        $payment->updated_by = auth()->user()->id;
+                                        $payment->created_by = Auth::user()->id;
+                                        $payment->updated_by = Auth::user()->id;
                                         $payment->user_id = $record->user_id;
-                                        $payment->branch_id = auth()->user()->branch_id;
+                                        $payment->branch_id = Auth::user()->branch_id;
                                         $payment->paymentable_id = $record->id;
                                         $payment->paymentable_type = 'App\Models\Porder';
                                         $payment->save();

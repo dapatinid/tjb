@@ -16,6 +16,8 @@ class CreateAdjItem extends CreateRecord
 
     protected function afterCreate(): void
     {
+        $this->data = null; // untuk mereset form agar tombol tidak double click
+
         // Update siapa yang BUAT
         $record = $this->record;
         OrderItem::where('adj_item_id', $record->id)->update(['created_by' => Auth::user()->id, 'status' => $record->status, 'date_order' => $record->date_order]);
@@ -57,6 +59,5 @@ class CreateAdjItem extends CreateRecord
         $barangsesuaikan->branch_id  = Auth::user()->branch_id;
         $barangsesuaikan->save();
 
-        $this->data = null; // untuk mereset form agar tombol tidak double click
     }
 }

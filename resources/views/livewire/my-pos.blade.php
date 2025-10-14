@@ -72,7 +72,7 @@
         @click.self="showProductModal = false"
     >
       <div class="bg-white p-4 rounded-lg shadow-lg w-11/12 md:w-1/3">
-          <h2 class="text-lg font-bold mb-2" x-text="productDetail.name"></h2>
+          <h2 class="text-lg font-bold mb-2" x-text="`${productDetail.name} ${productDetail.variant} ` "></h2>
           <img :src="productDetail.images && productDetail.images.length > 0 
             ? '/storage/' + productDetail.images[0] 
             : '/storage/food-packaging.png'" alt="" class="w-full object-cover rounded mb-2 mx-auto aspect-square">
@@ -314,7 +314,12 @@
 
       <div class="grid lg:grid-cols-3 grid-cols-2 gap-2 px-2">
         <template x-for="p in products.data" :key="p.id">
-          <div class="relative">
+          <div class="relative border border-gray-200 rounded">
+          <div class="absolute top-2.5 right-2" @click="showProduct(p.id)"> 
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+            </svg>
+          </div>
               <!-- 🔵 Badge jumlah produk di cart -->
               <template x-if="cart.some(item => item.id === p.id)">
                   <div 
@@ -354,11 +359,11 @@
                       >+</button>
                   </div>
               </template>
-              <button @click="addToCart(p)" onmouseup="setTimeout(() => this.blur(), 200)" class="w-full border border-gray-200 rounded p-3 transition-colors duration-300 active:bg-blue-400 focus:bg-blue-400">
+              <button @click="addToCart(p)"  onmouseup="setTimeout(() => this.blur(), 300)" :class="cart.some(item => item.id === p.id) ? 'bg-green-300': 'bg-white'" class="w-full h-full p-3 space-y-2 block transition-colors duration-300 active:bg-blue-400 focus:bg-blue-400">
                 {{-- <img :src="p.images && p.images.length > 0 
                 ? '/storage/' + p.images[0] 
                 : '/storage/food-packaging.png'" alt="" class="rounded-sm aspect-square"> --}}
-                <div class="flex justify-center"><span x-text="p.name" @click.stop="showProduct(p.id)" class="font-semibold cursor-pointer hover:underline hover:text-blue-500"></span></div>
+                <div x-text="p.name" class="font-semibold text-start"></div>
                 <div class="flex justify-between gap-2">
                     <em class="text-sm" x-text="p.variant"></em>
                     <span class="text-sm" x-text="`Rp ${formatMoney(p.price)}`"></span>
@@ -418,7 +423,7 @@ function posApp() {
 
     async showProduct(id) {
       this.showProductModal = true
-      this.productDetail = { name: 'Loading...', image_url: '', price: 0, description: '' }
+      this.productDetail = { name: 'Loading...', variant: '', image_url: '', price: 0, description: '' }
 
       try {
         let response = await fetch(`/api/products/${id}`)

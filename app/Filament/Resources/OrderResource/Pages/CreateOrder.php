@@ -24,6 +24,8 @@ class CreateOrder extends CreateRecord
 
     protected function afterCreate(): void
     {
+        $this->data = null; // untuk mereset form agar tombol tidak double click
+
         $record = $this->record;
         $hari = Carbon::parse($record->date_order)->format('Y-m-d');
         $antri = Order::where('branch_id', auth()->user()->branch_id)->where('date_order', 'like', "%$hari%")->count();
@@ -137,6 +139,5 @@ class CreateOrder extends CreateRecord
         ];
         $dataOrder->update($updatePaid);
 
-        $this->data = null; // untuk mereset form agar tombol tidak double click
     }
 }

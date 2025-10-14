@@ -24,11 +24,13 @@ class CreatePorder extends CreateRecord
 
     protected function afterCreate(): void
     {
+        $this->data = null; // untuk mereset form agar tombol tidak double click
+        
         $record = $this->record;
 
         // Update HPP tiap produk ketika melakukan Pembelian
         $dataBelanja = OrderItem::where('porder_id', $record->id)->get();
-        $orderitems = OrderItem::leftJoin('orders', 'order_items.id', '=', 'orders.id')->leftJoin('porders', 'order_items.id', '=', 'porders.id')->get()->where('order.status', '!=', 'canceled')->where('porder.status', '!=', 'canceled');
+        $orderitems = OrderItem::where('status', '!=', 'canceled');
         foreach ($dataBelanja as $item) {
             $boughtqty = $orderitems->where('product_id', $item->product_id)->sum('p_quantity');
             $soldqty = $orderitems->where('product_id', $item->product_id)->sum('quantity');
@@ -161,7 +163,6 @@ class CreatePorder extends CreateRecord
         ];
         $dataOrder->update($updatePaid);
 
-        $this->data = null; // untuk mereset form agar tombol tidak double click
     }
 
     protected function getRedirectUrl(): string

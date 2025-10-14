@@ -16,6 +16,8 @@ class CreateProduction extends CreateRecord
 
     protected function afterCreate(): void
     {
+        $this->data = null; // untuk mereset form agar tombol tidak double click
+
         // Update siapa yang BUAT
         $record = $this->record;
         OrderItem::where('production_id', $record->id)->update(['created_by' => Auth::user()->id, 'status' => $record->status, 'date_order' => $record->date_order]);
@@ -57,6 +59,5 @@ class CreateProduction extends CreateRecord
         $barangproduksi->branch_id  = Auth::user()->branch_id;
         $barangproduksi->save();
         
-        $this->data = null; // untuk mereset form agar tombol tidak double click
     }
 }

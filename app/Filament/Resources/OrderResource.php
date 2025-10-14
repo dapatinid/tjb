@@ -861,10 +861,7 @@ class OrderResource extends Resource
                             foreach ($records as $record) {
                                 // if ($data['is_paid'] == 1) {
                                 if ($record->total_cashback < 0) {
-                                    $paymentsNull = Payment::where('paymentable_id', $record->id)->where('paymentable_type', Order::class)->where('mutation_type', "Sales")->where('nominal_plus', 0)->get();
-                                    foreach ($paymentsNull as $payment) {
-                                        $payment->delete();
-                                    }
+                                    Payment::where('paymentable_id', $record->id)->where('paymentable_type', Order::class)->where('mutation_type', "Sales")->where('nominal', 0)->delete();
 
                                     $payment = new Payment();
                                     $payment->date_payment = $data['date_payment'];
@@ -875,10 +872,10 @@ class OrderResource extends Resource
                                     $payment->mutation_type = 'Sales';
                                     // $payment->debit = 'NR-DB-B-1100 CASH / BANK';
                                     // $payment->kredit = 'NR-DB-B-3000 Piutang Penjualan Barang';
-                                    $payment->created_by = auth()->user()->id;
-                                    $payment->updated_by = auth()->user()->id;
+                                    $payment->created_by = Auth::user()->id;
+                                    $payment->updated_by = Auth::user()->id;
                                     $payment->user_id = $record->user_id;
-                                    $payment->branch_id = auth()->user()->branch_id;
+                                    $payment->branch_id = Auth::user()->branch_id;
                                     $payment->paymentable_id = $record->id;
                                     $payment->paymentable_type = 'App\Models\Order';
                                     $payment->save();

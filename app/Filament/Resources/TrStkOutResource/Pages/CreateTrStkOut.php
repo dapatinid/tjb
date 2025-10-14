@@ -18,6 +18,8 @@ class CreateTrStkOut extends CreateRecord
 
     protected function afterCreate(): void
     {
+        $this->data = null; // untuk mereset form agar tombol tidak double click
+
         $record = $this->record;
 
         $tfIN = new TrStkIn();
@@ -108,6 +110,5 @@ class CreateTrStkOut extends CreateRecord
         $barangtransferOut->branch_id  = auth()->user()->branch_id;
         $barangtransferOut->save();
 
-        $this->data = null; // untuk mereset form agar tombol tidak double click
     }
 }
