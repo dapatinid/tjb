@@ -358,7 +358,7 @@
                 {{-- <img :src="p.images && p.images.length > 0 
                 ? '/storage/' + p.images[0] 
                 : '/storage/food-packaging.png'" alt="" class="rounded-sm aspect-square"> --}}
-                <div x-text="p.name" @click.stop="showProduct(p.id)" class="font-semibold cursor-pointer hover:underline hover:text-blue-500"></div>
+                <div class="flex justify-center"><span x-text="p.name" @click.stop="showProduct(p.id)" class="font-semibold cursor-pointer hover:underline hover:text-blue-500"></span></div>
                 <div class="flex justify-between gap-2">
                     <em class="text-sm" x-text="p.variant"></em>
                     <span class="text-sm" x-text="`Rp ${formatMoney(p.price)}`"></span>
