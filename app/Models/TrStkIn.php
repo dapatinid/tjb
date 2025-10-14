@@ -73,22 +73,23 @@ class TrStkIn extends Model
             $model->items()->withTrashed()->restore();
         });
         static::updated(function ($model) {
-            $dataOut = TrStkOut::withTrashed()->where('code_tr', Str::replace('TRI', 'TRO', $model->code_tr));
+            $dataOut = TrStkOut::where('code_tr', Str::replace('TRI', 'TRO', $model->code_tr));
             $dataOutGrandTotal = TrStkOut::where('code_tr', Str::replace('TRI', 'TRO', $model->code_tr))->value('grand_total');
-            $dataIn = TrStkIn::withTrashed()->where('code_tr', $model->code_tr);
+            $dataIn = TrStkIn::where('code_tr', $model->code_tr);
             if ($model->isDirty('status')) {
-                $dataOut->update(['status' => $model->status, 'date_order' => now()]);
-                $dataIn->update(['date_order' => now(), 'user_id' => auth()->user()->id, 'grand_total' => $dataOutGrandTotal]);
+                $dataOut->update(['status' => $model->status, 'date_order' => $model->date_order]);
+                $dataIn->update(['date_order' => $model->date_order, 'user_id' => auth()->user()->id, 'grand_total' => $dataOutGrandTotal]);
             }
 
-            // update berat
+            // update berat dan grandTotal
             foreach ($model->items as $item) {
                 $data = OrderItem::find($item->id);
                 $produk_weight = Product::where('id', $data->product_id)->value('weight');
                 $data->update(['total_weight' => $item->p_quantity * $produk_weight]);
             }
             $sum_weight = OrderItem::where('tr_stk_in_id', $model->id)->sum('total_weight');
-            TrStkIn::where('id', $model->id)->update(['total_weight' => $sum_weight]);
+            $sum_grandTotal = OrderItem::where('tr_stk_in_id', $model->id)->sum('total_amount');
+            TrStkIn::where('id', $model->id)->update(['total_weight' => $sum_weight, 'grand_total' => $sum_grandTotal]);
 
             /// update jurnal TRANSFER
             $id_Out = TrStkOut::where('code_tr', Str::replace('TRI', 'TRO', $model->code_tr))->value('id');

@@ -176,33 +176,33 @@ class TrStkInResource extends Resource
                                     ->afterStateUpdated(fn($state, Set $set) => $set('unit_amount', Product::find($state)?->cogs ?? 0))
                                     ->afterStateUpdated(fn($state, Set $set, Get $get) => $set('total_amount', Product::find($state)?->cogs * $get('p_quantity') ?? 0))
 
-                                    ->afterStateUpdated(function (Get $get, Set $set) {
-                                        $orderitems = OrderItem::leftJoin('orders', 'order_items.id', '=', 'orders.id')->leftJoin('porders', 'order_items.id', '=', 'porders.id')->get()->where('order.status', '!=', 'canceled')->where('porder.status', '!=', 'canceled');
-                                        $boughtqty = $orderitems->where('product_id', $get('product_id'))->sum('p_quantity');
-                                        $soldqty = $orderitems->where('product_id', $get('product_id'))->sum('quantity');
-                                        $set('stock_before', $boughtqty - $soldqty);
-                                    })
-                                    ->afterStateUpdated(function (Get $get, Set $set) {
-                                        $orderitems = OrderItem::leftJoin('orders', 'order_items.id', '=', 'orders.id')->leftJoin('porders', 'order_items.id', '=', 'porders.id')->get()->where('order.status', '!=', 'canceled')->where('porder.status', '!=', 'canceled');
-                                        $boughtqty = $orderitems->where('product_id', $get('product_id'))->sum('p_quantity');
-                                        $soldqty = $orderitems->where('product_id', $get('product_id'))->sum('quantity');
-                                        $set('stock_after', $boughtqty - $soldqty + $get('p_quantity'));
-                                    })
+                                    // ->afterStateUpdated(function (Get $get, Set $set) {
+                                    //     $orderitems = OrderItem::leftJoin('orders', 'order_items.id', '=', 'orders.id')->leftJoin('porders', 'order_items.id', '=', 'porders.id')->get()->where('order.status', '!=', 'canceled')->where('porder.status', '!=', 'canceled');
+                                    //     $boughtqty = $orderitems->where('product_id', $get('product_id'))->sum('p_quantity');
+                                    //     $soldqty = $orderitems->where('product_id', $get('product_id'))->sum('quantity');
+                                    //     $set('stock_before', $boughtqty - $soldqty);
+                                    // })
+                                    // ->afterStateUpdated(function (Get $get, Set $set) {
+                                    //     $orderitems = OrderItem::leftJoin('orders', 'order_items.id', '=', 'orders.id')->leftJoin('porders', 'order_items.id', '=', 'porders.id')->get()->where('order.status', '!=', 'canceled')->where('porder.status', '!=', 'canceled');
+                                    //     $boughtqty = $orderitems->where('product_id', $get('product_id'))->sum('p_quantity');
+                                    //     $soldqty = $orderitems->where('product_id', $get('product_id'))->sum('quantity');
+                                    //     $set('stock_after', $boughtqty - $soldqty + $get('p_quantity'));
+                                    // })
 
 
                                     ->columnSpan(['sm' => 8, 'md' => 8, 'lg' => 8, 'xl' => 8]),
 
-                                TextInput::make('stock_before')
-                                    ->label('Stock Before')
-                                    ->disabled()
-                                    ->dehydrated()
-                                    ->columnSpan(['sm' => 2, 'md' => 2, 'lg' => 2, 'xl' => 2]),
+                                // TextInput::make('stock_before')
+                                //     ->label('Stock Before')
+                                //     ->disabled()
+                                //     ->dehydrated()
+                                //     ->columnSpan(['sm' => 2, 'md' => 2, 'lg' => 2, 'xl' => 2]),
 
-                                TextInput::make('stock_after')
-                                    ->label('Stock After')
-                                    ->disabled()
-                                    ->dehydrated()
-                                    ->columnSpan(['sm' => 2, 'md' => 2, 'lg' => 2, 'xl' => 2]),
+                                // TextInput::make('stock_after')
+                                //     ->label('Stock After')
+                                //     ->disabled()
+                                //     ->dehydrated()
+                                //     ->columnSpan(['sm' => 2, 'md' => 2, 'lg' => 2, 'xl' => 2]),
 
                                 Hidden::make('branch_id')
                                     ->default(fn() => Auth::user()->branch_id)

@@ -63,6 +63,28 @@
         </div>
     </div>
 
+    <!-- Modal Detail Produk -->
+    <div 
+        x-show="showProductModal" 
+        x-transition.opacity 
+        x-cloak
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+        @click.self="showProductModal = false"
+    >
+      <div class="bg-white p-4 rounded-lg shadow-lg w-11/12 md:w-1/3">
+          <h2 class="text-lg font-bold mb-2" x-text="productDetail.name"></h2>
+          <img :src="productDetail.images && productDetail.images.length > 0 
+            ? '/storage/' + productDetail.images[0] 
+            : '/storage/food-packaging.png'" alt="" class="w-full object-cover rounded mb-2 mx-auto aspect-square">
+          <p class="text-gray-700 text-sm mb-2" x-text="productDetail.description"></p>
+          <p class="font-semibold text-lg" x-text="`Rp ${formatMoney(productDetail.price)}`"></p>
+
+          <div class="text-right mt-3">
+              <button @click="showProductModal = false" class="px-3 py-1 bg-gray-300 rounded">Tutup</button>
+          </div>
+      </div>
+    </div>
+
     <!-- Sidebar Cart (mobile: slide-in, desktop: tetap terlihat) -->
     <div 
         class="fixed inset-y-0 left-0 w-full bg-white transform transition-transform duration-300 z-20
@@ -156,7 +178,7 @@
                 <template x-for="(item, idx) in cart" :key="item.id">
                 <div class="block items-center gap-2 border border-gray-200 rounded p-2">
                     <div class="w-full flex justify-between">
-                        <div class="flex justify-start gap-2">
+                        <div class="flex justify-start gap-2 cursor-pointer hover:underline hover:text-blue-500"  @click="showProduct(item.id)">
                             <div class="font-medium" x-text="item.name"></div>
                             <div class="font-light" x-text="item.variant"></div>
                         </div>
@@ -292,20 +314,57 @@
 
       <div class="grid lg:grid-cols-3 grid-cols-2 gap-2 px-2">
         <template x-for="p in products.data" :key="p.id">
-          <button @click="addToCart(p)" onmouseup="setTimeout(() => this.blur(), 200)"  class="border border-gray-200 rounded p-3 transition-colors duration-300 active:bg-blue-400 focus:bg-blue-400">
-            {{-- <div class="relative -mb-10 flex justify-end">
-                <button @click="addToCart(p)" onmouseup="setTimeout(() => this.blur(), 200)" class="bg-blue-500 transition-colors duration-300 active:bg-blue-900 focus:bg-blue-900 text-white px-2 py-2 rounded">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                        <path fill-rule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd" />
-                    </svg>
-                </button>
-            </div> --}}
-            <div class="font-semibold" x-text="p.name"></div>
-            <div class="flex justify-between gap-2">
-                <em class="text-sm" x-text="p.variant"></em>
-                <span class="text-sm" x-text="`Rp ${formatMoney(p.price)}`"></span>
-            </div>            
-          </button>
+          <div class="relative">
+              <!-- 🔵 Badge jumlah produk di cart -->
+              <template x-if="cart.some(item => item.id === p.id)">
+                  <div 
+                      x-transition.scale.origin.top.right
+                      class="absolute bottom-2.5 left-2 bg-white border border-gray-300 rounded-full flex items-center justify-between h-6 shadow-md text-xs select-none"
+                  >
+                      <!-- Tombol - -->
+                      <button 
+                          class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold transition-colors duration-300 active:bg-red-400 focus:bg-red-400" onmouseup="setTimeout(() => this.blur(), 200)"
+                          @click.stop="
+                              let item = cart.find(i => i.id === p.id);
+                              if (item) {
+                                  if (item.quantity > 1) {
+                                      decrementQty(item);
+                                  } else {
+                                      cart = cart.filter(i => i.id !== p.id);
+                                      // this.recalcTotals(); // opsional kalau kamu mau recalculasi total
+                                  }
+                              }
+                          "
+                      >−</button>
+
+                      <!-- Angka quantity -->
+                      <span class="text-gray-800 font-semibold mx-1" 
+                            x-text="(cart.find(i => i.id === p.id) || {}).quantity || ''">
+                      </span>
+
+                      <!-- Tombol + -->
+                      <button 
+                          class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold transition-colors duration-300 active:bg-blue-400 focus:bg-blue-400" onmouseup="setTimeout(() => this.blur(), 200)"
+                          @click.stop="
+                              let item = cart.find(i => i.id === p.id);
+                              if (item) {
+                                  incrementQty(item);
+                              }
+                          "
+                      >+</button>
+                  </div>
+              </template>
+              <button @click="addToCart(p)" onmouseup="setTimeout(() => this.blur(), 200)" class="w-full border border-gray-200 rounded p-3 transition-colors duration-300 active:bg-blue-400 focus:bg-blue-400">
+                {{-- <img :src="p.images && p.images.length > 0 
+                ? '/storage/' + p.images[0] 
+                : '/storage/food-packaging.png'" alt="" class="rounded-sm aspect-square"> --}}
+                <div x-text="p.name" @click.stop="showProduct(p.id)" class="font-semibold cursor-pointer hover:underline hover:text-blue-500"></div>
+                <div class="flex justify-between gap-2">
+                    <em class="text-sm" x-text="p.variant"></em>
+                    <span class="text-sm" x-text="`Rp ${formatMoney(p.price)}`"></span>
+                </div>            
+              </button>
+          </div>
         </template>
       </div>
 
@@ -332,6 +391,9 @@ function posApp() {
     cart: [],
     customer_name: '',
 
+    showProductModal: false,
+    productDetail: {},
+
     init() {
         // Jika localStorage kosong maka isi dari window.initialCart (data yang disiapkan server)
         const saved = localStorage.getItem('pos_cart');
@@ -353,6 +415,20 @@ function posApp() {
         }
         this.fetchProducts();
     },
+
+    async showProduct(id) {
+      this.showProductModal = true
+      this.productDetail = { name: 'Loading...', image_url: '', price: 0, description: '' }
+
+      try {
+        let response = await fetch(`/api/products/${id}`)
+        if (!response.ok) throw new Error('Gagal ambil data')
+        this.productDetail = await response.json()
+      } catch (err) {
+        console.error(err)
+        this.productDetail = { name: 'Error memuat produk', description: '', price: 0 }
+      }
+    },    
 
     async fetchProducts(url = null) {
       try {

@@ -151,15 +151,15 @@ class AdjItemResource extends Resource
                                         // $orderitems = OrderItem::leftJoin('orders', 'order_items.id', '=', 'orders.id')->leftJoin('porders', 'order_items.id', '=', 'porders.id')->get()->where('order.status', '!=', 'canceled')->where('porder.status', '!=', 'canceled')->where('order.status', '!=', 'new')->where('porder.status', '!=', 'new')->where('porder.status', '!=', 'processing')->where('porder.status', '!=', 'shipped');
                                         // $itemsPlus = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id', $get('product_id'))->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('p_quantity');                                                                                
                                         // $itemsMins = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id', $get('product_id'))->where('status', '!=', 'canceled')->where('status', '!=', 'new')->sum('quantity');  
-                                        
-                                        $belinya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('porder_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->where('status', '!=', 'canceled')->sum('p_quantity');
-                                        $jualnya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('order_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->where('status', '!=', 'canceled')->sum('quantity');
-                                        $bikinnyaP = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('production_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('p_quantity');
-                                        $bikinnyaM = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('production_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('quantity');
-                                        $sesuainyaP = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('adj_item_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('p_quantity');
-                                        $sesuainyaM = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('adj_item_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('quantity');
-                                        $transferoutnya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('tr_stk_out_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->sum('quantity');
-                                        $transferinnya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('tr_stk_in_id')->whereNowOrPast('date_order')->where('status', '!=', 'new')->where('status', '!=', 'transfering')->sum('p_quantity');
+                                        // dd($get('../../date_order'));
+                                        $belinya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('porder_id')->where('date_order', '<=', $get('../../date_order'))->where('status', '!=', 'new')->where('status', '!=', 'canceled')->sum('p_quantity');
+                                        $jualnya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('order_id')->where('date_order', '<=', $get('../../date_order'))->where('status', '!=', 'new')->where('status', '!=', 'canceled')->sum('quantity');
+                                        $bikinnyaP = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('production_id')->where('date_order', '<=', $get('../../date_order'))->where('status', '!=', 'new')->sum('p_quantity');
+                                        $bikinnyaM = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('production_id')->where('date_order', '<=', $get('../../date_order'))->where('status', '!=', 'new')->sum('quantity');
+                                        $sesuainyaP = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('adj_item_id')->where('date_order', '<=', $get('../../date_order'))->where('status', '!=', 'new')->sum('p_quantity');
+                                        $sesuainyaM = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('adj_item_id')->where('date_order', '<=', $get('../../date_order'))->where('status', '!=', 'new')->sum('quantity');
+                                        $transferoutnya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('tr_stk_out_id')->where('date_order', '<=', $get('../../date_order'))->where('status', '!=', 'new')->sum('quantity');
+                                        $transferinnya = OrderItem::where('branch_id', Auth::user()->branch_id)->where('product_id',$get('product_id'))->whereNotNull('tr_stk_in_id')->where('date_order', '<=', $get('../../date_order'))->where('status', '!=', 'new')->where('status', '!=', 'transfering')->sum('p_quantity');
                                         $orderitems = $belinya - $jualnya + $bikinnyaP - $bikinnyaM + $sesuainyaP - $sesuainyaM - $transferoutnya + $transferinnya;
 
                                         $set('stock_before', $orderitems);
@@ -178,7 +178,8 @@ class AdjItemResource extends Resource
                                 TextInput::make('stock_after')
                                     ->label('Stock After')
                                     ->numeric()
-                                    ->live(debounce: 1000)
+                                    // ->live(debounce: 1000)
+                                    ->live(onBlur: true)
                                     ->afterStateUpdated(function ($state, Get $get, Set $set) {
                                         $stbefore = $get('stock_before');
                                         $value = $state - $stbefore;

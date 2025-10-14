@@ -46,16 +46,16 @@ class CreateTrStkOut extends CreateRecord
             $produk = Product::where('branch_id', $record->to_branch_id);
             $sku = $produkdari->where('id', $item['product_id'])->value('sku');
             $produkID = $produk->where('sku', $sku)->value('id');
-            $orderitems = OrderItem::leftJoin('orders', 'order_items.id', '=', 'orders.id')->leftJoin('porders', 'order_items.id', '=', 'porders.id')->get()->where('order.status', '!=', 'canceled')->where('porder.status', '!=', 'canceled');
-            $boughtqty = $orderitems->where('product_id', $produkID)->sum('p_quantity');
-            $soldqty = $orderitems->where('product_id', $produkID)->sum('quantity');
-            $stokBef = $boughtqty - $soldqty;
-            $stokAft = $boughtqty - $soldqty + $item['quantity'];
+            // $orderitems = OrderItem::leftJoin('orders', 'order_items.id', '=', 'orders.id')->leftJoin('porders', 'order_items.id', '=', 'porders.id')->get()->where('order.status', '!=', 'canceled')->where('porder.status', '!=', 'canceled');
+            // $boughtqty = $orderitems->where('product_id', $produkID)->sum('p_quantity');
+            // $soldqty = $orderitems->where('product_id', $produkID)->sum('quantity');
+            // $stokBef = $boughtqty - $soldqty;
+            // $stokAft = $boughtqty - $soldqty + $item['quantity'];
             $tfIN->items()->saveMany([
                 new OrderItem([
                     'product_id' => $produkID,
-                    'stock_before' => $stokBef,
-                    'stock_after' => $stokAft,
+                    // 'stock_before' => $stokBef,
+                    // 'stock_after' => $stokAft,
                     'unit_name' => $produk->where('sku', $sku)->value('unit_name'),
                     'total_weight' => $produk->where('sku', $sku)->value('weight') * $item['quantity'],
                     'contain' => $produk->where('sku', $sku)->value('contain'),
