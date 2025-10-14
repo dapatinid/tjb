@@ -142,7 +142,8 @@ class TrStkInResource extends Resource
                                 'new' => 'heroicon-m-sparkles',
                                 'transfering' => 'heroicon-m-arrow-path',
                                 'done' => 'heroicon-m-check-badge'
-                            ]),
+                            ])
+                            ->disableOptionWhen(fn (string $value): bool => $value === 'new'),
                         // ->live(onBlur: true)
                         // ->afterStateUpdated(fn($state, Set $set) => ($state === 'done' ? $set('date_order', now()->format('Y-m-d H:i:s')) : ''))
 
@@ -190,7 +191,7 @@ class TrStkInResource extends Resource
                                     // })
 
 
-                                    ->columnSpan(['sm' => 8, 'md' => 8, 'lg' => 8, 'xl' => 8]),
+                                    ->columnSpan(['sm' => 12, 'md' => 12, 'lg' => 12, 'xl' => 12]),
 
                                 // TextInput::make('stock_before')
                                 //     ->label('Stock Before')
@@ -223,11 +224,11 @@ class TrStkInResource extends Resource
                                     ->required()
                                     ->minValue(0)
                                     ->live(onBlur: true) //->live(debounce: 1000)
-                                    ->afterStateUpdated(function ($state, Get $get, Set $set) {
-                                        $stbefore = $get('stock_before');
-                                        $set('stock_after', $stbefore + $state);
-                                    })
-                                    ->afterStateHydrated(fn($state, Set $set, Get $get) => $set('total_amount', $state * $get('unit_amount')))
+                                    // ->afterStateUpdated(function ($state, Get $get, Set $set) {
+                                    //     $stbefore = $get('stock_before');
+                                    //     $set('stock_after', $stbefore + $state);
+                                    // })
+                                    // ->afterStateHydrated(fn($state, Set $set, Get $get) => $set('total_amount', $state * $get('unit_amount')))
                                     ->columnSpan(['sm' => 4, 'md' => 4, 'lg' => 4, 'xl' => 4]),
 
                                 TextInput::make('unit_amount')
@@ -237,7 +238,7 @@ class TrStkInResource extends Resource
                                     ->dehydrated()
                                     ->numeric()
                                     ->live(onBlur: true) //->live(debounce: 1000)
-                                    ->afterStateUpdated(fn($state, Set $set, Get $get) => $set('total_amount', $state * $get('p_quantity')))
+                                    // ->afterStateUpdated(fn($state, Set $set, Get $get) => $set('total_amount', $state * $get('p_quantity')))
                                     ->columnSpan(['sm' => 4, 'md' => 4, 'lg' => 4, 'xl' => 4]),
 
                                 TextInput::make('total_amount')
@@ -245,12 +246,12 @@ class TrStkInResource extends Resource
                                     ->required()
                                     ->readOnly()
                                     ->numeric()
-                                    ->placeholder(function (Set $set, Get $get) {
-                                        $stbefore = $get('stock_before');
-                                        $stafter = $get('stock_after');
-                                        $value =  $stafter - $stbefore;
-                                        $set('total_amount', $value * $get('unit_amount'));
-                                    })
+                                    // ->placeholder(function (Set $set, Get $get) {
+                                    //     $stbefore = $get('stock_before');
+                                    //     $stafter = $get('stock_after');
+                                    //     $value =  $stafter - $stbefore;
+                                    //     $set('total_amount', $value * $get('unit_amount'));
+                                    // })
                                     ->columnSpan(['sm' => 4, 'md' => 4, 'lg' => 4, 'xl' => 4]),
 
                                 TextInput::make('notes')
@@ -365,6 +366,7 @@ class TrStkInResource extends Resource
                         'transfering' => 'Transfering',
                         'done' => 'Done'
                     ])
+                    ->disableOptionWhen(fn (string $value): bool => $value === 'new')
                     ->afterStateUpdated(function ($record, $state) {
                         OrderItem::where('tr_stk_in_id', $record->id)->update(['status' => $state]);
                         $outID = TrStkOut::where('code_tr', Str::replace('TRI', 'TRO', $record->code_tr))->value('id');

@@ -146,7 +146,8 @@ class TrStkOutResource extends Resource
                                 'new' => 'heroicon-m-sparkles',
                                 'transfering' => 'heroicon-m-arrow-path',
                                 'done' => 'heroicon-m-check-badge'
-                            ]),
+                            ])
+                            ->disableOptionWhen(fn (string $value): bool => $value === 'done'),
 
                         Textarea::make('notes')
                             ->autosize()
@@ -216,7 +217,7 @@ class TrStkOutResource extends Resource
                                         },
                                     ])
 
-                                    ->columnSpan(['sm' => 8, 'md' => 8, 'lg' => 8, 'xl' => 8]),
+                                    ->columnSpan(['sm' => 12, 'md' => 12, 'lg' => 12, 'xl' => 12]),
 
                                 // TextInput::make('stock_before')
                                 //     ->label('Stock Before')
@@ -249,11 +250,11 @@ class TrStkOutResource extends Resource
                                     ->required()
                                     ->minValue(1)
                                     ->live(onBlur: true) //->live(debounce: 1000)
-                                    ->afterStateUpdated(function ($state, Get $get, Set $set) {
-                                        $stbefore = $get('stock_before');
-                                        $set('stock_after', $stbefore - $state);
-                                    })
-                                    ->afterStateHydrated(fn($state, Set $set, Get $get) => $set('p_total_amount', $state * $get('p_unit_amount')))
+                                    // ->afterStateUpdated(function ($state, Get $get, Set $set) {
+                                    //     $stbefore = $get('stock_before');
+                                    //     $set('stock_after', $stbefore - $state);
+                                    // })
+                                    // ->afterStateHydrated(fn($state, Set $set, Get $get) => $set('p_total_amount', $state * $get('p_unit_amount')))
                                     ->columnSpan(['sm' => 4, 'md' => 4, 'lg' => 4, 'xl' => 4]),
 
                                 TextInput::make('p_unit_amount')
@@ -263,7 +264,7 @@ class TrStkOutResource extends Resource
                                     ->dehydrated()
                                     ->numeric()
                                     ->live(onBlur: true) //->live(debounce: 1000)
-                                    ->afterStateUpdated(fn($state, Set $set, Get $get) => $set('p_total_amount', $state * $get('quantity')))
+                                    // ->afterStateUpdated(fn($state, Set $set, Get $get) => $set('p_total_amount', $state * $get('quantity')))
                                     ->columnSpan(['sm' => 4, 'md' => 4, 'lg' => 4, 'xl' => 4]),
 
                                 TextInput::make('p_total_amount')
@@ -271,16 +272,16 @@ class TrStkOutResource extends Resource
                                     ->required()
                                     ->readOnly()
                                     ->numeric()
-                                    ->placeholder(function (Set $set, Get $get) {
-                                        $stbefore = $get('stock_before');
-                                        $stafter = $get('stock_after');
-                                        $value = $stafter - $stbefore;
-                                        if ($value < 0) {
-                                            $set('p_total_amount', $value * -1 * $get('p_unit_amount'));
-                                        } else {
-                                            $set('p_total_amount', $value * $get('p_unit_amount'));
-                                        }
-                                    })
+                                    // ->placeholder(function (Set $set, Get $get) {
+                                    //     $stbefore = $get('stock_before');
+                                    //     $stafter = $get('stock_after');
+                                    //     $value = $stafter - $stbefore;
+                                    //     if ($value < 0) {
+                                    //         $set('p_total_amount', $value * -1 * $get('p_unit_amount'));
+                                    //     } else {
+                                    //         $set('p_total_amount', $value * $get('p_unit_amount'));
+                                    //     }
+                                    // })
                                     ->columnSpan(['sm' => 4, 'md' => 4, 'lg' => 4, 'xl' => 4]),
 
                                 TextInput::make('notes')
@@ -394,6 +395,7 @@ class TrStkOutResource extends Resource
                         'transfering' => 'Transfering',
                         'done' => 'Done'
                     ])
+                    ->disableOptionWhen(fn (string $value): bool => $value === 'done')
                     ->afterStateUpdated(function ($record, $state) {
                         OrderItem::where('tr_stk_out_id', $record->id)->update(['status' => $state]);
                         $inID = TrStkIn::where('code_tr', Str::replace('TRO', 'TRI', $record->code_tr))->value('id');

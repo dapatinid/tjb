@@ -82,6 +82,12 @@ class OrderItemResource extends Resource
             })
             ->columns([
 
+                TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable()
+                    ->searchable(isIndividual: true)
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('date_order')
                     ->dateTime()
                     ->sortable()
@@ -281,10 +287,10 @@ class OrderItemResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
 
             ])->defaultSort('date_order', 'desc')
-            // ->persistSortInSession()
-            // ->persistFiltersInSession()
-            // ->persistSearchInSession()
-            // ->deselectAllRecordsWhenFiltered(false)
+            ->persistSortInSession()
+            ->persistFiltersInSession()
+            ->persistSearchInSession()
+            ->deselectAllRecordsWhenFiltered(false)
             ->defaultPaginationPageOption(25)
             ->paginated([
                 10,
