@@ -439,6 +439,7 @@ class TrStkInResource extends Resource
                                     'transfering' => 'Transfering',
                                     'done' => 'Done'
                                 ])
+                                ->disableOptionWhen(fn (string $value): bool => $value === 'new')
                                 ->required(),
                         ]),
                     // Tables\Actions\DeleteBulkAction::make(),

@@ -11,22 +11,37 @@
     <script>
         window.initialCart = @json($initialCart ?? []);
     </script>
-  <div x-data="{ showCart: false, showModalMenu: false, showModal: false }" 
-        class="grid md:grid-cols-3 grid-cols-1 md:gap-x-2 gap-y-2 gap-0">
+  
+<div 
+    x-data="{
+        products: products, // gunakan array produk yang sudah ada
+        cols: 3,
+        get distributed() {
+            let groups = Array.from({ length: this.cols }, () => []);
+            this.products.forEach((p, i) => {
+                groups[i % this.cols].push(p);
+            });
+            return groups;
+        }
+    }"
+    class="grid lg:grid-cols-4 md:grid-cols-3 xs:grid-cols-3 grid-cols-2 gap-2"
+>
+    <template x-for="(column, colIndex) in distributed" :key="colIndex">
+        <div class='flex flex-col gap-2'>
+            <template x-for="p in column" :key="p.id">
+                <!-- product tile asli -->
+                <div class="border rounded p-2 bg-white text-center">
+                    <template x-if="p.image_url">
+                        <img :src="p.image_url" class="w-full h-32 object-cover rounded">
+                    </template>
+                    <div class="mt-2 font-semibold" x-text="p.name"></div>
+                    <div class="text-sm text-gray-500" x-text="p.price"></div>
+                </div>
+            </template>
+        </div>
+    </template>
+</div>
 
-    <!-- Modal Checkout -->
-    <div 
-        x-show="showModalMenu" 
-        x-transition.opacity 
-        x-cloak
-        class="fixed inset-0 flex items-center justify-center z-50 bg-black/50 bg-opacity-50"
-        @click.self="showModalMenu = false">
-
-        <div 
-            class="bg-white rounded-lg shadow-lg w-11/12 md:w-1/3"
-            x-transition.scale>
-            
-            <div class="text-xl font-bold border-b border-gray-200 p-3 text-center">MENU</div>
             <div class="flex flex-wrap p-3 gap-2">
               <a href="/" class="px-2 py-1 text-white bg-blue-500 rounded cursor-pointer">Home</a>
               <a href="/admin" class="px-2 py-1 text-white bg-blue-500 rounded cursor-pointer">Admin Panel</a>
@@ -182,8 +197,8 @@
                 <div class="block items-center gap-2 border border-gray-200 rounded p-2">
                     <div class="w-full flex justify-between">
                         <div class="flex justify-start gap-2 cursor-pointer hover:underline hover:text-blue-500"  @click="showProduct(item.id)">
-                            <div class="font-medium text-sm" x-text="item.name"></div>
-                            <div class="font-light text-sm" x-text="item.variant"></div>
+                            <div class="font-medium" x-text="item.name"></div>
+                            <div class="font-light" x-text="item.variant"></div>
                         </div>
                         <div>
                             <button @click="removeItem(idx)" class="text-red-600">
@@ -195,7 +210,7 @@
                     </div>
                     <div class="w-full flex space-x-2">
                         <div class="w-1/3">
-                            <input type="number" step="100" class="w-full text-sm border border-gray-200 rounded px-2 py-0" 
+                            <input type="number" step="100" class="w-full border border-gray-200 rounded px-2 py-0" 
                             x-mask:dynamic="(value) => {
                             const numeric = value.replace(/[^0-9]/g, '');
                             if (numeric === '') return '0';   // tampilkan 0 jika kosong
@@ -210,14 +225,14 @@
                                 <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm3 10.5a.75.75 0 0 0 0-1.5H9a.75.75 0 0 0 0 1.5h6Z" clip-rule="evenodd" />
                                 </svg>
                             </button>
-                                <input type="number" class="w-12 text-sm border border-gray-200 rounded px-2 py-0 text-center" x-model.number="item.quantity" @input="recalcItem(item)">
+                                <input type="number" class="w-12 border border-gray-200 rounded px-2 py-0 text-center" x-model.number="item.quantity" @input="recalcItem(item)">
                             <button @click="incrementQty(item)" onmouseup="setTimeout(() => this.blur(), 200)" class="items-center text-blue-500 transition-colors duration-300 active:text-black focus:text-black">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
                                 <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" clip-rule="evenodd" />
                                 </svg>
                             </button>
                         </div>
-                        <div class="w-1/3 flex justify-end text-sm" x-text="`${formatMoney(item.subtotal)}`">
+                        <div class="w-1/3 flex justify-end" x-text="`${formatMoney(item.subtotal)}`">
                         </div>
                     </div>
                 </div>
@@ -226,9 +241,9 @@
 
             <div class="mt-4">
                 <div class="flex justify-between">
-                <div class="font-bold text-sm" x-text="`Total : ${(totalweight)} kg`"></div>
+                <div class="font-bold" x-text="`Total : ${(totalweight)} kg`"></div>
                 {{-- <div class="font-bold" x-text="`Total : `"></div> --}}
-                <div class="font-bold text-sm" x-text="`Rp${formatMoney(total)}`"></div>
+                <div class="font-bold" x-text="`Rp${formatMoney(total)}`"></div>
                 </div>
 
                 <div class="mt-3 flex gap-2">
@@ -317,9 +332,9 @@
       </div>
 
       <!-- Badge toggle kategori -->
-      <div class="relative -mt-1 mb-1 mx-2">
-        <div class="absolute left-0 top-0 h-full w-10 md:hidden bg-gradient-to-r from-white to-transparent pointer-events-none z-5"></div>
-        <div class="absolute right-0 top-0 h-full w-10 md:hidden bg-gradient-to-l from-white to-transparent pointer-events-none z-5"></div>
+      <div class="relative m-3 -mt-1">
+        <div class="absolute left-0 top-0 h-full w-8 md:hidden bg-gradient-to-r from-white to-transparent pointer-events-none z-5"></div>
+        <div class="absolute right-0 top-0 h-full w-8 md:hidden bg-gradient-to-l from-white to-transparent pointer-events-none z-5"></div>
 
         <div
           class="flex gap-2 overflow-x-auto scrollbar-hide md:px-0 px-1"
@@ -351,16 +366,37 @@
         </div>
       </div>  
 
-      <div class="grid lg:grid-cols-4 md:grid-cols-3 xs:grid-cols-3 grid-cols-2 gap-2 px-2">
-    <template x-for="(col, i) in roundRobin(products.data, colsCount)" :key="i">
-      <div>
-        <template x-for="p in col" :key="p.id">
-          <div class="relative ">
-          <div class="absolute top-2.5 left-2 bg-white p-1 rounded-full" @click="showProduct(p.id)"> 
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-            </svg>
-          </div>
+      
+<div 
+    x-data="{
+        products: products, // gunakan array produk yang sudah ada
+        cols: 3,
+        get distributed() {
+            let groups = Array.from({ length: this.cols }, () => []);
+            this.products.forEach((p, i) => {
+                groups[i % this.cols].push(p);
+            });
+            return groups;
+        }
+    }"
+    class="grid lg:grid-cols-4 md:grid-cols-3 xs:grid-cols-3 grid-cols-2 gap-2"
+>
+    <template x-for="(column, colIndex) in distributed" :key="colIndex">
+        <div class='flex flex-col gap-2'>
+            <template x-for="p in column" :key="p.id">
+                <!-- product tile asli -->
+                <div class="border rounded p-2 bg-white text-center">
+                    <template x-if="p.image_url">
+                        <img :src="p.image_url" class="w-full h-32 object-cover rounded">
+                    </template>
+                    <div class="mt-2 font-semibold" x-text="p.name"></div>
+                    <div class="text-sm text-gray-500" x-text="p.price"></div>
+                </div>
+            </template>
+        </div>
+    </template>
+</div>
+
               <!-- 🔵 Badge jumlah produk di cart -->
               <template x-if="cart.some(item => item.id === p.id)">
                   <div 
@@ -404,20 +440,18 @@
                 :class="cart.some(item => item.id === p.id) ? 'bg-green-300': p.is_active == 0 ? 'bg-gray-300': 'bg-white'" 
                 {{-- :class="cart.some(item => item.id === p.id) ? 'bg-yellow-300': 'bg-white'"  --}}
                 {{-- :class="p.is_active == 0 ? 'bg-green-200': 'bg-white'"  --}}
-                class="w-full my-2 p-3 block rounded border border-gray-200 transition-colors duration-300 active:bg-blue-400 focus:bg-blue-400">
+                class="w-full p-3 space-y-2 block rounded border border-gray-200 transition-colors duration-300 active:bg-blue-400 focus:bg-blue-400">
                 <img :src="p.images && p.images.length > 0 
                 ? '/storage/' + p.images[0] 
                 : '/storage/box.png'" alt="" class="rounded aspect-square object-cover">
-                <div x-text="p.name" class="font-semibold text-sm/4 mt-1 text-start line-clamp-2"></div>
-                <div class="flex flex-wrap justify-between gap-1">
-                    <em class="text-xs pe-1 line-clamp-2" x-text="p.variant"></em>
-                    <div class="flex ms-auto"><span class="text-xs" x-text="`Rp${formatMoney(p.price)}`"></span></div>       
+                <div x-text="p.name" class="font-semibold text-start line-clamp-2"></div>
+                <div class="flex justify-between gap-2">
+                    <em class="text-sm pe-1 truncate" x-text="p.variant"></em>
+                    <span class="text-sm" x-text="`Rp${formatMoney(p.price)}`"></span>
                 </div>            
               </button>
           </div>
         </template>
-      </div>
-    </template>
       </div>
 
       <!-- pagination -->
@@ -467,29 +501,7 @@ function posApp() {
       this.fetchProducts();
     },   
 
-    colsCount: 2,
-    updateCols() {
-      if (window.matchMedia('(min-width: 1024px)').matches) {
-        this.colsCount = 4; // lg:grid-cols-4
-      } else if (window.matchMedia('(min-width: 768px)').matches) {
-        this.colsCount = 3; // md:grid-cols-3
-      } else if (window.matchMedia('(min-width: 430px)').matches) {
-        this.colsCount = 3; // xs:grid-cols-3
-      } else {
-        this.colsCount = 2; // grid-cols-2 (mobile)
-      }
-    },
-    roundRobin(arr, cols) {
-      const result = Array.from({ length: cols }, () => []);
-      arr.forEach((item, i) => result[i % cols].push(item));
-      return result;
-    },    
-
     init() {
-        // Mengetahui ukuran lebar layar
-        this.updateCols();
-        window.addEventListener('resize', () => this.updateCols());
-
         // Jika localStorage kosong maka isi dari window.initialCart (data yang disiapkan server)
         const saved = localStorage.getItem('pos_cart');
         if (saved) {

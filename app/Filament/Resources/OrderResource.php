@@ -869,9 +869,10 @@ class OrderResource extends Resource
                                     $payment->payment_method = $data['payment_method'];
                                     $payment->rekening = $data['rekening'];
                                     $payment->nominal_plus = $record->total_cashback * -1;
+                                    $payment->nominal = $record->total_cashback * -1;
                                     $payment->mutation_type = 'Sales';
-                                    // $payment->debit = 'NR-DB-B-1100 CASH / BANK';
-                                    // $payment->kredit = 'NR-DB-B-3000 Piutang Penjualan Barang';
+                                    $payment->debit = 'NR-DB-B-1100 CASH / BANK';
+                                    $payment->kredit = 'NR-DB-B-3000 Piutang Penjualan Barang';
                                     $payment->created_by = Auth::user()->id;
                                     $payment->updated_by = Auth::user()->id;
                                     $payment->user_id = $record->user_id;
@@ -900,8 +901,9 @@ class OrderResource extends Resource
                         ->action(function (Collection $records, array $data): void {
                             foreach ($records as $record) {
                                 $record->status = $data['status'];
+                                $record->updated_by = Auth::user()->id;
                                 $record->save();
-                                OrderItem::where('order_id', $record->id)->update(['status' => $data['status']]);
+                                OrderItem::where('order_id', $record->id)->update(['status' => $data['status'], 'updated_by' => Auth::user()->id]);
                             }
                         })
                         ->form([

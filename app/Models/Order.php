@@ -89,114 +89,114 @@ class Order extends Model
             $model->items()->withTrashed()->restore();
             $model->payments()->withTrashed()->restore();
         });
-        static::updating(function ($model) {
-            if ($model->isDirty('date_order')) {
-                $hari = Carbon::parse($model->date_order)->format('Y-m-d');
-                $antri = Order::where('branch_id', auth()->user()->branch_id)->where('date_order', 'like', "%$hari%")->count() + 1;
-                Order::where('id', $model->id)->update(['q' => $antri,]);
-            }
-            // hitung Piutang Penjualan untuk jurnal
-            // if ($model->isDirty('grand_total')) {
-            Payment::where('paymentable_type', Order::class)
-                ->where('paymentable_id', $model->id)
-                ->where('mutation_type', "Piutang Penjualan")
-                ->update([
-                    // 'date_payment' => $lastEdit,
-                    'date_payment' => $model->date_order,
-                    'nominal_plus' => $model->grand_total,
-                    'nominal_mins' => 0,
-                    'nominal' => $model->grand_total,
-                ]);
-            // }
-        });
-        static::updated(function ($model) {
-            $orderTarget = Order::where('id', $model->id);
-            $user_id = Order::where('id', $model->id)->value('user_id');
-            // $lastEdit = Payment::where('paymentable_type', Order::class)->where('paymentable_id', $model->id)->where('mutation_type', "Sales")->orderBy('date_payment', 'desc')->value('date_payment');
+        // static::updating(function ($model) {
+        //     if ($model->isDirty('date_order')) {
+        //         $hari = Carbon::parse($model->date_order)->format('Y-m-d');
+        //         $antri = Order::where('branch_id', auth()->user()->branch_id)->where('date_order', 'like', "%$hari%")->count() + 1;
+        //         Order::where('id', $model->id)->update(['q' => $antri,]);
+        //     }
+        //     // hitung Piutang Penjualan untuk jurnal
+        //     // if ($model->isDirty('grand_total')) {
+        //     Payment::where('paymentable_type', Order::class)
+        //         ->where('paymentable_id', $model->id)
+        //         ->where('mutation_type', "Piutang Penjualan")
+        //         ->update([
+        //             // 'date_payment' => $lastEdit,
+        //             'date_payment' => $model->date_order,
+        //             'nominal_plus' => $model->grand_total,
+        //             'nominal_mins' => 0,
+        //             'nominal' => $model->grand_total,
+        //         ]);
+        //     // }
+        // });
+        // static::updated(function ($model) {
+        //     $orderTarget = Order::where('id', $model->id);
+        //     $user_id = Order::where('id', $model->id)->value('user_id');
+        //     // $lastEdit = Payment::where('paymentable_type', Order::class)->where('paymentable_id', $model->id)->where('mutation_type', "Sales")->orderBy('date_payment', 'desc')->value('date_payment');
 
-            // Update siapa yang BUAT
-            OrderItem::where('order_id', $model->id)->update([
-                'updated_by' => auth()->user()->id,
-                'status' => $model->status,
-                'date_order' => $model->date_order
-            ]);
+        //     // Update siapa yang BUAT
+        //     OrderItem::where('order_id', $model->id)->update([
+        //         'updated_by' => auth()->user()->id,
+        //         'status' => $model->status,
+        //         'date_order' => $model->date_order
+        //     ]);
 
-            // Update siapa yang JUAL/BELI di PAYMENT
-            Payment::where('paymentable_id', $model->id)->where('paymentable_type', Order::class)->update([
-                'updated_by' => auth()->user()->id,
-                'user_id' => $user_id,
-            ]);
+        //     // Update siapa yang JUAL/BELI di PAYMENT
+        //     Payment::where('paymentable_id', $model->id)->where('paymentable_type', Order::class)->update([
+        //         'updated_by' => auth()->user()->id,
+        //         'user_id' => $user_id,
+        //     ]);
 
-            // Tanggal Pelunasan
-            if ($model->is_paid == 1) {
-                $dataPAIDat = Payment::where('paymentable_type', Order::class)->where('paymentable_id', $model->id)->where('mutation_type', "Sales")->orderBy('date_payment', 'desc')->value('date_payment');
-                if ($model->total_cashback >= 0) {
-                    foreach ($model->payments as $payment) {
-                        Payment::where('paymentable_type', Order::class)
-                            ->where('paymentable_id', $model->id)
-                            ->where('mutation_type', "Sales")
-                            ->where('id', $payment->id)
-                            ->update([
-                                'nominal_mins' => 0,
-                                'nominal' => $payment->nominal_plus - 0,
-                                'debit' => 'NR-DB-B-1100 CASH / BANK',
-                                'kredit' => 'NR-DB-B-3000 Piutang Penjualan Barang',
-                            ]);
-                    }
-                    $nominalPlus = Payment::where('paymentable_type', Order::class)->where('paymentable_id', $model->id)->where('mutation_type', "Sales")->orderBy('date_payment', 'desc')->value('nominal_plus');
-                    Payment::where('paymentable_type', Order::class)->where('paymentable_id', $model->id)->where('mutation_type', "Sales")->orderBy('date_payment', 'desc')->take(1)
-                        ->update([
-                            'nominal_mins' => $model->total_cashback,
-                            'nominal' => $nominalPlus - $model->total_cashback,
-                            'debit' => 'NR-DB-B-1100 CASH / BANK',
-                            'kredit' => 'NR-DB-B-3000 Piutang Penjualan Barang',
-                        ]);
-                }
-            } else {
-                $dataPAIDat = null;
-                foreach ($model->payments as $payment) {
-                    Payment::where('paymentable_type', Order::class)
-                        ->where('paymentable_id', $model->id)
-                        ->where('mutation_type', "Sales")
-                        ->where('id', $payment->id)
-                        ->update([
-                            'nominal_mins' => 0,
-                            'nominal' => $payment->nominal_plus - 0,
-                            'debit' => 'NR-DB-B-1100 CASH / BANK',
-                            'kredit' => 'NR-DB-B-3000 Piutang Penjualan Barang',
-                        ]);
-                }
-            }
+        //     // Tanggal Pelunasan
+        //     if ($model->is_paid == 1) {
+        //         $dataPAIDat = Payment::where('paymentable_type', Order::class)->where('paymentable_id', $model->id)->where('mutation_type', "Sales")->orderBy('date_payment', 'desc')->value('date_payment');
+        //         if ($model->total_cashback >= 0) {
+        //             foreach ($model->payments as $payment) {
+        //                 Payment::where('paymentable_type', Order::class)
+        //                     ->where('paymentable_id', $model->id)
+        //                     ->where('mutation_type', "Sales")
+        //                     ->where('id', $payment->id)
+        //                     ->update([
+        //                         'nominal_mins' => 0,
+        //                         'nominal' => $payment->nominal_plus - 0,
+        //                         'debit' => 'NR-DB-B-1100 CASH / BANK',
+        //                         'kredit' => 'NR-DB-B-3000 Piutang Penjualan Barang',
+        //                     ]);
+        //             }
+        //             $nominalPlus = Payment::where('paymentable_type', Order::class)->where('paymentable_id', $model->id)->where('mutation_type', "Sales")->orderBy('date_payment', 'desc')->value('nominal_plus');
+        //             Payment::where('paymentable_type', Order::class)->where('paymentable_id', $model->id)->where('mutation_type', "Sales")->orderBy('date_payment', 'desc')->take(1)
+        //                 ->update([
+        //                     'nominal_mins' => $model->total_cashback,
+        //                     'nominal' => $nominalPlus - $model->total_cashback,
+        //                     'debit' => 'NR-DB-B-1100 CASH / BANK',
+        //                     'kredit' => 'NR-DB-B-3000 Piutang Penjualan Barang',
+        //                 ]);
+        //         }
+        //     } else {
+        //         $dataPAIDat = null;
+        //         foreach ($model->payments as $payment) {
+        //             Payment::where('paymentable_type', Order::class)
+        //                 ->where('paymentable_id', $model->id)
+        //                 ->where('mutation_type', "Sales")
+        //                 ->where('id', $payment->id)
+        //                 ->update([
+        //                     'nominal_mins' => 0,
+        //                     'nominal' => $payment->nominal_plus - 0,
+        //                     'debit' => 'NR-DB-B-1100 CASH / BANK',
+        //                     'kredit' => 'NR-DB-B-3000 Piutang Penjualan Barang',
+        //                 ]);
+        //         }
+        //     }
 
-            // hitung berat dan ambil nilai beli untuk jurnal
-            $barang_terjual = 0;
-            foreach ($model->items as $item) {
-                $dataItem = OrderItem::find($item->id);
-                $produk_weight = Product::where('id', $dataItem->product_id)->value('weight');
-                $dataItem->update(['total_weight' => $item->quantity * $produk_weight]);
+        //     // hitung berat dan ambil nilai beli untuk jurnal
+        //     $barang_terjual = 0;
+        //     foreach ($model->items as $item) {
+        //         $dataItem = OrderItem::find($item->id);
+        //         $produk_weight = Product::where('id', $dataItem->product_id)->value('weight');
+        //         $dataItem->update(['total_weight' => $item->quantity * $produk_weight]);
 
-                $barang_terjual += Product::where('id', $dataItem->product_id)->value('cogs') * $item->quantity;
-            }
-            $sum_weight = OrderItem::where('order_id', $model->id)->sum('total_weight');
+        //         $barang_terjual += Product::where('id', $dataItem->product_id)->value('cogs') * $item->quantity;
+        //     }
+        //     $sum_weight = OrderItem::where('order_id', $model->id)->sum('total_weight');
 
-            /// update barangterjual
-            Payment::where('paymentable_type', Order::class)
-                ->where('paymentable_id', $model->id)
-                ->where('mutation_type', "Barang Terjual")
-                ->update([
-                    // 'date_payment' => $lastEdit,
-                    'date_payment' => $model->date_order,
-                    'nominal_plus' => 0,
-                    'nominal_mins' => $barang_terjual,
-                    'nominal' => $barang_terjual,
-                ]);
+        //     /// update barangterjual
+        //     Payment::where('paymentable_type', Order::class)
+        //         ->where('paymentable_id', $model->id)
+        //         ->where('mutation_type', "Barang Terjual")
+        //         ->update([
+        //             // 'date_payment' => $lastEdit,
+        //             'date_payment' => $model->date_order,
+        //             'nominal_plus' => 0,
+        //             'nominal_mins' => $barang_terjual,
+        //             'nominal' => $barang_terjual,
+        //         ]);
 
-            $updatePaid = [
-                'paid_at' => $dataPAIDat,
-                'total_weight' => $sum_weight,
-                'updated_by' => auth()->user()->id,
-            ];
-            $orderTarget->update($updatePaid);
-        });
+        //     $updatePaid = [
+        //         'paid_at' => $dataPAIDat,
+        //         'total_weight' => $sum_weight,
+        //         'updated_by' => auth()->user()->id,
+        //     ];
+        //     $orderTarget->update($updatePaid);
+        // });
     }
 }

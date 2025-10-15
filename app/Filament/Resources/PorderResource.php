@@ -202,7 +202,7 @@ class PorderResource extends Resource
                                     // ->disableOptionsWhenSelectedInSiblingRepeaterItems() ## ini jika item tidak ingin berulang
                                     ->reactive()
                                     ->afterStateUpdated(fn($state, Set $set) => $set('p_unit_amount', Product::find($state)?->cogs ?? 0))
-                                    ->afterStateUpdated(fn($state, Set $set, Get $get) => $set('p_total_amount', Product::find($state)?->cogs * $get('quantity') ?? 0))
+                                    ->afterStateUpdated(fn($state, Set $set, Get $get) => $set('p_total_amount', Product::find($state)?->cogs * $get('p_quantity') ?? 0))
                                     ->afterStateUpdated(fn(Set $set) => $set('updated_by', Auth::user()->id))
                                     ->columnSpan(['default' => 12, 'sm' => 6, 'md' => 6, 'lg' => 6, 'xl' => 6]),
 
@@ -222,8 +222,9 @@ class PorderResource extends Resource
                                     // }) #ini untuk membatasi quantity sesuai stok yang ada
                                     // ->minValue(1)
                                     ->live(onBlur: true) //->live(debounce: 1000) ## ini untuk delay 1000 milidetik lalu ada perubahan
-                                    ->afterStateUpdated(fn($state, Set $set, Get $get) => $set('p_total_amount', $state * $get('p_unit_amount')))
+                                        
                                     ->afterStateUpdated(fn(Set $set) => $set('updated_by', Auth::user()->id))
+                                    ->afterStateUpdated(fn($state, Set $set, Get $get) => $set('p_total_amount', $state * $get('p_unit_amount')))
                                     ->afterStateUpdated(fn(Set $set, Get $get) => $set('poin', (Product::find($get('product_id'))?->poin ?? 0) * $get('p_quantity')))
                                     ->columnSpan(['default' => 3, 'sm' => 2, 'md' => 2, 'lg' => 2, 'xl' => 2]),
 
@@ -788,7 +789,7 @@ class PorderResource extends Resource
                         ])
                         ->action(function (Collection $records, array $data): void {
                             foreach ($records as $record) {
-                                if ($data['is_paid'] == 1) {
+                                // if ($data['is_paid'] == 1) {
                                     if ($record->total_cashback < 0) {
                                         Payment::where('paymentable_id', $record->id)->where('paymentable_type', Porder::class)->where('mutation_type', "Purchase")->where('nominal', 0)->delete();
 
@@ -798,9 +799,10 @@ class PorderResource extends Resource
                                         $payment->payment_method = $data['payment_method'];
                                         $payment->rekening = $data['rekening'];
                                         $payment->nominal_mins = $record->total_cashback * -1;
+                                        $payment->nominal = $record->total_cashback * -1;
                                         $payment->mutation_type = 'Purchase';
-                                        // $payment->debit = 'NR-KR-C-2000 Hutang_Pembelian_Barang';
-                                        // $payment->kredit = 'NR-DB-B-1100 CASH / BANK';
+                                        $payment->debit = 'NR-KR-C-2000 Hutang_Pembelian_Barang';
+                                        $payment->kredit = 'NR-DB-B-1100 CASH / BANK';
                                         $payment->created_by = Auth::user()->id;
                                         $payment->updated_by = Auth::user()->id;
                                         $payment->user_id = $record->user_id;
@@ -817,7 +819,7 @@ class PorderResource extends Resource
                                         $record->paid_at = now();
                                         $record->save();
                                     }
-                                }
+                                // }
                             }
                         }),
 
@@ -829,8 +831,9 @@ class PorderResource extends Resource
                         ->action(function (Collection $records, array $data): void {
                             foreach ($records as $record) {
                                 $record->status = $data['status'];
+                                $record->updated_by = Auth::user()->id;
                                 $record->save();
-                                OrderItem::where('porder_id', $record->id)->update(['status' => $data['status']]);
+                                OrderItem::where('porder_id', $record->id)->update(['status' => $data['status'], 'updated_by' => Auth::user()->id]);
                             }
                         })
                         ->form([

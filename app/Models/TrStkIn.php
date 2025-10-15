@@ -139,7 +139,7 @@ class TrStkIn extends Model
             // Update HPP tiap produk ketika melakukan Transfer In
             // $record = $this->record;
             $dataBelanja = OrderItem::where('tr_stk_in_id', $model->id)->get();
-            $orderitems = OrderItem::leftJoin('orders', 'order_items.id', '=', 'orders.id')->leftJoin('porders', 'order_items.id', '=', 'porders.id')->get()->where('order.status', '!=', 'canceled')->where('porder.status', '!=', 'canceled');
+            $orderitems = OrderItem::where('status', '!=', 'canceled');
             foreach ($dataBelanja as $item) {
                 $boughtqty = $orderitems->where('product_id', $item->product_id)->sum('p_quantity');
                 $soldqty = $orderitems->where('product_id', $item->product_id)->sum('quantity');

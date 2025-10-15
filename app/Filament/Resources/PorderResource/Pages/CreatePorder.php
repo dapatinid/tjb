@@ -18,7 +18,7 @@ class CreatePorder extends CreateRecord
     // protected function mutateFormDataBeforeCreate(array $data): array
     // {
     //     $today = Carbon::today()->format('Y-m-d');
-    //     $data['q'] = PPorder::where('branch_id', auth()->user()->branch_id)->where('date_order', 'like', "%$today%")->count() + 1;
+    //     $data['q'] = PPorder::where('branch_id', Auth::user()->branch_id)->where('date_order', 'like', "%$today%")->count() + 1;
     //     return $data;
     // }
 
@@ -52,19 +52,19 @@ class CreatePorder extends CreateRecord
         }
 
         $hari = Carbon::parse($record->date_order)->format('Y-m-d');
-        $antri = Porder::where('branch_id', auth()->user()->branch_id)->where('date_order', 'like', "%$hari%")->count();
+        $antri = Porder::where('branch_id', Auth::user()->branch_id)->where('date_order', 'like', "%$hari%")->count();
         $user_id = Porder::where('id', $record->id)->value('user_id');
 
         // Update siapa yang BUAT
         OrderItem::where('porder_id', $record->id)->update([
-            'created_by' => auth()->user()->id,
+            'created_by' => Auth::user()->id,
             'status' => $record->status,
             'date_order' => $record->date_order
         ]);
 
         // Update siapa yang BELI di PAYMENT
         Payment::where('paymentable_id', $record->id)->where('paymentable_type', Porder::class)->update([
-            'created_by' => auth()->user()->id,
+            'created_by' => Auth::user()->id,
             'user_id' => $user_id,
             'debit' => 'NR-KR-C-2000 Hutang_Pembelian_Barang',
             'kredit' => 'NR-DB-B-1100 CASH / BANK',
@@ -77,10 +77,7 @@ class CreatePorder extends CreateRecord
             $dataPAIDat = Payment::where('paymentable_type', Porder::class)->where('paymentable_id', $record->id)->where('mutation_type', 'Purchase')->orderBy('date_payment', 'desc')->value('date_payment');
             if ($record->total_cashback >= 0) {
                 foreach ($record->payments as $payment) {
-                    Payment::where('paymentable_type', Porder::class)
-                        ->where('paymentable_id', $record->id)
-                        ->where('mutation_type', 'Purchase')
-                        ->where('id', $payment->id)
+                    Payment::where('paymentable_type', Porder::class)->where('paymentable_id', $record->id)->where('mutation_type', 'Purchase')->where('id', $payment->id)
                         ->update([
                             'nominal_plus' => 0,
                             'nominal' => $payment->nominal_mins - 0,
@@ -96,10 +93,7 @@ class CreatePorder extends CreateRecord
         } else {
             $dataPAIDat = null;
             foreach ($record->payments as $payment) {
-                Payment::where('paymentable_type', Porder::class)
-                    ->where('paymentable_id', $record->id)
-                    ->where('mutation_type', 'Purchase')
-                    ->where('id', $payment->id)
+                Payment::where('paymentable_type', Porder::class)->where('paymentable_id', $record->id)->where('mutation_type', 'Purchase')->where('id', $payment->id)
                     ->update([
                         'nominal_plus' => 0,
                         'nominal' => $payment->nominal_mins - 0,
@@ -159,7 +153,7 @@ class CreatePorder extends CreateRecord
             'q' => $antri,
             'paid_at' => $dataPAIDat,
             'total_weight' => $sum_weight,
-            'created_by' => auth()->user()->id,
+            'created_by' => Auth::user()->id,
         ];
         $dataOrder->update($updatePaid);
 

@@ -18,7 +18,7 @@ class CreateOrder extends CreateRecord
     // protected function mutateFormDataBeforeCreate(array $data): array
     // {
     //     $today = Carbon::today()->format('Y-m-d');
-    //     $data['q'] = Order::where('branch_id', auth()->user()->branch_id)->where('date_order', 'like', "%$today%")->count() + 1;
+    //     $data['q'] = Order::where('branch_id', Auth::user()->branch_id)->where('date_order', 'like', "%$today%")->count() + 1;
     //     return $data;
     // }
 
@@ -28,19 +28,19 @@ class CreateOrder extends CreateRecord
 
         $record = $this->record;
         $hari = Carbon::parse($record->date_order)->format('Y-m-d');
-        $antri = Order::where('branch_id', auth()->user()->branch_id)->where('date_order', 'like', "%$hari%")->count();
+        $antri = Order::where('branch_id', Auth::user()->branch_id)->where('date_order', 'like', "%$hari%")->count();
         $user_id = Order::where('id', $record->id)->value('user_id');
 
         // Update siapa yang BUAT
         OrderItem::where('order_id', $record->id)->update([
-            'created_by' => auth()->user()->id,
+            'created_by' => Auth::user()->id,
             'status' => $record->status,
             'date_order' => $record->date_order
         ]);
 
         // Update siapa yang BELI di PAYMENT
         Payment::where('paymentable_id', $record->id)->where('paymentable_type', Order::class)->update([
-            'created_by' => auth()->user()->id,
+            'created_by' => Auth::user()->id,
             'user_id' => $user_id,
             'debit' => 'NR-DB-B-1100 CASH / BANK',
             'kredit' => 'NR-DB-B-3000 Piutang Penjualan Barang',
@@ -53,10 +53,7 @@ class CreateOrder extends CreateRecord
             $dataPAIDat = Payment::where('paymentable_type', Order::class)->where('paymentable_id', $record->id)->where('mutation_type', 'Sales')->orderBy('date_payment', 'desc')->value('date_payment');
             if ($record->total_cashback >= 0) {
                 foreach ($record->payments as $payment) {
-                    Payment::where('paymentable_type', Order::class)
-                        ->where('paymentable_id', $record->id)
-                        ->where('mutation_type', 'Sales')
-                        ->where('id', $payment->id)
+                    Payment::where('paymentable_type', Order::class)->where('paymentable_id', $record->id)->where('mutation_type', 'Sales')->where('id', $payment->id)
                         ->update([
                             'nominal_mins' => 0,
                             'nominal' => $payment->nominal_plus - 0,
@@ -72,11 +69,8 @@ class CreateOrder extends CreateRecord
         } else {
             $dataPAIDat = null;
             foreach ($record->payments as $payment) {
-                Payment::where('paymentable_type', Order::class)
-                    ->where('paymentable_id', $record->id)
-                    ->where('mutation_type', 'Sales')
-                    ->where('id', $payment->id)
-                    ->update([
+                Payment::where('paymentable_type', Order::class)->where('paymentable_id', $record->id)->where('mutation_type', 'Sales')->where('id', $payment->id)
+                ->update([
                         'nominal_mins' => 0,
                         'nominal' => $payment->nominal_plus - 0,
                     ]);
@@ -135,7 +129,7 @@ class CreateOrder extends CreateRecord
             'q' => $antri,
             'paid_at' => $dataPAIDat,
             'total_weight' => $sum_weight,
-            'created_by' => auth()->user()->id,
+            'created_by' => Auth::user()->id,
         ];
         $dataOrder->update($updatePaid);
 

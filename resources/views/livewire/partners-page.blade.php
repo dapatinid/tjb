@@ -163,7 +163,7 @@
 
   <div class="grid grid-cols-3 gap-4 mt-3 max-lg:grid-cols-2 max-md:grid-cols-1 sm:gap-6">
     @foreach ($branches->where('name', 'LIKE', '%' . $cariBranch . '%')->inRandomOrder()->get() as $branch)
-    <a wire:navigate 
+    <a wire:navigate onclick="hapusPosCart()"
     wire:click.prevent='changeBranch({{ $branch->id }})' 
     wire:key="{{ $branch->id }}" class="flex flex-col transition bg-white border-none shadow-sm cursor-pointer group rounded-xl hover:shadow-md dark:bg-slate-900 dark:border-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
       <div class="p-4 md:p-5">
@@ -194,6 +194,24 @@
     </a>
     @endforeach
   </div>
+
+  <script>
+    // Pastikan kode ini dijalankan setelah DOM dimuat,
+    // atau di bagian akhir body, sebelum </body> tag.
+
+    /**
+     * Menghapus item 'pos_cart' dari Local Storage.
+     * Jika item tidak ada, tidak akan terjadi error.
+     */
+    function hapusPosCart() {
+        localStorage.removeItem('pos_cart');
+        console.log('pos_cart telah dihapus dari Local Storage.');
+    }
+
+    // Contoh memanggil fungsi penghapusan, misalnya saat tombol diklik
+    // atau ketika proses tertentu selesai:
+    // hapusPosCart();
+</script>
 
   </div>
   

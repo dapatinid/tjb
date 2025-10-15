@@ -255,6 +255,7 @@ class TrStkOutResource extends Resource
                                     //     $set('stock_after', $stbefore - $state);
                                     // })
                                     // ->afterStateHydrated(fn($state, Set $set, Get $get) => $set('p_total_amount', $state * $get('p_unit_amount')))
+                                    ->afterStateUpdated(fn($state, Set $set, Get $get) => $set('p_total_amount', $state * $get('p_unit_amount')))
                                     ->columnSpan(['sm' => 4, 'md' => 4, 'lg' => 4, 'xl' => 4]),
 
                                 TextInput::make('p_unit_amount')
@@ -264,7 +265,7 @@ class TrStkOutResource extends Resource
                                     ->dehydrated()
                                     ->numeric()
                                     ->live(onBlur: true) //->live(debounce: 1000)
-                                    // ->afterStateUpdated(fn($state, Set $set, Get $get) => $set('p_total_amount', $state * $get('quantity')))
+                                    ->afterStateUpdated(fn($state, Set $set, Get $get) => $set('p_total_amount', $state * $get('quantity')))
                                     ->columnSpan(['sm' => 4, 'md' => 4, 'lg' => 4, 'xl' => 4]),
 
                                 TextInput::make('p_total_amount')
@@ -472,6 +473,7 @@ class TrStkOutResource extends Resource
                                     'transfering' => 'Transfering',
                                     'done' => 'Done'
                                 ])
+                                ->disableOptionWhen(fn (string $value): bool => $value === 'done')
                                 ->required(),
                         ]),
                     Tables\Actions\DeleteBulkAction::make(),
