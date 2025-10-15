@@ -40,7 +40,7 @@ class MyPos extends Component
             })->toArray();
         }
         Cart::where('branch_id', Auth::user()->branch_id)->where('created_by', Auth::user()->id)->delete();
-        $categories = Category::select('id', 'name')->where('is_active',true)->get();
+        $categories = Category::select('id', 'name')->where('is_active',true)->whereHas('products')->get();
         return view('livewire.my-pos', compact('initialCart', 'categories'));
     }
 
@@ -59,13 +59,13 @@ class MyPos extends Component
             $cart->variant = $item['variant'];
             $cart->slug = Product::find($item['id'])->slug;
             $cart->unit_name = Product::find($item['id'])->unit_name;
-            // $cart->total_weight = $item['subtotalweight'];
+            $cart->total_weight = $item['subtotalweight'];
             $cart->contain = Product::find($item['id'])->contain;
             $cart->image = Product::find($item['id'])->images[0] ?? null;
             $cart->quantity = $item['quantity'];
             $cart->unit_amount = $item['price'];
             $cart->total_amount = $item['subtotal'];
-            // $cart->poin = Product::find($item['id'])->poin * $item['quantity'];
+            $cart->poin = Product::find($item['id'])->poin * $item['quantity'];
             $cart->mutation_type = 'Sales';
             $cart->created_by = Auth::user()->id;
             $cart->updated_by = Auth::user()->id;
@@ -73,8 +73,8 @@ class MyPos extends Component
             $cart->save();
         }
         $this->cartItems = [];
-        $this->redirect("/checkout?branch_id=" . Auth::user()->branch_id , navigate: false);
-        // $this->redirect("/checkout?branch_id=" . Auth::user()->branch_id . "&shipping_method=self_pickup&sales_type=self_pickup&payment_method=cash&rekening=KAS+KASIR&date_order=" . date('Y') . "-" . date('m') . "-" . date('d') . "T" . date('H') . "%3A" . date('i'), navigate: true);
+        // $this->redirect("/checkout?branch_id=" . Auth::user()->branch_id , navigate: false);
+        $this->redirect("/checkout?branch_id=" . Auth::user()->branch_id . "&shipping_method=self_pickup&sales_type=self_pickup&payment_method=cash&rekening=KAS+KASIR&date_order=" . date('Y') . "-" . date('m') . "-" . date('d') . "T" . date('H') . "%3A" . date('i'), navigate: false);
     }
 
 }
