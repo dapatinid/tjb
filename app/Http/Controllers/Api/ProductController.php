@@ -14,7 +14,6 @@ class ProductController extends Controller
     $q = $request->query('q');
     $perPage = (int) $request->query('per_page', 50);
 
-
     $query = Product::query()->where('branch_id',Auth::user()->branch_id)->where('is_active',true);
     if ($q) {
     $query->where(function ($query) use ($q) {
@@ -25,11 +24,15 @@ class ProductController extends Controller
                 });
     }
 
+    if ($categoryIds = $request->query('category_id')) {
+        // bisa single value atau array
+        $query->whereIn('category_id', (array) $categoryIds);
+    }
 
     $products = $query->orderBy('name')->paginate($perPage)->appends($request->query());
 
-
     return response()->json($products);
+    
     }
 
 

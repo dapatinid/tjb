@@ -72,12 +72,15 @@
         @click.self="showProductModal = false"
     >
       <div class="bg-white p-4 rounded-lg shadow-lg w-11/12 md:w-1/3">
-          <h2 class="text-lg font-bold mb-2" x-text="`${productDetail.name} ${productDetail.variant} ` "></h2>
+          <div class="flex gap-2">
+            <h2 class="text-lg font-bold mb-2" x-text="productDetail.name"></h2>
+            <h2 class="text-lg font-bold mb-2 text-green-500" x-text="productDetail.variant ? `${productDetail.variant}` : ``"></h2>
+          </div>
           <img :src="productDetail.images && productDetail.images.length > 0 
             ? '/storage/' + productDetail.images[0] 
-            : '/storage/food-packaging.png'" alt="" class="w-full object-cover rounded mb-2 mx-auto aspect-square">
+            : '/storage/box.png'" alt="" class="w-full object-cover rounded mb-2 mx-auto aspect-square">
+          <p class="font-semibold text-lg" x-text="`Rp${formatMoney(productDetail.price)}`"></p>
           <p class="text-gray-700 text-sm mb-2" x-text="productDetail.description"></p>
-          <p class="font-semibold text-lg" x-text="`Rp ${formatMoney(productDetail.price)}`"></p>
 
           <div class="text-right mt-3">
               <button @click="showProductModal = false" class="px-3 py-1 bg-gray-300 rounded">Tutup</button>
@@ -214,7 +217,7 @@
                                 </svg>
                             </button>
                         </div>
-                        <div class="w-1/3 flex justify-end" x-text="`Rp ${formatMoney(item.subtotal)}`">
+                        <div class="w-1/3 flex justify-end" x-text="`${formatMoney(item.subtotal)}`">
                         </div>
                     </div>
                 </div>
@@ -223,8 +226,9 @@
 
             <div class="mt-4">
                 <div class="flex justify-between">
-                <div x-text="`Total : ${(totalweight)} kg`"></div>
-                <div x-text="`Rp ${formatMoney(total)}`"></div>
+                <div class="font-bold" x-text="`Total : ${(totalweight)} kg`"></div>
+                {{-- <div class="font-bold" x-text="`Total : `"></div> --}}
+                <div class="font-bold" x-text="`Rp${formatMoney(total)}`"></div>
                 </div>
 
                 <div class="mt-3 flex gap-2">
@@ -312,10 +316,42 @@
         </select>
       </div>
 
-      <div class="grid lg:grid-cols-3 grid-cols-2 gap-2 px-2">
+      <!-- Badge toggle kategori -->
+      <div class="relative m-3 -mt-1">
+        <div class="absolute left-0 top-0 h-full w-8 md:hidden bg-gradient-to-r from-white to-transparent pointer-events-none z-5"></div>
+        <div class="absolute right-0 top-0 h-full w-8 md:hidden bg-gradient-to-l from-white to-transparent pointer-events-none z-5"></div>
+
+        <div
+          class="flex gap-2 overflow-x-auto scrollbar-hide md:px-0 px-1"
+          style="white-space: nowrap; -ms-overflow-style: none; scrollbar-width: none;"
+        >
+
+          <button
+            x-show="activeCategories.length > 0"
+            @click="clearCategory()"
+            class="px-2 py-1 rounded-full border border-gray-300 bg-white text-gray-600 text-xs flex-shrink-0"
+          >
+            Semua
+          </button>
+
+          <template x-for="cat in categories" :key="cat.id">
+            <button
+              @click="toggleCategory(cat.id)"
+              class="px-2 py-1 rounded-full border text-xs transition-colors duration-200 flex-shrink-0"
+              :class="activeCategories.includes(cat.id)
+                ? 'bg-yellow-500 text-white border-yellow-500'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'"
+              x-text="cat.name"
+            ></button>
+          </template>
+
+        </div>
+      </div>  
+
+      <div class="grid lg:grid-cols-4 md:grid-cols-3 xs:grid-cols-3 grid-cols-2 gap-2 px-2">
         <template x-for="p in products.data" :key="p.id">
           <div class="relative border border-gray-200 rounded">
-          <div class="absolute top-2.5 right-2" @click="showProduct(p.id)"> 
+          <div class="absolute top-2.5 left-2 bg-white p-1 rounded-full" @click="showProduct(p.id)"> 
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
               <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
             </svg>
@@ -324,7 +360,7 @@
               <template x-if="cart.some(item => item.id === p.id)">
                   <div 
                       x-transition.scale.origin.top.right
-                      class="absolute bottom-2.5 left-2 bg-white border border-gray-300 rounded-full flex items-center justify-between h-6 shadow-md text-xs select-none"
+                      class="absolute top-2.5 right-2 bg-white border border-gray-300 rounded-full flex items-center justify-between h-6 shadow-md text-xs select-none"
                   >
                       <!-- Tombol - -->
                       <button 
@@ -359,14 +395,18 @@
                       >+</button>
                   </div>
               </template>
-              <button @click="addToCart(p)"  onmouseup="setTimeout(() => this.blur(), 300)" :class="cart.some(item => item.id === p.id) ? 'bg-green-300': 'bg-white'" class="w-full h-full p-3 space-y-2 block transition-colors duration-300 active:bg-blue-400 focus:bg-blue-400">
-                {{-- <img :src="p.images && p.images.length > 0 
+              <button @click="addToCart(p)"  onmouseup="setTimeout(() => this.blur(), 300)" 
+                :class="cart.some(item => item.id === p.id) ? 'bg-green-300': p.is_active == 0 ? 'bg-gray-300': 'bg-white'" 
+                {{-- :class="cart.some(item => item.id === p.id) ? 'bg-yellow-300': 'bg-white'"  --}}
+                {{-- :class="p.is_active == 0 ? 'bg-green-200': 'bg-white'"  --}}
+                class="w-full h-full p-3 space-y-2 block rounded transition-colors duration-300 active:bg-blue-400 focus:bg-blue-400">
+                <img :src="p.images && p.images.length > 0 
                 ? '/storage/' + p.images[0] 
-                : '/storage/food-packaging.png'" alt="" class="rounded-sm aspect-square"> --}}
-                <div x-text="p.name" class="font-semibold text-start"></div>
+                : '/storage/box.png'" alt="" class="rounded aspect-square object-cover">
+                <div x-text="p.name" class="font-semibold text-start truncate"></div>
                 <div class="flex justify-between gap-2">
-                    <em class="text-sm" x-text="p.variant"></em>
-                    <span class="text-sm" x-text="`Rp ${formatMoney(p.price)}`"></span>
+                    <em class="text-sm truncate" x-text="p.variant"></em>
+                    <span class="text-sm" x-text="`Rp${formatMoney(p.price)}`"></span>
                 </div>            
               </button>
           </div>
@@ -398,6 +438,27 @@ function posApp() {
 
     showProductModal: false,
     productDetail: {},
+
+    categories: @js($categories), // dari controller
+
+    activeCategories: [],
+
+    toggleCategory(id) {
+      const i = this.activeCategories.indexOf(id);
+      if (i === -1) {
+        // jika belum ada, tambahkan
+        this.activeCategories.push(id);
+      } else {
+        // jika sudah ada, hapus
+        this.activeCategories.splice(i, 1);
+      }
+      this.fetchProducts();
+    },
+
+    clearCategory() {
+      this.activeCategories = [];
+      this.fetchProducts();
+    },   
 
     init() {
         // Jika localStorage kosong maka isi dari window.initialCart (data yang disiapkan server)
@@ -438,14 +499,26 @@ function posApp() {
     async fetchProducts(url = null) {
       try {
         let endpoint;
-        if (url) endpoint = url;
-        else endpoint = `/api/products?q=${encodeURIComponent(this.q||'')}&per_page=${this.perPage}`;
+
+        if (url) {
+          endpoint = url;
+        } else {
+          const query = encodeURIComponent(this.q || '');
+          let categoryParams = '';
+
+          if (this.activeCategories.length > 0) {
+            categoryParams = this.activeCategories.map(id => `&category_id[]=${id}`).join('');
+          }
+
+          endpoint = `/api/products?q=${query}&per_page=${this.perPage}${categoryParams}`;
+        }
 
         const res = await fetch(endpoint);
         if (!res.ok) throw new Error('Gagal mengambil produk');
+
         const data = await res.json();
 
-        // map data to expected keys if pagination structure differs
+        // tetap gunakan struktur lama
         this.products = data;
       } catch (e) {
         console.error(e);
