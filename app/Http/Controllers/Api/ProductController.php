@@ -28,8 +28,22 @@ class ProductController extends Controller
         // bisa single value atau array
         $query->whereIn('category_id', (array) $categoryIds);
     }
+    if ($brandIds = $request->query('brand_id')) {
+        // bisa single value atau array
+        $query->whereIn('brand_id', (array) $brandIds);
+    }
 
-    $products = $query->orderBy('name')->paginate($perPage)->appends($request->query());
+    $sortBy = $request->get('sort_by', 'name');
+    $sortOrder = $request->get('sort_order', 'asc');
+
+    if (!in_array($sortBy, ['name', 'price'])) {
+        $sortBy = 'name';
+    }
+    if (!in_array($sortOrder, ['asc', 'desc'])) {
+        $sortOrder = 'asc';
+    }
+
+    $products = $query->orderBy($sortBy, $sortOrder)->paginate($perPage)->appends($request->query());
 
     return response()->json($products);
     

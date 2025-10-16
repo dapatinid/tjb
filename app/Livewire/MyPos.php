@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Cart;
 use App\Models\Category;
+use App\Models\Brand;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -41,7 +42,8 @@ class MyPos extends Component
         }
         Cart::where('branch_id', Auth::user()->branch_id)->where('created_by', Auth::user()->id)->delete();
         $categories = Category::select('id', 'name')->where('is_active',true)->whereHas('products')->get();
-        return view('livewire.my-pos', compact('initialCart', 'categories'));
+        $brands = Brand::select('id', 'name')->where('is_active',true)->whereHas('products')->get();
+        return view('livewire.my-pos', compact('initialCart', 'categories', 'brands'));
     }
 
         public function triggerLoadCart()

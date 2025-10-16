@@ -206,116 +206,106 @@
                         class="{{ $url == 0 ? ' hidden' : 'flex' }} sticky top-3 text-blue-400 bg-transparent z-10 mb-2 mx-auto justify-center items-center"><span class="bg-white dark:bg-slate-900 px-2 rounded-full">reset</span></a>
 
                     {{-- Product Card Start --}}
+                    @php
+                        $count = $products->count();
+                        $maxColumns = 5;
+                    @endphp
 
-                    <div class="flex flex-wrap items-center justify-center mx-auto">
+                    <div class="space-y-6">
 
-                        @foreach ($products as $product)
-                            <div wire:key="{{ $product->id }}"
-                                class="w-1/2 px-1 mb-2 xs:w-1/3 sm:w-1/3 md:w-1/4 lg:w-1/5 md:mb-3 ">
-                                <div
-                                    class="bg-white border border-gray-300 dark:bg-neutral-900 rounded-xl hover:shadow-md hover:border-gray-400 dark:border-gray-700 dark:hover:border-white">
-                                    <div
-                                        class="relative {{ $product->is_active == 1 ? 'bg-gray-100 dark:bg-gray-800' : 'bg-gray-400 dark:bg-black' }} rounded-lg scale-90">
-                                        <a wire:navigate href="/products/{{ $product->slug }}" class="">
-                                            @if ($product->images != null || $product->images === "[]")
-                                                <img src="{{ Str::replace('%2F', '/',url('storage', $product->images[0])) }}"
-                                                onerror="this.src='{{ url('storage/food-packaging.png') }}';"    
-                                                alt="{{ $product->name }}"
-                                                    class="object-cover w-full mx-auto rounded-lg aspect-square">
-                                            @else
-                                                <img src="{{ url('storage/food-packaging.png') }}"
-                                                    alt="{{ $product->name }}"
-                                                    class="object-cover w-full mx-auto rounded-lg aspect-square">
-                                            @endif
-
-                                        </a>
-                                    </div>
-                                    <div class="px-3 pb-2">
-                                        <div class="flex items-center justify-between gap-2">
-                                            <h3 class="text-lg font-medium truncate max-lg:text-base dark:text-white">
-                                                @if (Str::contains($product->variant, $product->name))
-                                                    {{ $product->variant }}
-                                                @else
-                                                    {{ $product->name }} {{ $product->variant }}
-                                                @endif
-                                            </h3>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <p class="text-base max-lg:text-sm"> 
-                                                {{-- bisa tambahkan class truncate --}}
-                                                <span class="text-green-600 dark:text-lime-400 text-nowrap">
-                                                    @if (Str::length($product->price) > 6)
-                                                    Rp{{  Number::forHumans($product->price, precision: 2) }}
-                                                    @else
-                                                    @currency($product->price)
-                                                    @endif
-                                                </span>
-                                                @if ($product->strikethroughprice != null && $product->strikethroughprice > 0)
-                                                    <span class="pr-2 text-xs font-normal text-gray-500 line-through text-nowrap dark:text-green-600">
-                                                        @if (Str::length($product->strikethroughprice) > 3)
-                                                        {{  substr($product->strikethroughprice, 0, -3) }}rb
-                                                        @else
-                                                        @currency($product->strikethroughprice)
-                                                        @endif
-                                                    </span>
-                                                @endif
-                                            </p>
-                                            <p class="flex items-center text-nowrap dark:text-white text-xs">
-                                                <x-fas-star class="size-3 text-yellow-400 mb-0.5 mr-1"/> {{ $product->rating }}</p>
-                                        </div>
-                                    </div>
-                                    <div 
-                                        id='addToCartButton'
-                                        {{-- wire:click.prevent='addToCart({{ $product->id }}); soundBeep.play();' --}}
-                                        wire:click.prevent='addToCart({{ $product->id }});'
-                                        class="cursor-pointer flex justify-center p-2 border-t border-gray-300 dark:border-gray-700">
-
-                                        {{-- @php
-                      $boughtqty = $orderitem->where('product_id', $product->id)->sum('p_quantity');
-                      $soldqty = $orderitem->where('product_id', $product->id)->sum('quantity');
-                      $stock = $boughtqty - $soldqty;
-                  @endphp --}}
-
-                                        {{-- @if ($stock >= 1 && $product->in_stock == 1) --}}
-                                        @if ($product->in_stock == 1)
-                                            <span 
-                                                class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-300">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="w-4 h-4 bi bi-cart3 "
-                                                    viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z">
-                                                    </path>
-                                                </svg><span wire:loading.remove
-                                                    wire:target='addToCart({{ $product->id }})'>Add to Cart</span><span wire:loading
-                                                    wire:target='addToCart({{ $product->id }})'>Adding...</span>
-                                            </span>
+                        {{-- Jika produk sedikit, tampilkan grid horizontal biasa --}}
+                        @if ($count <= $maxColumns)
+                            <div class="grid grid-cols-2 xs:grid-cols-{{ min($count, 3) }} md:grid-cols-{{ min($count, 4) }} lg:grid-cols-{{ min($count, $maxColumns) }} gap-2">
+                                @foreach ($products as $p)
+                                    <div class="mb-2 break-inside-avoid-column inline-block w-full align-top bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition duration-300 overflow-hidden">
+                                        @if ($p->images)
+                                            <a href="{{ '/product/'.$p->slug }}">
+                                                <img src="{{ asset('storage/' . $p->images[0]) }}"
+                                                alt="{{ $p->name }}"
+                                                class="w-full h-auto object-cover">
+                                            </a>
                                         @else
-                                            <a
-                                                class="flex items-center space-x-2 text-gray-500 cursor-not-allowed dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-300"><span>Habis</span></a>
+                                            <a href="{{ '/product/'.$p->slug }}">
+                                                <img src="{{ asset('storage/box.png') }}"
+                                                    alt="{{ $p->name }}"
+                                                    class="w-full h-auto object-cover p-2">
+                                            </a>
                                         @endif
 
+                                        <div class="p-3">
+                                            <div class="font-semibold text-gray-800 leading-tight line-clamp-2">{{ $p->name }}</div>
+                                            <div class="flex">
+                                                <div class="text-sm text-gray-500 mb-2">
+                                                    Rp{{ number_format($p->price, 0, ',', '.') }}
+                                                </div>
+                                                @if ($p->in_stock == 1)
+                                                    <button wire:click="addToCart({{ $p->id }})"
+                                                        class="ms-auto bg-green-600 hover:bg-green-700 text-white text-sm py-1 px-3 rounded transition">
+                                                        +
+                                                    </button>
+                                                @else
+                                                    <button 
+                                                        class="ms-auto text-gray-400 text-sm py-1">
+                                                        Habis
+                                                    </button>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                @endforeach
                             </div>
-                        @endforeach
+
+                        {{-- Jika produk banyak, aktifkan masonry --}}
+                        @else
+                            <div class="columns-2 xs:columns-3 md:columns-4 lg:columns-5 gap-2 [column-fill:_balance]">
+                                @foreach ($products as $p)
+                                    <div class="mb-2 break-inside-avoid-column inline-block w-full align-top bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition duration-300 overflow-hidden">
+                                        @if ($p->images)
+                                            <a href="{{ '/product/'.$p->slug }}">
+                                                <img src="{{ asset('storage/' . $p->images[0]) }}"
+                                                alt="{{ $p->name }}"
+                                                class="w-full h-auto object-cover">
+                                            </a>
+                                        @else
+                                            <a href="{{ '/product/'.$p->slug }}">
+                                                <img src="{{ asset('storage/box.png') }}"
+                                                    alt="{{ $p->name }}"
+                                                    class="w-full h-auto object-cover p-2">
+                                            </a>
+                                        @endif
+
+                                        <div class="p-3">
+                                            <div class="font-semibold text-gray-800 leading-tight line-clamp-2">{{ $p->name }}</div>
+                                            <div class="flex">
+                                                <div class="text-sm text-gray-500 mb-2">
+                                                    Rp{{ number_format($p->price, 0, ',', '.') }}
+                                                </div>
+                                                @if ($p->in_stock == 1)
+                                                    <button wire:click="addToCart({{ $p->id }})"
+                                                        class="ms-auto bg-green-600 hover:bg-green-700 text-white text-sm py-1 px-3 rounded transition">
+                                                        +
+                                                    </button>
+                                                @else
+                                                    <button 
+                                                        class="ms-auto text-gray-400 text-sm py-1">
+                                                        Habis
+                                                    </button>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+
+               
+                        {{-- Pagination --}}
+                        <div class="mt-6" style="">
+                            <div>{{ $products->links('vendor.pagination.tailwind') }}</div>
+                        </div>
 
                     </div>
-                    {{-- Product Card End --}}
 
-                    <!-- pagination start -->
-                    {{-- <style>
-                        nav div div p {
-                            margin-left: 20px;
-                            margin-right: 20px;
-                        }
-                    </style> --}}
-                    <div 
-                    {{-- class="flex justify-center mt-6" --}}
-                    >
-                        {{ $products->links() }}
-                    </div>
-                    <!-- pagination end -->
 
                 </div>
 

@@ -76,7 +76,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/branches', BranchesPage::class);
     Route::get('/categories', CategoriesPage::class);
     Route::get('/products', ProductsPage::class);
-    Route::get('/products/{slug}', ProductDetailPage::class);
+    Route::get('/product/{slug}', ProductDetailPage::class);
 
     Route::get('/logout', function () {
         auth()->logout();

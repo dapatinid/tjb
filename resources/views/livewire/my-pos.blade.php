@@ -11,7 +11,7 @@
     <script>
         window.initialCart = @json($initialCart ?? []);
     </script>
-  <div x-data="{ showCart: false, showModalMenu: false, showModal: false }" 
+  <div x-data="{ showCart: false, showModalMenu: false, showModal: false, showSidebar: false }" 
         class="grid md:grid-cols-3 grid-cols-1 md:gap-x-2 gap-y-2 gap-0">
 
     <!-- Modal Checkout -->
@@ -78,7 +78,7 @@
           </div>
           <img :src="productDetail.images && productDetail.images.length > 0 
             ? '/storage/' + productDetail.images[0] 
-            : '/storage/box.png'" alt="" class="w-full object-cover rounded mb-2 mx-auto aspect-square">
+            : '/storage/foto-produk.png'" alt="" class="w-full object-cover rounded mb-2 mx-auto aspect-square">
           <p class="font-semibold text-lg" x-text="`Rp${formatMoney(productDetail.price)}`"></p>
           <p class="text-gray-700 text-sm mb-2" x-text="productDetail.description"></p>
 
@@ -90,7 +90,7 @@
 
     <!-- Sidebar Cart (mobile: slide-in, desktop: tetap terlihat) -->
     <div 
-        class="fixed inset-y-0 left-0 w-full bg-white transform transition-transform duration-300 z-20
+        class="fixed inset-y-0 left-0 w-full min-h-screen bg-white transform transition-transform duration-300 z-20
                md:static md:translate-x-0 " 
         :class="{ '-translate-x-full': !showCart, 'translate-x-0': showCart }">
 
@@ -172,7 +172,7 @@
         </div>
 
         <!-- isi cart -->
-        <div class="px-3 pt-3 pb-52 h-[calc(100%)] overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-gray-300" style="-webkit-overflow-scrolling: touch;">
+        <div class="px-3 pt-1.5 pb-24 h-[calc(100vh-4rem)] md:h-auto overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-gray-300" style="-webkit-overflow-scrolling: touch;">
             <template x-if="cart.length === 0">
                 <div class="text-sm text-gray-500 text-center">Cart kosong</div>
             </template>
@@ -227,7 +227,7 @@
             <div class="mt-4">
                 <div class="flex justify-between">
                 <div class="font-bold text-sm" x-text="`Total : ${(totalweight)} kg`"></div>
-                {{-- <div class="font-bold" x-text="`Total : `"></div> --}}
+                {{-- <div class="font-bold text-sm" x-text="`Total : `"></div> --}}
                 <div class="font-bold text-sm" x-text="`Rp${formatMoney(total)}`"></div>
                 </div>
 
@@ -276,8 +276,8 @@
     <div class="col-span-2 bg-white h-full">
       <div class="flex items-center gap-2 mb-4 sticky top-0 p-2 border-b border-gray-200" style="background-color: white; z-index: 10;">
         <button @click="showCart = true" class="md:hidden">
-            <div x-text="`${(qtybyqty)}`" x-show="qtybyqty > 0" class="absolute px-1 rounded-full -mt-1 -ml-1 text-white bg-green-500 "></div>
-            <div class="p-2 bg-blue-600 text-white rounded">
+            <div x-text="`${(qtybyqty)}`" x-show="qtybyqty > 0" class="absolute px-1 rounded-full -mt-1 -ml-1 text-white bg-gray-800 "></div>
+            <div class="p-2 bg-amber-400 text-white rounded">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="25" height="25">
                 <path fill-rule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 0 0 4.25 22.5h15.5a1.875 1.875 0 0 0 1.865-2.071l-1.263-12a1.875 1.875 0 0 0-1.865-1.679H16.5V6a4.5 4.5 0 1 0-9 0ZM12 3a3 3 0 0 0-3 3v.75h6V6a3 3 0 0 0-3-3Zm-3 8.25a3 3 0 1 0 6 0v-.75a.75.75 0 0 1 1.5 0v.75a4.5 4.5 0 1 1-9 0v-.75a.75.75 0 0 1 1.5 0v.75Z" clip-rule="evenodd" />
                 </svg>
@@ -295,25 +295,154 @@
             ✕
         </button>
         </div>
-        <select x-model="perPage" @change="fetchProducts()" class="border border-gray-200 rounded" 
-            style="
-                width: 100px;
-                padding: 8px 16px 8px 16px;
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                appearance: none;
-                background-image: url('https://www.svgrepo.com/show/80156/down-arrow.svg');
-                background-repeat: no-repeat;
-                background-size: 14px 14px;
-                background-position: calc(100% - 16px);
-            " 
-            >
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="20">20</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-        </select>
+
+        <!-- Tombol ikon filter -->
+        <button 
+            @click="showSidebar = true" 
+            class="flex items-center gap-1 p-2 border border-gray-200 rounded-lg hover:bg-gray-100 transition">
+            <!-- Heroicon filter -->
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
+              class="size-5 text-gray-700">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+              </svg>
+
+            {{-- <span class="text-sm font-medium">Filter</span> --}}
+        </button>
+
+        <!-- Overlay gelap -->
+        <div 
+            x-show="showSidebar"
+            @click="showSidebar = false"
+            x-transition.opacity
+            class="fixed inset-0 bg-black/50 z-40"
+            style="display: none;">
+        </div>
+
+        <!-- Sidebar kanan -->
+        <div 
+            x-show="showSidebar"
+            x-transition:enter="transform transition ease-in-out duration-300"
+            x-transition:enter-start="translate-x-full"
+            x-transition:enter-end="translate-x-0"
+            x-transition:leave="transform transition ease-in-out duration-300"
+            x-transition:leave-start="translate-x-0"
+            x-transition:leave-end="translate-x-full"
+            class="fixed top-0 right-0 w-80 sm:w-96 h-full bg-white shadow-xl z-50 flex flex-col"
+            style="display: none;">
+
+            <!-- Header sidebar -->
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+                <h2 class="text-lg font-semibold">Filter</h2>
+                <button @click="showSidebar = false" class="p-2 rounded hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" 
+                        fill="none" viewBox="0 0 24 24" stroke-width="1.5" 
+                        stroke="currentColor" class="w-5 h-5 text-gray-600">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Isi sidebar -->
+            <div class="p-4 space-y-4 overflow-y-auto flex-1">
+                <!-- Dropdown perPage -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Items per page</label>
+                    <select x-model="perPage" @change="fetchProducts()" class="w-full border-gray-300 rounded-md">
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="200">200</option>
+                      <option value="500">500</option>
+                    </select>
+                </div>
+
+                <div class="pt-4 border-t border-gray-200">
+
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Brand</label>
+
+                  <div class="flex flex-wrap gap-2">
+                    <button
+                      {{-- x-show="activeBrands.length > 0" --}}
+                      @click="clearBrand()"
+                      class="px-2 py-1 rounded-full border text-xs transition-colors duration-200 flex-shrink-0"
+                        :class="activeBrands.length <= 0
+                          ? 'bg-yellow-500 text-white border-yellow-500'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'"            
+                    >
+                      Semua
+                    </button>
+                    <template x-for="brn in brands" :key="brn.id">
+                      <button
+                        @click="toggleBrand(brn.id)"
+                        class="px-2 py-1 rounded-full border text-xs transition-colors duration-200 flex-shrink-0"
+                        :class="activeBrands.includes(brn.id)
+                          ? 'bg-yellow-500 text-white border-yellow-500'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'"
+                        x-text="brn.name"
+                      ></button>
+                    </template>
+                  </div>
+
+                </div>
+
+                <div class="pt-4 border-t border-gray-200">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Sortir berdasarkan</label>
+                    <div class="flex items-center justify-between bg-gray-100 rounded-lg p-1">
+                        <label 
+                            class="flex-1 text-center cursor-pointer py-2 rounded-lg text-xs font-medium"
+                            :class="sortBy === 'name' ? 'bg-white shadow text-gray-800' : 'text-gray-500'"
+                        >
+                            <input @change="fetchProducts()" type="radio" value="name" x-model="sortBy" class="hidden" />
+                            Nama
+                        </label>
+                        <label 
+                            class="flex-1 text-center cursor-pointer py-2 rounded-lg text-xs font-medium"
+                            :class="sortBy === 'updated_at' ? 'bg-white shadow text-gray-800' : 'text-gray-500'"
+                        >
+                            <input @change="fetchProducts()" type="radio" value="updated_at" x-model="sortBy" class="hidden" />
+                            Last Edited
+                        </label>
+                        <label 
+                            class="flex-1 text-center cursor-pointer py-2 rounded-lg text-xs font-medium"
+                            :class="sortBy === 'price' ? 'bg-white shadow text-gray-800' : 'text-gray-500'"
+                        >
+                            <input @change="fetchProducts()" type="radio" value="price" x-model="sortBy" class="hidden" />
+                            Harga
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Sort Order -->
+                <div class="pt-4 border-t border-gray-200">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Urutan</label>
+                    <div class="flex items-center justify-between bg-gray-100 rounded-lg p-1">
+                        <label 
+                            class="flex-1 text-center cursor-pointer py-2 rounded-lg text-sm font-medium"
+                            :class="sortOrder === 'asc' ? 'bg-white shadow text-gray-800' : 'text-gray-500'">
+                            <input type="radio" value="asc" x-model="sortOrder" @change="fetchProducts()" class="hidden" />
+                            Naik
+                        </label>
+                        <label 
+                            class="flex-1 text-center cursor-pointer py-2 rounded-lg text-sm font-medium"
+                            :class="sortOrder === 'desc' ? 'bg-white shadow text-gray-800' : 'text-gray-500'">
+                            <input type="radio" value="desc" x-model="sortOrder" @change="fetchProducts()" class="hidden" />
+                            Turun
+                        </label>
+                    </div>
+                </div>                
+            </div>
+
+            <!-- Footer (opsional) -->
+            <div class="p-4 border-t border-gray-200">
+                <button 
+                    @click="showSidebar = false" 
+                    class="w-full bg-gray-800 text-white py-2 rounded-md hover:bg-gray-700 transition">
+                    Selesai
+                </button>
+            </div>
+        </div>        
       </div>
 
       <!-- Badge toggle kategori -->
@@ -401,13 +530,13 @@
                   </div>
               </template>
               <button @click="addToCart(p)"  onmouseup="setTimeout(() => this.blur(), 300)" 
-                :class="cart.some(item => item.id === p.id) ? 'bg-green-300': p.is_active == 0 ? 'bg-gray-300': 'bg-white'" 
+                :class="cart.some(item => item.id === p.id) ? 'bg-yellow-300': p.is_active == 0 ? 'bg-green-400': 'bg-white'" 
                 {{-- :class="cart.some(item => item.id === p.id) ? 'bg-yellow-300': 'bg-white'"  --}}
                 {{-- :class="p.is_active == 0 ? 'bg-green-200': 'bg-white'"  --}}
                 class="w-full my-2 p-3 block rounded border border-gray-200 transition-colors duration-300 active:bg-blue-400 focus:bg-blue-400">
                 <img :src="p.images && p.images.length > 0 
                 ? '/storage/' + p.images[0] 
-                : '/storage/box.png'" alt="" class="rounded aspect-square object-cover">
+                : '/storage/foto-produk.png'" alt="" class="rounded aspect-square object-cover">
                 <div x-text="p.name" class="font-semibold text-sm/4 mt-1 text-start line-clamp-2"></div>
                 <div class="flex flex-wrap justify-between gap-1">
                     <em class="text-xs pe-1 line-clamp-2" x-text="p.variant"></em>
@@ -421,11 +550,33 @@
       </div>
 
       <!-- pagination -->
-      <div class="mt-4 flex items-center justify-between p-4">
-        <div x-text="`Total: ${products.total || 0}`"></div>
-        <div class="flex gap-2">
-          <button :disabled="!products.prev_page_url" @click="fetchProducts(products.prev_page_url)" class="px-3 py-1 border border-gray-100 bg-blue-100 hover:bg-blue-400 disabled:bg-gray-200 rounded">Prev</button>
-          <button :disabled="!products.next_page_url" @click="fetchProducts(products.next_page_url)" class="px-3 py-1 border border-gray-100 bg-blue-100 hover:bg-blue-400 disabled:bg-gray-200 rounded">Next</button>
+      <div class="flex flex-wrap items-center md:justify-between justify-center mt-4 p-4 gap-2">
+        <div class="flex flex-wrap gap-2">
+          <div x-text="`Total : ${products.total || 0}`"></div>
+          <div x-text="`${products.from || 0}-${products.to || 0}`"></div>
+        </div>
+        <div class="flex gap-2 md:w-auto md:justify-end w-full justify-center">
+          <button :disabled="!products.prev_page_url" @click="fetchProducts(products.first_page_url)" class="px-3 py-1 border border-gray-100 bg-white transition-colors duration-300 active:bg-yellow-400 focus:bg-yellow-400 disabled:bg-gray-200 rounded" onmouseup="setTimeout(() => this.blur(), 200)" >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m18.75 4.5-7.5 7.5 7.5 7.5m-6-15L5.25 12l7.5 7.5" />
+            </svg>
+          </button>
+          <button :disabled="!products.prev_page_url" @click="fetchProducts(products.prev_page_url)" class="px-3 py-1 border border-gray-100 bg-white transition-colors duration-300 active:bg-yellow-400 focus:bg-yellow-400 disabled:bg-gray-200 rounded" onmouseup="setTimeout(() => this.blur(), 200)" >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+          <button disabled class="px-3 py-1 border border-gray-100 bg-gray-800 rounded text-white" x-text="products.current_page" ></button>
+          <button :disabled="!products.next_page_url" @click="fetchProducts(products.next_page_url)" class="px-3 py-1 border border-gray-100 bg-white transition-colors duration-300 active:bg-yellow-400 focus:bg-yellow-400 disabled:bg-gray-200 rounded" onmouseup="setTimeout(() => this.blur(), 200)" >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+          <button :disabled="!products.next_page_url" @click="fetchProducts(products.last_page_url)" class="px-3 py-1 border border-gray-100 bg-white transition-colors duration-300 active:bg-yellow-400 focus:bg-yellow-400 disabled:bg-gray-200 rounded" onmouseup="setTimeout(() => this.blur(), 200)" >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -442,13 +593,17 @@ function posApp() {
     perPage: 50,
     cart: [],
     customer_name: '',
+    sortBy: 'name',
+    sortOrder: 'asc',
 
     showProductModal: false,
     productDetail: {},
 
     categories: @js($categories), // dari controller
+    brands: @js($brands), // dari controller
 
     activeCategories: [],
+    activeBrands: [],
 
     toggleCategory(id) {
       const i = this.activeCategories.indexOf(id);
@@ -464,6 +619,22 @@ function posApp() {
 
     clearCategory() {
       this.activeCategories = [];
+      this.fetchProducts();
+    },   
+    toggleBrand(id) {
+      const i = this.activeBrands.indexOf(id);
+      if (i === -1) {
+        // jika belum ada, tambahkan
+        this.activeBrands.push(id);
+      } else {
+        // jika sudah ada, hapus
+        this.activeBrands.splice(i, 1);
+      }
+      this.fetchProducts();
+    },
+
+    clearBrand() {
+      this.activeBrands = [];
       this.fetchProducts();
     },   
 
@@ -533,13 +704,19 @@ function posApp() {
           endpoint = url;
         } else {
           const query = encodeURIComponent(this.q || '');
-          let categoryParams = '';
+          const sortBy = this.sortBy !== 'name' ? this.sortBy : 'name';
+          const sortOrder = this.sortOrder !== 'asc' ? this.sortOrder : 'asc';
 
+          let categoryParams = '';
           if (this.activeCategories.length > 0) {
             categoryParams = this.activeCategories.map(id => `&category_id[]=${id}`).join('');
           }
+          let brandParams = '';
+          if (this.activeBrands.length > 0) {
+            brandParams = this.activeBrands.map(id => `&brand_id[]=${id}`).join('');
+          }
 
-          endpoint = `/api/products?q=${query}&per_page=${this.perPage}${categoryParams}`;
+          endpoint = `/api/products?q=${query}&per_page=${this.perPage}&sort_by=${sortBy}&sort_order=${sortOrder}${categoryParams}${brandParams}`;
         }
 
         const res = await fetch(endpoint);
