@@ -11,8 +11,9 @@
     {{ request()->is('laba-rugi-all') ? ' hidden' : 'flex' }}
     {{ request()->is('neraca') ? ' hidden' : 'flex' }}
     {{ request()->is('neraca-all') ? ' hidden' : 'flex' }}
+    {{-- {{ request()->is('products') ? ' hidden' : 'flex' }} --}}
      {{-- {{ dd(request()->fullUrl()) }} --}}
-    {{ Str::of(request()->fullUrl())->contains('products/') ? ' hidden' : 'flex' }}
+    {{-- {{ Str::of(request()->fullUrl())->contains('product/') ? ' hidden' : 'flex' }} --}}
       ">
     <nav class="max-w-[85rem] w-full mx-auto px-4 flex flex-wrap basis-full items-center justify-between">
       <span class="cursor-pointer sm:order-1 flex-none text-xl font-marko text-green-400 dark:text-text-green-400 focus:outline-hidden focus:opacity-80" 
@@ -434,7 +435,7 @@
     bottom-0 left-0 z-50 w-full h-10 pb-4 rounded-tl-2xl rounded-tr-2xl bg-white border-gray-300 dark:bg-gray-800 dark:border-gray-900">
     <div class="grid h-full max-w-lg grid-cols-5 mx-auto font-medium">
       
-      @if (request()->is('/') || request()->is('cart'))
+      @if (request()->is('/') || request()->is('cart') || request()->is('products'))
       <button aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-offcanvas-body-scrolling-with-backdrop" data-hs-overlay="#hs-offcanvas-body-scrolling-with-backdrop"
       class="inline-flex flex-col items-center justify-center px-5 hover:bg-transparent dark:hover:transparent group">
           <div class="w-5 h-5 -mb-3 mx-auto {{ request()->is('my-orders')?' text-amber-600' : 'text-gray-500'}} dark:text-gray-400 group-hover:text-amber-600 dark:group-hover:text-amber-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -459,7 +460,7 @@
       
       <!-- Popover -->
       <div class="hs-tooltip [--trigger:click] inline-flex flex-col items-center justify-center px-5 bg-transparent dark:transparent group">
-        <button type="button" class="absolute items-center justify-center text-sm font-semibold rounded-full shadow-md bottom-2 size-12 bg-yellow-200 dark:bg-yellow-200 hs-tooltip-toggle hover:bg-gray-800 focus:outline-hidden focus:bg-green-500 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:hover:bg-white dark:focus:bg-green-500">
+        <button type="button" class="absolute items-center justify-center text-sm font-semibold rounded-full shadow-md bottom-2 size-12 bg-yellow-200 dark:bg-yellow-200 hs-tooltip-toggle hover:bg-gray-800 focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:hover:bg-white dark:focus:bg-green-500">
           <img src="{{ url('storage/TegarJayaBerkah-LogoAja.png') }}" alt="" class="ml-[0.65rem] size-7" />
 
           <div class="absolute z-10 invisible inline-block px-1 py-2 text-sm text-gray-600 transition-opacity bg-white border border-gray-200 rounded-lg shadow-md opacity-0 hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400" role="tooltip">

@@ -61,7 +61,6 @@ class EditOrder extends EditRecord
         $record = $this->record;
 
             $orderTarget = Order::where('id', $record->id);
-            $user_id = Order::where('id', $record->id)->value('user_id');
             // $lastEdit = Payment::where('paymentable_type', Order::class)->where('paymentable_id', $record->id)->where('mutation_type', "Sales")->orderBy('date_payment', 'desc')->value('date_payment');
 
             // Update siapa yang BUAT
@@ -74,7 +73,7 @@ class EditOrder extends EditRecord
             // Update siapa yang JUAL/BELI di PAYMENT
             Payment::where('paymentable_id', $record->id)->where('paymentable_type', Order::class)->update([
                 'updated_by' => Auth::user()->id,
-                'user_id' => $user_id,
+                'user_id' => $record->user_id,
             ]);
 
             // Tanggal Pelunasan

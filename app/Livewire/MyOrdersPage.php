@@ -109,28 +109,10 @@ class MyOrdersPage extends Component
         $paymenttf = Payment::where('mutation_type', 'Sales')->where('branch_id', auth()->user()->branch_id)->where('date_payment', 'like', "%$today%")->where('payment_method', '=', 'transfer')->sum(value('nominal_plus'));
         $my_orders_sum_cashback = Order::where('is_paid', 1)->where('paid_at', 'like', "%$today%")->where('total_payment', '>=', 'grand_total')->sum(value('total_cashback'));
 
-        $payments = Payment::where('branch_id', auth()->user()->branch_id)->where('paymentable_type', Order::class)->where('mutation_type', 'Sales')
-            ->where('date_payment', 'like', "%$today%")
-            ->orderBy('id', 'desc')->get();
-
         $products = Product::all();
-        $orderItems = OrderItem::whereNull('deleted_at');
-        $itemsSold = OrderItem::where('branch_id', auth()->user()->branch_id)
-            ->whereNotNull('order_id')
-            ->whereNull('deleted_at')
-            ->where('updated_at', 'like', "%$today%")
-            ->orderBy('product_id', 'asc')->get();
-        $itemsSoldGroup = OrderItem::where('branch_id', auth()->user()->branch_id)
-            ->whereNotNull('order_id')
-            ->whereNull('deleted_at')
-            ->where('updated_at', 'like', "%$today%")
-            ->orderBy('product_id', 'asc')->get()
-            ->groupBy('product_id');
-
         $branch = Branch::all();
 
         return view('livewire.my-orders-page', [
-            'payments' => $payments,
             'orders' => $my_orders,
             'orders_all' => $orders_all,
             'my_orders_sum' => $my_orders_sum,
@@ -143,9 +125,6 @@ class MyOrdersPage extends Component
             'paymentcash' => $paymentcash,
             'paymenttf' => $paymenttf,
             'products' => $products,
-            'orderItems' => $orderItems,
-            'itemsSold' => $itemsSold,
-            'itemsSoldGroup' => $itemsSoldGroup,
             'branch' => $branch,
         ]);
     }

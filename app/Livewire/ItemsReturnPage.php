@@ -52,13 +52,12 @@ class ItemsReturnPage extends Component
             ->whereBetween('updated_at', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])
             ->whereNull('deleted_at')
             ->orderBy('id', 'desc')
-            ->get()
             ->where('status', '!=', 'canceled');
 
         return view('livewire.items-return-page', [
             'orders' => $orders,
             'products' => $products,
-            'itemsreturn' => $itemsreturn
+            'itemsreturn' => $itemsreturn->paginate(25),
         ]);
     }
 }

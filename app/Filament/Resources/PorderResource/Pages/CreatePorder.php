@@ -53,7 +53,6 @@ class CreatePorder extends CreateRecord
 
         $hari = Carbon::parse($record->date_order)->format('Y-m-d');
         $antri = Porder::where('branch_id', Auth::user()->branch_id)->where('date_order', 'like', "%$hari%")->count();
-        $user_id = Porder::where('id', $record->id)->value('user_id');
 
         // Update siapa yang BUAT
         OrderItem::where('porder_id', $record->id)->update([
@@ -65,7 +64,7 @@ class CreatePorder extends CreateRecord
         // Update siapa yang BELI di PAYMENT
         Payment::where('paymentable_id', $record->id)->where('paymentable_type', Porder::class)->update([
             'created_by' => Auth::user()->id,
-            'user_id' => $user_id,
+            'user_id' => $record->user_id,
             'debit' => 'NR-KR-C-2000 Hutang_Pembelian_Barang',
             'kredit' => 'NR-DB-B-1100 CASH / BANK',
             // 'rekening' => 'KAS KASIR',

@@ -68,10 +68,10 @@
         x-show="showProductModal" 
         x-transition.opacity 
         x-cloak
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 overflow-y-auto"
         @click.self="showProductModal = false"
     >
-      <div class="bg-white p-4 rounded-lg shadow-lg w-11/12 md:w-1/3">
+      <div class="bg-white p-4 md:shadow-lg md:w-2/3 lg:w-1/2 md:my-10 md:max-h-[90vh] overflow-y-auto w-screen max-h-[100vh]">
           <div class="flex gap-2">
             <h2 class="text-lg font-bold mb-2" x-text="productDetail.name"></h2>
             <h2 class="text-lg font-bold mb-2 text-green-500" x-text="productDetail.variant ? `${productDetail.variant}` : ``"></h2>
@@ -81,6 +81,7 @@
             : '/storage/foto-produk.png'" alt="" class="w-full object-cover rounded mb-2 mx-auto aspect-square">
           <p class="font-semibold text-lg" x-text="`Rp${formatMoney(productDetail.price)}`"></p>
           <p class="text-gray-700 text-sm mb-2" x-text="productDetail.description"></p>
+          <p class="text-gray-700 text-sm mb-2" > Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae voluptate quos placeat numquam quo nostrum, aliquid magnam animi consectetur provident iure esse praesentium! Quos rem iure, tempora laboriosam reprehenderit illum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae voluptate quos placeat numquam quo nostrum, aliquid magnam animi consectetur provident iure esse praesentium! Quos rem iure, tempora laboriosam reprehenderit illum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae voluptate quos placeat numquam quo nostrum, aliquid magnam animi consectetur provident iure esse praesentium! Quos rem iure, tempora laboriosam reprehenderit illum.</p>
 
           <div class="text-right mt-3">
               <button @click="showProductModal = false" class="px-3 py-1 bg-gray-300 rounded">Tutup</button>
@@ -172,7 +173,7 @@
         </div>
 
         <!-- isi cart -->
-        <div class="px-3 pt-1.5 pb-24 h-[calc(100vh-4rem)] md:h-auto overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-gray-300" style="-webkit-overflow-scrolling: touch;">
+        <div class="px-3 pt-2 pb-24 h-[calc(100vh-4rem)] md:h-auto overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-gray-300" style="-webkit-overflow-scrolling: touch;">
             <template x-if="cart.length === 0">
                 <div class="text-sm text-gray-500 text-center">Cart kosong</div>
             </template>

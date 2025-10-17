@@ -138,4 +138,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/exportbrands', [ExportController::class, 'exportBrand']);
     Route::get('/exportdompetbydatetransaksi/{byfilter}', [ExportController::class, 'exportDompetDateTrans'])->name('exportdompetbydatetransaksi');
     Route::get('/exportdompetbydatedibuat/{byfilter}', [ExportController::class, 'exportDompetDateDibuat'])->name('exportdompetbydatedibuat');
+    Route::get('/exportdompetbydatediedit/{byfilter}', [ExportController::class, 'exportDompetDateDiedit'])->name('exportdompetbydatediedit');
 });

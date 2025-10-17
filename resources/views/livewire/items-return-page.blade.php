@@ -66,14 +66,18 @@
             </div>
           </div> 
           
-          <!-- pagination start -->
-          <!-- pagination end -->
 
         </div>
       </div>
     </div>
     
    
+    <!-- pagination start -->
+            <div class="mx-2 mt-5">
+                {{ $itemsreturn->links('vendor.pagination.tailwind') }}
+            </div>
+  <!-- pagination end -->
   </div> 
+
 
 </div>

@@ -83,7 +83,6 @@ class EditPorder extends EditRecord
 
 
             $orderTarget = Porder::where('id', $record->id);
-            $user_id = Porder::where('id', $record->id)->value('user_id');
             // $lastEdit = Payment::where('paymentable_type', Porder::class)->where('paymentable_id', $record->id)->where('mutation_type', "Purchase")->orderBy('date_payment', 'desc')->value('date_payment');
 
             // Update siapa yang BUAT
@@ -96,7 +95,7 @@ class EditPorder extends EditRecord
             // Update siapa yang JUAL/BELI di PAYMENT
             Payment::where('paymentable_id', $record->id)->where('paymentable_type', Porder::class)->update([
                 'updated_by' => Auth::user()->id,
-                'user_id' => $user_id,
+                'user_id' => $record->user_id,
             ]);
 
             // Tanggal Pelunasan

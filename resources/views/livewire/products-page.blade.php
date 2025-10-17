@@ -1,4 +1,4 @@
-<div class="w-full max-w-[85rem] sm:py-6 pt-3 px-2 md:px-6 lg:px-8 mx-auto">
+<div class="w-full max-w-[85rem] sm:py-6 pt-3 px-2 md:px-6 lg:px-8 mx-auto pb-8">
 
     {{-- <p>The current URL is: {{url()->full()}}</p> --}}
     {{-- @if (url()->full() === 'http://ecommerce.test/products?selected_categories%5B0%5D=2') bg-green-300 @else --}}
@@ -7,7 +7,25 @@
         <div class="items-center justify-between my-2 bg-transparent sm:flex  ">
 
             <div class="justify-start w-full">
-                <h3 class="text-xl font-bold sm:text-left sm:mb-0 sm:ml-2 mb-4 text-center dark:text-white">PRODUCTS</h3>
+                <div class="flex justify-between mb-4 items-center">
+                    <a class="sm:hidden cursor-pointer flex flex-nowrap items-center dark:text-gray-300 bg-white dark:bg-gray-800 p-1 rounded-full"
+                        href="/" wire:navigate                   
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                            </svg>
+
+                    </a> 
+                    <h1 class="text-xl font-semibold dark:text-white sm:-mb-3">Products</h1>
+                    <a class="sm:hidden cursor-pointer flex flex-nowrap items-center dark:text-gray-300 bg-white dark:bg-gray-800 p-1 rounded-full"
+                        href="/categories" wire:navigate                   
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
+                            </svg>
+                    </a> 
+                </div>
             </div>
 
             <div class="flex justify-end w-full flex-nowrap">
@@ -234,14 +252,17 @@
 
                                         <div class="p-3">
                                             <div class="font-semibold text-gray-800 leading-tight line-clamp-2">{{ $p->name }}</div>
+                                            <div class="text-gray-600 leading-tight line-clamp-2">{{ $p->variant ?? '' }}</div>
                                             <div class="flex">
                                                 <div class="text-sm text-gray-500 mb-2">
                                                     Rp{{ number_format($p->price, 0, ',', '.') }}
                                                 </div>
                                                 @if ($p->in_stock == 1)
                                                     <button wire:click="addToCart({{ $p->id }})"
-                                                        class="ms-auto bg-green-600 hover:bg-green-700 text-white text-sm py-1 px-3 rounded transition">
-                                                        +
+                                                        class="ms-auto bg-green-600 hover:bg-green-700 text-white text-sm py-1 px-2 rounded transition">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                                        </svg>                                                        
                                                     </button>
                                                 @else
                                                     <button 
@@ -276,14 +297,17 @@
 
                                         <div class="p-3">
                                             <div class="font-semibold text-gray-800 leading-tight line-clamp-2">{{ $p->name }}</div>
+                                            <div class="text-gray-600 leading-tight line-clamp-2">{{ $p->variant ?? '' }}</div>
                                             <div class="flex">
                                                 <div class="text-sm text-gray-500 mb-2">
                                                     Rp{{ number_format($p->price, 0, ',', '.') }}
                                                 </div>
                                                 @if ($p->in_stock == 1)
                                                     <button wire:click="addToCart({{ $p->id }})"
-                                                        class="ms-auto bg-green-600 hover:bg-green-700 text-white text-sm py-1 px-3 rounded transition">
-                                                        +
+                                                        class="ms-auto bg-green-600 hover:bg-green-700 text-white text-sm py-1 px-2 rounded transition">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                                        </svg>                                                        
                                                     </button>
                                                 @else
                                                     <button 

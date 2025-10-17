@@ -33,6 +33,7 @@
         class="py-1 px-2 pe-9 block w-40 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">                      
         <option value="date_payment">Sort Tgl Trans</option>  
         <option value="created_at">Sort Tgl Dibuat</option>  
+        <option value="updated_at">Sort Tgl Diedit</option>  
     </select>
 
     <select name="rek" id="rek" wire:model.live="rek"
@@ -47,7 +48,7 @@
 
   <div wire:ignore class="flex justify-between mb-3">
     
-    <x-filament::modal>
+    <x-filament::modal width="2xl">
         <x-slot name="trigger">
             <h3 class="dark:text-white font-bold">Riwayat Terakhir  &#128438;</h3>
         </x-slot>
@@ -58,12 +59,15 @@
                       wire:model="laporan_dompet_by_date"
                   />
             </x-filament::input.wrapper>
-            <div class="grid grid-cols-2 gap-3">
-              <x-filament::button wire:click="exportDompetbyDateTransaksi" class="cursor-pointer text-xs bg-amber-300 hover:bg-amber-500" icon="heroicon-m-printer">
+            <div class="grid grid-cols-3 gap-3">
+              <x-filament::button wire:click="exportDompetbyDateTransaksi" class="w-full cursor-pointer text-xs bg-amber-300 hover:bg-amber-500" icon="heroicon-m-printer">
                 by Date Transaksi
               </x-filament::button>
-              <x-filament::button wire:click="exportDompetbyDateDibuat" class="cursor-pointer text-xs bg-amber-300 hover:bg-amber-500" icon="heroicon-m-printer">
+              <x-filament::button wire:click="exportDompetbyDateDibuat" class="w-full cursor-pointer text-xs bg-amber-300 hover:bg-amber-500" icon="heroicon-m-printer">
                 by Date Dibuat
+              </x-filament::button>
+              <x-filament::button wire:click="exportDompetbyDateDiedit" class="w-full cursor-pointer text-xs bg-amber-300 hover:bg-amber-500" icon="heroicon-m-printer">
+                by Date Diedit
               </x-filament::button>
             </div>
     </x-filament::modal>
@@ -172,6 +176,11 @@
                 <div class="pt-3">{{ $transaksi->created_at->translatedFormat('l') }}, {{ $transaksi->created_at->translatedFormat('d') }} {{ $transaksi->created_at->translatedFormat('M') }}</div> 
                 @php $previousDate = $transaksi->created_at->format('Ymd'); @endphp
               @endif     
+          @elseif ($this->date_option === 'updated_at')
+              @if ($transaksi->updated_at->format('Ymd') != $previousDate)     
+                <div class="pt-3">{{ $transaksi->updated_at->translatedFormat('l') }}, {{ $transaksi->updated_at->translatedFormat('d') }} {{ $transaksi->updated_at->translatedFormat('M') }}</div> 
+                @php $previousDate = $transaksi->updated_at->format('Ymd'); @endphp
+              @endif     
           @else
               @if ($transaksi->date_payment->format('Ymd') != $previousDate)     
                 <div class="pt-3">{{ $transaksi->date_payment->translatedFormat('l') }}, {{ $transaksi->date_payment->translatedFormat('d') }} {{ $transaksi->date_payment->translatedFormat('M') }}</div> 
@@ -182,7 +191,7 @@
         <div class="p-4 grid grid-cols-3 bg-white rounded-xl">
           <div class="flex items-center">
             <div class="text-sm line-clamp-2 pe-2">
-              {{ $transaksi->user->name }}
+              {{ $transaksi->user->name ?? '' }}
             </div>
           </div>
           <a       
@@ -232,6 +241,8 @@
             <div class="flex items-center justify-end text-xs text-gray-500">
                   @if ($this->date_option === 'created_at')
                   {{ $transaksi->created_at->format('H:i') }}
+                  @elseif ($this->date_option === 'updated_at')
+                  {{ $transaksi->updated_at->format('H:i') }}
                   @else
                   {{ $transaksi->date_payment->format('H:i') }}
                   @endif
@@ -250,10 +261,8 @@
                             margin-right: 20px;
                         }
                     </style> --}}
-                    <div 
-                    class="mt-3"
-                    >
-                        {{ $cashBankHistories->links() }}
+                    <div class="flex justify-center mt-3">  
+                        {{ $cashBankHistories->links('vendor.pagination.tailwind') }}
                     </div>
                     <!-- pagination end -->
 

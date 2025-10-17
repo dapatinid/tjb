@@ -66,6 +66,18 @@ class WalletPage extends Component
             )));
         }
     }
+    public function exportDompetbyDateDiedit()
+    {
+        if ($this->laporan_dompet_by_date == null || $this->laporan_dompet_by_date == '') {
+            LivewireAlert::title('Tanggal Kosong')
+                ->show();
+        } else {
+            return redirect()->route('exportdompetbydatediedit', http_build_query(array(
+                'bydate' => $this->laporan_dompet_by_date,
+                'rek' => $this->rek
+            )));
+        }
+    }
 
     public function render()
     {
@@ -78,6 +90,9 @@ class WalletPage extends Component
         if ($this->date_option === 'created_at') {
         $cashBankHistories = Payment::where('branch_id', Auth::user()->branch_id)->whereNotNull('rekening')->where('rekening', 'LIKE', '%' . $this->rek . '%')->orderBy('created_at', 'desc');
         $cashBankHistoriesLast = Payment::query()->where('branch_id', Auth::user()->branch_id)->whereNotNull('rekening')->where('rekening', 'LIKE', '%' . $this->rek . '%')->orderBy('created_at', 'desc')->value('created_at');
+        } elseif ($this->date_option === 'updated_at') {
+        $cashBankHistories = Payment::where('branch_id', Auth::user()->branch_id)->whereNotNull('rekening')->where('rekening', 'LIKE', '%' . $this->rek . '%')->orderBy('updated_at', 'desc');
+        $cashBankHistoriesLast = Payment::query()->where('branch_id', Auth::user()->branch_id)->whereNotNull('rekening')->where('rekening', 'LIKE', '%' . $this->rek . '%')->orderBy('updated_at', 'desc')->value('updated_at');
         } else {
         $cashBankHistories = Payment::where('branch_id', Auth::user()->branch_id)->whereNotNull('rekening')->where('rekening', 'LIKE', '%' . $this->rek . '%')->orderBy('date_payment', 'desc');
         $cashBankHistoriesLast = Payment::query()->where('branch_id', Auth::user()->branch_id)->whereNotNull('rekening')->where('rekening', 'LIKE', '%' . $this->rek . '%')->orderBy('date_payment', 'desc')->value('date_payment');

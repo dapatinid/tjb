@@ -12,10 +12,10 @@
             <span class="font-medium">{{ $paginator->total() }}</span>
             {!! __('data') !!}
         </div>
-
+        
         {{-- Pagination buttons (scrollable di mobile) --}}
         <div class="w-full sm:w-auto overflow-x-auto scrollbar-hide flex justify-center">
-            <div class="inline-flex items-center space-x-1 px-1 py-1 ">
+            <div class="flex flex-wrap gap-1 items-center py-1 pe-1 justify-center">
                 {{-- Tombol Prev --}}
                 @if ($paginator->onFirstPage())
                     <span
@@ -53,7 +53,7 @@
                         @foreach ($element as $page => $url)
                             @if ($page == $paginator->currentPage())
                                 <span
-                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-indigo-600 border border-indigo-600 rounded-md cursor-default">
+                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-yellow-400 border border-yellow-400 rounded-md cursor-default">
                                     {{ $page }}
                                 </span>
                             @else

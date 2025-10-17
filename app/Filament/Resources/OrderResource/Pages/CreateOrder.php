@@ -29,7 +29,6 @@ class CreateOrder extends CreateRecord
         $record = $this->record;
         $hari = Carbon::parse($record->date_order)->format('Y-m-d');
         $antri = Order::where('branch_id', Auth::user()->branch_id)->where('date_order', 'like', "%$hari%")->count();
-        $user_id = Order::where('id', $record->id)->value('user_id');
 
         // Update siapa yang BUAT
         OrderItem::where('order_id', $record->id)->update([
@@ -41,7 +40,7 @@ class CreateOrder extends CreateRecord
         // Update siapa yang BELI di PAYMENT
         Payment::where('paymentable_id', $record->id)->where('paymentable_type', Order::class)->update([
             'created_by' => Auth::user()->id,
-            'user_id' => $user_id,
+            'user_id' => $record->user_id,
             'debit' => 'NR-DB-B-1100 CASH / BANK',
             'kredit' => 'NR-DB-B-3000 Piutang Penjualan Barang',
             // 'rekening' => 'KAS KASIR',

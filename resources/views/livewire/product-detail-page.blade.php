@@ -1,4 +1,4 @@
-<div class="w-full max-w-[85rem] py-0 lg:px-10 mx-auto">
+<div class="w-full max-w-[85rem] pb-10 lg:px-10 mx-auto">
     <section class="pt-0 pb-10 overflow-hidden bg-white md:pt-7 font-poppins dark:bg-gray-800">
         <div class="max-w-6xl px-0 py-0 mx-auto lg:py-0 md:px-6">
             <div class="flex flex-wrap">

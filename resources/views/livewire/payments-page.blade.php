@@ -75,15 +75,18 @@
               </div>
             </div> 
             
-            <!-- pagination start -->
-            {{-- <div>
-              {{ $payments->links() }}
-            </div> --}}
-            <!-- pagination end -->
+
     
           </div>
         </div>
+        <!-- pagination start -->
+        <div class="mx-2 mt-5">
+          {{ $payments->links('vendor.pagination.tailwind') }}
+        </div>
+        <!-- pagination end -->
       </div>
+
+
       <div id="segment-2" class="hidden" role="tabpanel" aria-labelledby="segment-item-2">
         <div class="flex flex-col p-5 mt-4 bg-white rounded-lg shadow-lg dark:bg-neutral-700">
           <div class="-m-1.5 overflow-x-auto">
@@ -100,7 +103,7 @@
                       </tr>
                   </thead>
                   <tbody>
-                    @foreach ($ordersUnpaid->where('total_cashback', '<', 0) as $orderUpd)     
+                    @foreach ($ordersUnpaid->where('total_cashback', '<', 0)->take(12)->get() as $orderUpd)     
                     <tr class="odd:bg-white even:bg-gray-100 hover:bg-green-400 dark:odd:bg-neutral-800 dark:even:bg-neutral-700 dark:hover:bg-neutral-900">
                       <td class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap dark:text-gray-200"><a wire:navigate href="/my-orders/{{ $orderUpd->id }}">{{ $orderUpd->id }}</a></td>
                       <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $orderUpd->date_order }}</td>
@@ -111,7 +114,7 @@
                   </tbody>
                   <tfoot>
                     <tr class="bg-slate-300 dark:bg-neutral-900">
-                        <td colspan="3"></td>
+                        <td colspan="3"><a href="/admin/orders?tableFilters[is_paid][isActive]=false&tableFilters[Unpaid][isActive]=true" class="text-blue-500 ms-5">Selengkapnya ada di sini</a></td>
                         <td class="px-6 py-4 text-sm font-bold text-gray-800 whitespace-nowrap text-end dark:text-gray-200">@formatNumber($ordersUnpaid->where('total_cashback', '<', 0)->sum('total_cashback'))</td>
                     </tr>
                   </tfoot>
@@ -120,14 +123,15 @@
               </div>
             </div> 
             
-            <!-- pagination start -->
-            <div>
-              {{ $ordersUnpaid->links() }}
-            </div>
-            <!-- pagination end -->
+
   
           </div>
         </div>
+        <!-- pagination start -->
+        {{-- <div>
+          {{ $ordersUnpaid->links('vendor.pagination.tailwind') }}
+        </div> --}}
+        <!-- pagination end -->      
       </div>
      
     </div> 

@@ -94,15 +94,15 @@
             </div>
           </div> 
           
-          <!-- pagination start -->
-                    <div class="mx-2">
-                        {{ $products->links() }}
-                    </div>
-          <!-- pagination end -->
-
+          
         </div>
       </div>
-   
-  </div> 
-
+      
+      <!-- pagination start -->
+                <div class="mx-2 mt-5">
+                    {{ $products->links('vendor.pagination.tailwind') }}
+                </div>
+      <!-- pagination end -->
+    </div> 
+    
 </div>

@@ -12,6 +12,8 @@
     {{ request()->is('neraca-all') ? ' hidden' : 'flex' }}
     {{ request()->is('login') ? ' hidden' : 'flex' }}
     {{ request()->is('register') ? ' hidden' : 'flex' }}
+    {{ request()->is('products') ? ' hidden' : 'flex' }}
+     {{ Str::of(request()->fullUrl())->contains('product/') ? ' hidden' : 'flex' }}
    ">
     <div class="w-full max-w-[85rem] pb-11 md:pb-5 pt-5 px-4 sm:px-6 lg:px-8 mx-auto">
 
