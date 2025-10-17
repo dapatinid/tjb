@@ -81,7 +81,6 @@
             : '/storage/foto-produk.png'" alt="" class="w-full object-cover rounded mb-2 mx-auto aspect-square">
           <p class="font-semibold text-lg" x-text="`Rp${formatMoney(productDetail.price)}`"></p>
           <p class="text-gray-700 text-sm mb-2" x-text="productDetail.description"></p>
-          <p class="text-gray-700 text-sm mb-2" > Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae voluptate quos placeat numquam quo nostrum, aliquid magnam animi consectetur provident iure esse praesentium! Quos rem iure, tempora laboriosam reprehenderit illum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae voluptate quos placeat numquam quo nostrum, aliquid magnam animi consectetur provident iure esse praesentium! Quos rem iure, tempora laboriosam reprehenderit illum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae voluptate quos placeat numquam quo nostrum, aliquid magnam animi consectetur provident iure esse praesentium! Quos rem iure, tempora laboriosam reprehenderit illum.</p>
 
           <div class="text-right mt-3">
               <button @click="showProductModal = false" class="px-3 py-1 bg-gray-300 rounded">Tutup</button>
