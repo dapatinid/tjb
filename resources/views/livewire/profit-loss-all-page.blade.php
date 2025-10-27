@@ -75,16 +75,16 @@
     {{-- {{ $pl_kredit }} --}}
     @foreach ($pl_kredit as $kredit)        
     <div class="pb-2 grid grid-cols-3">
-    <div
-      class="flex items-center text-sm">
+    <a href="/admin/payments?tableSearch={{ Str::after($kredit->kredit,'LR-KR-') }}" target="_blank"
+      class="flex items-center text-sm hover:text-blue-500">
         {{ Str::after($kredit->kredit,'LR-KR-') }}      
-    </div>
+    </a>
     <div class="flex items-center justify-end text-xs text-gray-500">
-      {{ $kredit->nominal }} transaksi
+      {{ $profitLoss->where('kredit', $kredit->kredit)->count() + $profitLoss->where('debit', $kredit->kredit)->count() }} transaksi
     </div>
       <div 
         class="flex items-center justify-end text-green-60">
-        @formatNumber($profitLoss->where('kredit', $kredit->kredit)->sum('nominal'))
+        @formatNumber($profitLoss->where('kredit', $kredit->kredit)->sum('nominal') - $profitLoss->where('debit', $kredit->kredit)->sum('nominal'))
       </div>
     </div>
     @endforeach
@@ -101,16 +101,16 @@
     {{-- {{ $pl_debit }} --}}
     @foreach ($pl_debit as $debit)        
     <div class="pb-2 grid grid-cols-3">
-    <div
-      class="flex items-center text-sm">
+    <a href="/admin/payments?tableSearch={{ Str::after($debit->debit,'LR-DB-') }}" target="_blank"
+      class="flex items-center text-sm hover:text-blue-500">
       {{ Str::after($debit->debit,'LR-DB-') }}    
-    </div>
+    </a>
     <div class="flex items-center justify-end text-xs text-gray-500">
-      {{ $debit->nominal }} transaksi
+      {{ $profitLoss->where('debit', $debit->debit)->count() + $profitLoss->where('kredit', $debit->debit)->count() }} transaksi
     </div>
     <div 
         class="flex items-center justify-end text-green-60">
-        @formatNumber($profitLoss->where('debit', $debit->debit)->sum('nominal'))
+        @formatNumber($profitLoss->where('debit', $debit->debit)->sum('nominal') - $profitLoss->where('kredit', $debit->debit)->sum('nominal'))
       </div>
     </div>
     @endforeach

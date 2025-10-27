@@ -21,7 +21,9 @@ class BalanceSheetAllPage extends Component
 {
     use WithPagination;
 
+    #[Url()]
     public $date_awal = '';
+    #[Url()]
     public $date_akhir = '';
     public $branchByPartner = [];
 
@@ -118,17 +120,17 @@ class BalanceSheetAllPage extends Component
 
         $profitLoss = Payment::all()->whereIn('branch_id', $branchByPartner)->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59']);
 
-        $pl_kredit = Payment::whereIn('branch_id', $branchByPartner)->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->where('kredit', 'like', '%LR-KR-%')
-            ->groupBy('kredit')
-            ->selectRaw('count(*) as nominal, kredit')
-            ->orderBy('kredit', 'asc')->get();
-        $pl_debit = Payment::whereIn('branch_id', $branchByPartner)->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->where('debit', 'like', '%LR-DB-%')
-            ->groupBy('debit')
-            ->selectRaw('count(*) as nominal, debit')
-            ->orderBy('debit', 'asc')->get();
+        // $pl_kredit = Payment::whereIn('branch_id', $branchByPartner)->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->where('kredit', 'like', '%LR-KR-%')
+        //     ->groupBy('kredit')
+        //     ->selectRaw('count(*) as nominal, kredit')
+        //     ->orderBy('kredit', 'asc')->get();
+        // $pl_debit = Payment::whereIn('branch_id', $branchByPartner)->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->where('debit', 'like', '%LR-DB-%')
+        //     ->groupBy('debit')
+        //     ->selectRaw('count(*) as nominal, debit')
+        //     ->orderBy('debit', 'asc')->get();
 
-        $pl_kredit_total = Payment::whereIn('branch_id', $branchByPartner)->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->where('kredit', 'like', '%LR-KR-%')->sum('nominal');
-        $pl_debit_total = Payment::whereIn('branch_id', $branchByPartner)->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->where('debit', 'like', '%LR-DB-%')->sum('nominal');
+        $pl_kredit_total = Payment::whereIn('branch_id', $branchByPartner)->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->where('kredit', 'like', '%LR-KR-%')->sum('nominal') - Payment::whereIn('branch_id', $branchByPartner)->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->where('debit', 'like', '%LR-KR-%')->sum('nominal');
+        $pl_debit_total = Payment::whereIn('branch_id', $branchByPartner)->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->where('debit', 'like', '%LR-DB-%')->sum('nominal') - Payment::whereIn('branch_id', $branchByPartner)->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->where('kredit', 'like', '%LR-DB-%')->sum('nominal');
 
         $branchQuery = Branch::query()->where('is_active', 1);
         $mitra = Partner::all();
@@ -142,8 +144,8 @@ class BalanceSheetAllPage extends Component
             'nr_PasivaEkuitas' => $nr_PasivaEkuitas->unique(),
 
             'profitLoss' => $profitLoss,
-            'pl_kredit' => $pl_kredit,
-            'pl_debit' => $pl_debit,
+            // 'pl_kredit' => $pl_kredit,
+            // 'pl_debit' => $pl_debit,
             'pl_kredit_total' => $pl_kredit_total,
             'pl_debit_total' => $pl_debit_total,
 

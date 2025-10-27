@@ -64,7 +64,8 @@
 
   <!-- JUDUL End -->
 
-<div wire:poll class="grid grid-cols-2 space-x-5">
+<div  class="grid grid-cols-2 space-x-5"> 
+  {{-- wire:poll --}}
 
 <div class="">
   <div class="flex justify-between mt-5 mb-3">
@@ -78,10 +79,10 @@
     @endphp
     @foreach ($nr_AktivaAsetTetap as $debit)        
     <div class="pb-2 grid grid-cols-2">
-    <div
-      class="flex items-center text-sm">
+    <a href="/admin/payments?tableSearch={{ Str::after($debit,'NR-DB-') }}" target="_blank"
+      class="flex items-center text-sm hover:text-blue-500">
       {{ Str::after($debit,'NR-DB-') }}    
-    </div>
+    </a>
     <div 
         class="flex items-center justify-end text-green-60">
         @formatNumber($balance->where('debit', $debit)->sum('nominal') - $balance->where('kredit', $debit)->sum('nominal'))
@@ -101,10 +102,10 @@
     @endphp
     @foreach ($nr_AktivaAsetLancar as $debit)        
     <div class="pb-2 grid grid-cols-2">
-    <div
-      class="flex items-center text-sm">
+    <a href="/admin/payments?tableSearch={{ Str::after($debit,'NR-DB-') }}" target="_blank"
+      class="flex items-center text-sm hover:text-blue-500">
       {{ Str::after($debit,'NR-DB-') }}    
-    </div>
+    </a>
     <div 
         class="flex items-center justify-end text-green-60">
         @formatNumber($balance->where('debit', $debit)->sum('nominal') - $balance->where('kredit', $debit)->sum('nominal'))
@@ -135,10 +136,10 @@
     @endphp    
     @foreach ($nr_PasivaKewajiban as $kredit)        
     <div class="pb-2 grid grid-cols-2">
-    <div
-      class="flex items-center text-sm">
+    <a href="/admin/payments?tableSearch={{ Str::after($kredit,'NR-KR-') }}" target="_blank"
+      class="flex items-center text-sm hover:text-blue-500">
         {{ Str::after($kredit,'NR-KR-') }}      
-    </div>
+    </a>
       <div 
         class="flex items-center justify-end text-green-60">
         @formatNumber($balance->where('kredit', $kredit)->sum('nominal') - $balance->where('debit', $kredit)->sum('nominal'))
@@ -158,10 +159,10 @@
     @endphp    
     @foreach ($nr_PasivaEkuitas as $kredit)        
     <div class="pb-2 grid grid-cols-2">
-    <div
-      class="flex items-center text-sm">
+    <a href="/admin/payments?tableSearch={{ Str::after($kredit,'NR-KR-') }}" target="_blank"
+      class="flex items-center text-sm hover:text-blue-500">
         {{ Str::after($kredit,'NR-KR-') }}      
-    </div>
+    </a>
       <div 
         class="flex items-center justify-end text-green-60">
         @formatNumber($balance->where('kredit', $kredit)->sum('nominal') - $balance->where('debit', $kredit)->sum('nominal'))
