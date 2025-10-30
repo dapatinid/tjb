@@ -21,9 +21,10 @@
       </div>
     </div>
 
-    <div class="inline-flex flex-wrap justify-end text-end">
+    <div class="inline-flex flex-wrap justify-end text-end gap-3">
+    <x-filament::button wire:click="exportTabelStokLow" class="cursor-pointer text-xs bg-amber-300 hover:bg-amber-500" icon="heroicon-m-printer" >Print</x-filament::button>
     <div class=""><span class="dark:text-gray-400">From</span> <input wire:model.live='date_awal' type="date" name="date_awal" id="date_awal" class="px-2 bg-white"></div>
-    <div class=""><span class="dark:text-gray-400 ml-3">To</span> <input wire:model.live='date_akhir' type="date" name="date_akhir" id="date_akhir" class="px-2 bg-white"></div>
+    <div class=""><span class="dark:text-gray-400">To</span> <input wire:model.live='date_akhir' type="date" name="date_akhir" id="date_akhir" class="px-2 bg-white"></div>
     </div>
   </div>
   

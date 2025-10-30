@@ -139,4 +139,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/exportdompetbydatetransaksi/{byfilter}', [ExportController::class, 'exportDompetDateTrans'])->name('exportdompetbydatetransaksi');
     Route::get('/exportdompetbydatedibuat/{byfilter}', [ExportController::class, 'exportDompetDateDibuat'])->name('exportdompetbydatedibuat');
     Route::get('/exportdompetbydatediedit/{byfilter}', [ExportController::class, 'exportDompetDateDiedit'])->name('exportdompetbydatediedit');
+    Route::get('/exporttabelstoklow/{byfilter}', [ExportController::class, 'exportTabelStokLow'])->name('exporttabelstoklow');
 });

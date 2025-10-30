@@ -10,6 +10,7 @@ use Livewire\WithPagination;
 use App\Models\Product;
 use Carbon\Carbon;
 use Livewire\Attributes\Url;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 
 #[Title('Items Status')]
 class ItemsLowPage extends Component
@@ -29,6 +30,19 @@ class ItemsLowPage extends Component
             return redirect('/my-orders');
         }
     }
+
+    public function exportTabelStokLow()
+    {
+        if ($this->date_awal == null || $this->date_akhir == '') {
+            LivewireAlert::title('Tanggal Kosong')
+                ->show();
+        } else {
+            return redirect()->route('exporttabelstoklow', http_build_query(array(
+                'date_awal' => $this->date_awal,
+                'date_akhir' => $this->date_akhir,
+            )));
+        }
+    }    
 
     public function render()
     {

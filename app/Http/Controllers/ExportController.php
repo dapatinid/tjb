@@ -7,6 +7,7 @@ use App\Exports\ProductsExport;
 use App\Exports\DompetExportByDateTrans;
 use App\Exports\DompetExportByDateDibuat;
 use App\Exports\DompetExportByDateDiedit;
+use App\Exports\StokStatusExport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -44,5 +45,11 @@ class ExportController extends Controller
     {
         // return "Hello Export : " . $byfilter;
         return Excel::download(new DompetExportByDateDiedit($byfilter), 'dompet-bydate-Diedit.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+    }
+
+    public function exportTabelStokLow($byfilter)
+    {
+        // return "Hello Export : " . $byfilter;
+        return Excel::download(new StokStatusExport($byfilter), 'stok-status.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 }
