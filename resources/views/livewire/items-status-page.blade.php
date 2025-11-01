@@ -61,7 +61,6 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-    // Jalankan script perhitungan saldo
     const orderItems = @json($orderItems);
 
     const grouped = orderItems.reduce((acc, item) => {
@@ -79,7 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 TfOut: 0,
                 TfIn: 0,
                 saldo: 0,
-
                 totINnotNew: 0,
                 totINnotTf: 0,
                 totOUTnotNew: 0,
@@ -88,79 +86,91 @@ document.addEventListener("DOMContentLoaded", () => {
             };
         }
 
-        if (item.mutation_type === 'Purchase') acc[pid].beli += item.p_quantity;
-        if (item.mutation_type === 'Sales') acc[pid].jual += item.quantity;
-        if (item.mutation_type === 'Transfer Out') acc[pid].TfOut += item.quantity;
-        if (item.mutation_type === 'Transfer In') acc[pid].TfIn += item.p_quantity;
+        // ✅ Pastikan semua angka valid (gunakan Number() dan fallback 0)
+        const q = Number(item.quantity) || 0;
+        const pq = Number(item.p_quantity) || 0;
+
+        // Mutasi
+        if (item.mutation_type === 'Purchase') acc[pid].beli += pq;
+        if (item.mutation_type === 'Sales') acc[pid].jual += q;
+        if (item.mutation_type === 'Transfer Out') acc[pid].TfOut += q;
+        if (item.mutation_type === 'Transfer In') acc[pid].TfIn += pq;
 
         if (item.mutation_type === 'Production') {
-            acc[pid].ProdPlus += item.p_quantity;
-            acc[pid].ProdMins += item.quantity;
+            acc[pid].ProdPlus += pq;
+            acc[pid].ProdMins += q;
         }
         if (item.mutation_type === 'Adjusment') {
-            acc[pid].AdjPlus += item.p_quantity;
-            acc[pid].AdjMins += item.quantity;
+            acc[pid].AdjPlus += pq;
+            acc[pid].AdjMins += q;
         }
 
+        // Status handling
+        if (item.status === 'new') {
+            acc[pid].totINnotNew += pq;
+            acc[pid].totOUTnotNew += q;
+        }
+        if (item.status === 'transfering') {
+            acc[pid].totINnotTf += pq;
+            acc[pid].totOUTnotTf += q;
+        }
 
-        if (item.status === 'new') acc[pid].totINnotNew += item.p_quantity;
-        if (item.status === 'transfering') acc[pid].totINnotTf += item.p_quantity;
-        if (item.status === 'new') acc[pid].totOUTnotNew += item.quantity;
-        if (item.status === 'transfering') acc[pid].totOUTnotTf += item.quantity;
-
-        acc[pid].saldo =
-            acc[pid].beli -
-            acc[pid].jual -
-            acc[pid].TfOut +
-            acc[pid].TfIn +
-            acc[pid].ProdPlus -
-            acc[pid].ProdMins +
-            acc[pid].AdjPlus -
-            acc[pid].AdjMins;
+        // ✅ Hindari Infinity/NaN dengan default 0
+        acc[pid].saldo = 
+            (acc[pid].beli || 0) -
+            (acc[pid].jual || 0) -
+            (acc[pid].TfOut || 0) +
+            (acc[pid].TfIn || 0) +
+            (acc[pid].ProdPlus || 0) -
+            (acc[pid].ProdMins || 0) +
+            (acc[pid].AdjPlus || 0) -
+            (acc[pid].AdjMins || 0);
 
         acc[pid].saldoGudang =
-            acc[pid].saldo - acc[pid].totINnotNew - acc[pid].totINnotTf + acc[pid].totOUTnotNew + acc[pid].totOUTnotTf;
+            (acc[pid].saldo || 0) -
+            (acc[pid].totINnotNew || 0) -
+            (acc[pid].totINnotTf || 0) +
+            (acc[pid].totOUTnotNew || 0) +
+            (acc[pid].totOUTnotTf || 0);
 
         return acc;
     }, {});
 
-    // 🔹 Ubah ke array dan sort berdasarkan nama produk (A → Z)
-    const result = Object.values(grouped).sort((a, b) => {
-        return a.product.name.localeCompare(b.product.name);
-    });
+    // 🔹 Sort berdasarkan nama produk
+    const result = Object.values(grouped).sort((a, b) =>
+        a.product.name.localeCompare(b.product.name)
+    );
 
-    // 🔹 Render ke tabel Blade
+    // 🔹 Render ke tabel
     const tbody = document.getElementById('saldoTable');
     tbody.innerHTML = '';
 
     result.forEach((item) => {
+        // Pastikan semua angka valid untuk ditampilkan
+        const format = (v) => isFinite(v) ? v : 0;
+
         tbody.innerHTML += `
             <tr class="h-10 items-center text-center odd:bg-white even:bg-gray-100 hover:bg-green-400 dark:odd:bg-neutral-800 dark:even:bg-neutral-700 dark:hover:bg-neutral-900">
                 <td class="text-left ps-3">${item.product.id}</td>
                 <td class="text-left">${item.product.name} ${item.product.variant ?? ''}</td>
                 <td>
-                  ${(item.saldo - item.product.low_alert) >= 0
+                  ${(format(item.saldo) - (item.product.low_alert ?? 0)) >= 0
                         ? 'aman'
                         : '<span class="text-white bg-red-500 rounded shadow text-xs py-1 px-2">LOW</span>'}
                 </td>
-                <td>${item.beli}</td>
-                <td>${item.jual * -1}</td>
-                <td>${item.ProdPlus - item.ProdMins}</td>
-                <td>${item.AdjPlus - item.AdjMins}</td>
-                <td>${item.TfOut * -1}</td>
-                <td>${item.TfIn}</td>
-                <td class="font-bold">${item.saldo}</td>
-                <td>${item.saldoGudang}</td>
+                <td>${format(item.beli)}</td>
+                <td>${format(item.jual * -1)}</td>
+                <td>${format(item.ProdPlus - item.ProdMins)}</td>
+                <td>${format(item.AdjPlus - item.AdjMins)}</td>
+                <td>${format(item.TfOut * -1)}</td>
+                <td>${format(item.TfIn)}</td>
+                <td class="font-bold">${format(item.saldo)}</td>
+                <td>${format(item.saldoGudang)}</td>
             </tr>
         `;
     });
 
-  });
-  // 🔹 Tangkap event dari Livewire dan reload halaman penuh
-  // window.addEventListener('refreshPage', () => {
-  //     window.location.reload(false);
-  // });
-
+});
 </script>
 
 
