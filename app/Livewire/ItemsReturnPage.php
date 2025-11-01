@@ -11,7 +11,7 @@ use App\Models\Product;
 use Carbon\Carbon;
 use Livewire\Attributes\Url;
 
-#[Title('Items')]
+#[Title('Items Return')]
 class ItemsReturnPage extends Component
 {
     use WithPagination;

@@ -10,9 +10,10 @@ use Livewire\WithPagination;
 use App\Models\Product;
 use Carbon\Carbon;
 use Livewire\Attributes\Url;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 
-#[Title('Items')]
-class ItemsSoldPage extends Component
+#[Title('Items Warehouse')]
+class ItemsWarehousePage extends Component
 {
     use WithPagination;
     // protected $paginationTheme = 'bootstrap';
@@ -29,6 +30,19 @@ class ItemsSoldPage extends Component
             return redirect('/my-orders');
         }
     }
+
+    public function exportTabelStokLow()
+    {
+        if ($this->date_awal == null || $this->date_akhir == '') {
+            LivewireAlert::title('Tanggal Kosong')
+                ->show();
+        } else {
+            return redirect()->route('exporttabelstoklow', http_build_query(array(
+                'date_awal' => $this->date_awal,
+                'date_akhir' => $this->date_akhir,
+            )));
+        }
+    }    
 
     public function render()
     {
@@ -47,7 +61,7 @@ class ItemsSoldPage extends Component
 
         $products = Product::where('branch_id', auth()->user()->branch_id)->orderBy('name', 'asc')->paginate(25);
 
-        return view('livewire.items-sold-page', [
+        return view('livewire.items-warehouse-page', [
             'products' => $products,
         ]);
     }
