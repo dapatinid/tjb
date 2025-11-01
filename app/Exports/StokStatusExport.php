@@ -2,88 +2,63 @@
 
 namespace App\Exports;
 
-use App\Models\Journal;
-use App\Models\OrderItem;
-use Illuminate\Support\Str;
-use App\Models\Payment;
-use App\Models\Product;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class StokStatusExport implements FromCollection, WithMapping, WithHeadings
 {
-    protected $bydate;
+    protected $data;
 
-    function __construct($byfilter)
+    public function __construct($data)
     {
-        $byfilter = Str::of($byfilter)->explode('&');
-        $bydateawal = Str::after($byfilter[0], '=');
-        $bydateakhir = Str::after($byfilter[1], '=');
-        $this->bydateawal = $bydateawal;
-        $this->bydateakhir = $bydateakhir;
+        // Pastikan data jadi array associative, bukan object JS
+        $this->data = collect(json_decode(json_encode($data), true));
+
+        // Optional debug ke log
+        // \Log::info('📦 Data diterima di export:', [
+        //     'count' => $this->data->count(),
+        //     'sample' => $this->data->take(1),
+        // ]);
     }
 
     public function headings(): array
     {
         return [
             'ID',
-            'Nama',
-            'Stok Tanpa New',
-            'Stok',
-            'STATUS',
-            'Terbeli',
-            'Terjual',
-            'Prod',
-            'Adj',
-            'Tf-Out',
-            'Tf-In',
+            'Nama Produk',
+            'Status',
+            'Beli',
+            'Jual',
+            'Produksi',
+            'Adjustment',
+            'Transfer Out',
+            'Transfer In',
+            'Saldo',
+            'Saldo Gudang',
         ];
     }
 
-    public function map($product): array
+    public function map($item): array
     {
-        $OrderItem = OrderItem::all()->where('branch_id', Auth::user()->branch_id);
-        $Terbeli = $OrderItem->where('product_id',$product->id)->whereNotNull('porder_id')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->bydateawal . ' 00:00:00', $this->bydateakhir . ' 23:59:59'])->sum('p_quantity');
-        $Terjual = $OrderItem->where('product_id',$product->id)->whereNotNull('order_id')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->bydateawal . ' 00:00:00', $this->bydateakhir . ' 23:59:59'])->sum('quantity');
-        $ProdPlus = $OrderItem->where('product_id',$product->id)->whereNotNull('production_id')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->bydateawal . ' 00:00:00', $this->bydateakhir . ' 23:59:59'])->sum('p_quantity');
-        $ProdMins = $OrderItem->where('product_id',$product->id)->whereNotNull('production_id')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->bydateawal . ' 00:00:00', $this->bydateakhir . ' 23:59:59'])->sum('quantity');
-        $AdjPlus = $OrderItem->where('product_id',$product->id)->whereNotNull('adj_item_id')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->bydateawal . ' 00:00:00', $this->bydateakhir . ' 23:59:59'])->sum('p_quantity');
-        $AdjMins = $OrderItem->where('product_id',$product->id)->whereNotNull('adj_item_id')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->bydateawal . ' 00:00:00', $this->bydateakhir . ' 23:59:59'])->sum('quantity');
-        $TfOUT = $OrderItem->where('product_id',$product->id)->whereNotNull('tr_stk_out_id')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->bydateawal . ' 00:00:00', $this->bydateakhir . ' 23:59:59'])->sum('quantity');
-        $TfIN = $OrderItem->where('product_id',$product->id)->whereNotNull('tr_stk_in_id')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->bydateawal . ' 00:00:00', $this->bydateakhir . ' 23:59:59'])->sum('p_quantity');
-
-        $stIN = $OrderItem->where('product_id',$product->id)->where('status', '!=', 'new')->where('status', '!=', 'transfering')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->bydateawal . ' 00:00:00', $this->bydateakhir . ' 23:59:59'])->sum('p_quantity');
-        $stOUT = $OrderItem->where('product_id',$product->id)->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->bydateawal . ' 00:00:00', $this->bydateakhir . ' 23:59:59'])->sum('quantity');
-        $stOUTTanpaNew = $OrderItem->where('product_id',$product->id)->where('status', '!=', 'new')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->bydateawal . ' 00:00:00', $this->bydateakhir . ' 23:59:59'])->sum('quantity');
-        $status = (($stIN - $stOUT) > $product->low_alert) ? 'aman' : 'LOW' ;
         return [
-            $product->id,
-            $product->name,
-            $stIN - $stOUTTanpaNew,
-            $stIN - $stOUT,
-            $status,
-            $Terbeli,
-            $Terjual*-1,
-            $ProdPlus - $ProdMins,
-            $AdjPlus - $AdjMins,            
-            $TfOUT*-1,
-            $TfIN,
-
+            $item['product']['id'] ?? '',
+            (($item['product']['name'] ?? '') . ' ' . ($item['product']['variant'] ?? '')),
+            (($item['saldo'] ?? 0) - ($item['product']['low_alert'] ?? 0)) >= 0 ? 'aman' : 'LOW',
+            $item['beli'] ?? 0,
+            -($item['jual'] ?? 0),
+            ($item['ProdPlus'] ?? 0) - ($item['ProdMins'] ?? 0),
+            ($item['AdjPlus'] ?? 0) - ($item['AdjMins'] ?? 0),
+            -($item['TfOut'] ?? 0),
+            $item['TfIn'] ?? 0,
+            $item['saldo'] ?? 0,
+            $item['saldoGudang'] ?? 0,
         ];
     }
 
-    /**
-     * @return \Illuminate\Support\Collection
-     */
     public function collection()
     {
-        if ($this->bydate != null) {
-            return Product::where('branch_id', Auth::user()->branch_id)->orderBy('name', 'asc')->get();
-            // return Product::where('branch_id', Auth::user()->branch_id)->orderBy('name', 'asc')->whereBetween('date_order', [$this->bydateawal . ' 00:00:00', $this->bydateakhir . ' 23:59:59'])->get();
-        } else {
-            return Product::where('branch_id', Auth::user()->branch_id)->orderBy('name', 'asc')->get();
-        }
+        return $this->data;
     }
 }

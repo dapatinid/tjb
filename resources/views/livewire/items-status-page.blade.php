@@ -25,6 +25,10 @@
       <div class=""><span class="dark:text-gray-400">From</span> <input wire:model='date_awal' type="date" name="date_awal" id="date_awal" class="px-2 bg-white"></div>
       <div class=""><span class="dark:text-gray-400">To</span> <input wire:model='date_akhir' type="date" name="date_akhir" id="date_akhir" class="px-2 bg-white"></div>
       <button onclick="window.location.reload(true);" class="rounded-md px-2 text-xs bg-amber-300 hover:bg-amber-500" >Terapkan</button>
+      <button id="exportExcelBtn"
+          class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm flex flex-nowrap items-center" >
+          <x-far-file-excel class="text-white dark:text-white size-6" /> Excel
+      </button>
     </div>
   </div>
   
@@ -53,14 +57,15 @@
             </tr>
         </thead>
         <tbody id="saldoTable" class="">
-            <tr><td colspan="11" class="text-center pt-10">Memuat data...</td></tr>
+            <tr><td colspan="11" class="text-center pt-10">Pilih tanggal dan terapkan...</td></tr>
         </tbody>
     </table>
 
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+let exportData = []; // akan dikirim ke backend
 
+document.addEventListener("DOMContentLoaded", () => {
     const orderItems = @json($orderItems);
 
     const grouped = orderItems.reduce((acc, item) => {
@@ -86,11 +91,10 @@ document.addEventListener("DOMContentLoaded", () => {
             };
         }
 
-        // ✅ Pastikan semua angka valid (gunakan Number() dan fallback 0)
+        // Pastikan semua numeric
         const q = Number(item.quantity) || 0;
         const pq = Number(item.p_quantity) || 0;
 
-        // Mutasi
         if (item.mutation_type === 'Purchase') acc[pid].beli += pq;
         if (item.mutation_type === 'Sales') acc[pid].jual += q;
         if (item.mutation_type === 'Transfer Out') acc[pid].TfOut += q;
@@ -105,7 +109,6 @@ document.addEventListener("DOMContentLoaded", () => {
             acc[pid].AdjMins += q;
         }
 
-        // Status handling
         if (item.status === 'new') {
             acc[pid].totINnotNew += pq;
             acc[pid].totOUTnotNew += q;
@@ -115,46 +118,34 @@ document.addEventListener("DOMContentLoaded", () => {
             acc[pid].totOUTnotTf += q;
         }
 
-        // ✅ Hindari Infinity/NaN dengan default 0
-        acc[pid].saldo = 
-            (acc[pid].beli || 0) -
-            (acc[pid].jual || 0) -
-            (acc[pid].TfOut || 0) +
-            (acc[pid].TfIn || 0) +
-            (acc[pid].ProdPlus || 0) -
-            (acc[pid].ProdMins || 0) +
-            (acc[pid].AdjPlus || 0) -
-            (acc[pid].AdjMins || 0);
+        acc[pid].saldo =
+            acc[pid].beli - acc[pid].jual - acc[pid].TfOut + acc[pid].TfIn +
+            acc[pid].ProdPlus - acc[pid].ProdMins + acc[pid].AdjPlus - acc[pid].AdjMins;
 
         acc[pid].saldoGudang =
-            (acc[pid].saldo || 0) -
-            (acc[pid].totINnotNew || 0) -
-            (acc[pid].totINnotTf || 0) +
-            (acc[pid].totOUTnotNew || 0) +
-            (acc[pid].totOUTnotTf || 0);
+            acc[pid].saldo - acc[pid].totINnotNew - acc[pid].totINnotTf +
+            acc[pid].totOUTnotNew + acc[pid].totOUTnotTf;
 
         return acc;
     }, {});
 
-    // 🔹 Sort berdasarkan nama produk
     const result = Object.values(grouped).sort((a, b) =>
         a.product.name.localeCompare(b.product.name)
     );
 
-    // 🔹 Render ke tabel
+    exportData = result;
+
     const tbody = document.getElementById('saldoTable');
     tbody.innerHTML = '';
 
-    result.forEach((item) => {
-        // Pastikan semua angka valid untuk ditampilkan
-        const format = (v) => isFinite(v) ? v : 0;
+    const format = (v) => isFinite(v) ? v : 0;
 
+    result.forEach((item) => {
         tbody.innerHTML += `
-            <tr class="h-10 items-center text-center odd:bg-white even:bg-gray-100 hover:bg-green-400 dark:odd:bg-neutral-800 dark:even:bg-neutral-700 dark:hover:bg-neutral-900">
+            <tr class="h-10 text-center odd:bg-white even:bg-gray-100 hover:bg-green-400 dark:odd:bg-neutral-800 dark:even:bg-neutral-700 dark:hover:bg-neutral-900">
                 <td class="text-left ps-3">${item.product.id}</td>
                 <td class="text-left">${item.product.name} ${item.product.variant ?? ''}</td>
-                <td>
-                  ${(format(item.saldo) - (item.product.low_alert ?? 0)) >= 0
+                <td>${(format(item.saldo) - (item.product.low_alert ?? 0)) >= 0
                         ? 'aman'
                         : '<span class="text-white bg-red-500 rounded shadow text-xs py-1 px-2">LOW</span>'}
                 </td>
@@ -169,7 +160,35 @@ document.addEventListener("DOMContentLoaded", () => {
             </tr>
         `;
     });
+});
 
+// 🔹 Tombol Export
+document.addEventListener('click', (e) => {
+    if (e.target.id === 'exportExcelBtn') {
+        fetch("{{ route('exporttabelstok') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ data: exportData })
+        })
+        .then(res => {
+            if (res.headers.get("Content-Type").includes("application/json")) {
+                return res.json().then(console.log); // Debug JSON dulu
+            } else {
+                return res.blob().then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "stok_status.xlsx";
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
+            }
+        })
+        .catch(err => console.error("Export error:", err));
+    }
 });
 </script>
 
@@ -191,6 +210,8 @@ document.addEventListener("DOMContentLoaded", () => {
                   {{ $products->links('vendor.pagination.tailwind') }}
               </div> --}}
     <!-- pagination end -->
+
+
   </div> 
 
 </div>

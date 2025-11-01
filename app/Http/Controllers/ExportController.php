@@ -47,9 +47,11 @@ class ExportController extends Controller
         return Excel::download(new DompetExportByDateDiedit($byfilter), 'dompet-bydate-Diedit.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 
-    public function exportTabelStokLow($byfilter)
+    public function exportTabelStokStatus(Request $request)
     {
-        // return "Hello Export : " . $byfilter;
-        return Excel::download(new StokStatusExport($byfilter), 'stok-status.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+        $data = $request->input('data', []);
+
+        $filename = 'stok_status_' . now()->format('Ymd_His') . '.xlsx';
+        return Excel::download(new StokStatusExport($data), $filename, \Maatwebsite\Excel\Excel::XLSX);
     }
 }
