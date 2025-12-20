@@ -282,7 +282,7 @@ class JournalResource extends Resource
                                 $set("debit", "NR-KR-D-3000 Prive");
                                 $set("kredit", "NR-DB-B-1100 CASH / BANK");
                             } elseif ($state === "bagikan dividen tunai") {
-                                $set("debit", "NR-KR-D-9100 Sedekah / Donasi dari Dividen");
+                                $set("debit", "NR-KR-D-7000 Dividen");
                                 $set("kredit", "NR-DB-B-1100 CASH / BANK");
                             } elseif ($state === "sedekahkan") {
                                 $set("debit", "NR-KR-D-9200 Sedekah / Donasi umum");

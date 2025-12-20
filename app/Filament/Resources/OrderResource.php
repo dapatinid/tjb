@@ -49,6 +49,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Str;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\DB;
 
 class OrderResource extends Resource
 {
@@ -813,85 +814,111 @@ class OrderResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
 
-                    Tables\Actions\BulkAction::make(name: 'Paid?')
-                        ->requiresConfirmation()
-                        ->color('info')
-                        ->icon('heroicon-o-credit-card')
-                        ->form([
-                            DateTimePicker::make('date_payment')
-                                ->label('Date')
-                                ->required(),
-                            // Toggle::make('is_paid')
-                            //     ->label('Paid ?')
-                            //     ->required(),
-                            ToggleButtons::make('payment_method')
-                                ->label('Method')
-                                ->options([
-                                    'cash' => 'Cash',
-                                    'transfer' => 'Transfer',
-                                ])
-                                ->live()
-                                ->afterStateUpdated(fn(Set $set) => $set('rekening', null))
-                                ->required()
-                                ->grouped(),
-                            Select::make('rekening')
-                                ->options(fn(Get $get): array => match ($get('payment_method')) {
-                                    'cash' => [
-                                        'KAS UTAMA' => 'KAS UTAMA',
-                                        'KAS KASIR' => 'KAS KASIR',
-                                        'KAS KECIL' => 'KAS KECIL',
-                                    ],
-                                    'transfer' => [
-                                        'BANK BCA' => 'BANK BCA',
-                                        'BANK BRI' => 'BANK BRI',
-                                    ],
-                                    default => [
-                                        'KAS UTAMA' => 'KAS UTAMA',
-                                        'KAS KASIR' => 'KAS KASIR',
-                                        'KAS KECIL' => 'KAS KECIL',
-                                        'BANK BCA' => 'BANK BCA',
-                                        'BANK BRI' => 'BANK BRI',
-                                    ],
-                                })
-                                ->required()
-                                ->searchable()
-                                ->preload(),
-                        ])
-                        ->action(function (Collection $records, array $data): void {
-                            foreach ($records as $record) {
-                                // if ($data['is_paid'] == 1) {
-                                if ($record->total_cashback < 0) {
-                                    Payment::where('paymentable_id', $record->id)->where('paymentable_type', Order::class)->where('mutation_type', "Sales")->where('nominal', 0)->delete();
+                Tables\Actions\BulkAction::make('Paid?')
+                    ->requiresConfirmation()
+                    ->color('info')
+                    ->icon('heroicon-o-credit-card')
+                    ->form([
+                        DateTimePicker::make('date_payment')
+                            ->label('Date')
+                            ->required(),
 
-                                    $payment = new Payment();
-                                    $payment->date_payment = $data['date_payment'];
-                                    $payment->currency = 'idr';
-                                    $payment->payment_method = $data['payment_method'];
-                                    $payment->rekening = $data['rekening'];
-                                    $payment->nominal_plus = $record->total_cashback * -1;
-                                    $payment->nominal = $record->total_cashback * -1;
-                                    $payment->mutation_type = 'Sales';
-                                    $payment->debit = 'NR-DB-B-1100 CASH / BANK';
-                                    $payment->kredit = 'NR-DB-B-3000 Piutang Penjualan Barang';
-                                    $payment->created_by = Auth::user()->id;
-                                    $payment->updated_by = Auth::user()->id;
-                                    $payment->user_id = $record->user_id;
-                                    $payment->branch_id = Auth::user()->branch_id;
-                                    $payment->paymentable_id = $record->id;
-                                    $payment->paymentable_type = 'App\Models\Order';
-                                    $payment->save();
+                        ToggleButtons::make('payment_method')
+                            ->label('Method')
+                            ->options([
+                                'cash' => 'Cash',
+                                'transfer' => 'Transfer',
+                            ])
+                            ->live()
+                            ->afterStateUpdated(fn (Set $set) => $set('rekening', null))
+                            ->required()
+                            ->grouped(),
 
-                                    $paymentsSUM = Payment::where('paymentable_id', $record->id)->where('paymentable_type', Order::class)->where('mutation_type', "Sales")->sum('nominal_plus');
-                                    // $record->is_paid = $data['is_paid'];
-                                    $record->is_paid = true;
-                                    $record->total_payment = $paymentsSUM;
-                                    $record->total_cashback = $paymentsSUM - $record->grand_total;
-                                    $record->paid_at = now();
-                                    $record->save();
+                        Select::make('rekening')
+                            ->required()
+                            ->searchable()
+                            ->preload()
+                            ->options(fn (Get $get) => match ($get('payment_method')) {
+                                'cash' => [
+                                    'KAS UTAMA' => 'KAS UTAMA',
+                                    'KAS KASIR' => 'KAS KASIR',
+                                    'KAS KECIL' => 'KAS KECIL',
+                                ],
+                                'transfer' => [
+                                    'BANK BCA' => 'BANK BCA',
+                                    'BANK BRI' => 'BANK BRI',
+                                ],
+                                default => [],
+                            }),
+                    ])
+                    ->action(function (Collection $records, array $data): void {
+
+                        foreach ($records as $record) {
+
+                            DB::transaction(function () use ($record, $data) {
+
+                                // Lock order row
+                                $order = Order::whereKey($record->id)->lockForUpdate()->first();
+
+                                // Skip jika sudah lunas
+                                if ($order->is_paid) {
+                                    return;
                                 }
-                                // }
-                            }
-                        }),
+
+                                // Hitung total payment yang SUDAH ADA
+                                $totalPaid = Payment::where('paymentable_id', $order->id)
+                                    ->where('paymentable_type', Order::class)
+                                    ->where('mutation_type', 'Sales')
+                                    ->sum('nominal_plus');
+
+                                $remaining = $order->grand_total - $totalPaid;
+
+                                // Tidak ada yang perlu dibayar
+                                if ($remaining <= 0) {
+                                    return;
+                                }
+
+                                // Cegah double pelunasan
+                                $exists = Payment::where('paymentable_id', $order->id)
+                                    ->where('paymentable_type', Order::class)
+                                    ->where('mutation_type', 'Sales')
+                                    ->where('nominal_plus', $remaining)
+                                    ->exists();
+
+                                if ($exists) {
+                                    return;
+                                }
+
+                                // Create payment pelunasan
+                                Payment::create([
+                                    'date_payment'     => $data['date_payment'],
+                                    'currency'         => 'idr',
+                                    'payment_method'   => $data['payment_method'],
+                                    'rekening'         => $data['rekening'],
+                                    'nominal_plus'     => $remaining,
+                                    'nominal'          => $remaining,
+                                    'mutation_type'    => 'Sales',
+                                    'debit'            => 'NR-DB-B-1100 CASH / BANK',
+                                    'kredit'           => 'NR-DB-B-3000 Piutang Penjualan Barang',
+                                    'created_by'       => Auth::id(),
+                                    'updated_by'       => Auth::id(),
+                                    'user_id'          => $order->user_id,
+                                    'branch_id'        => Auth::user()->branch_id,
+                                    'paymentable_id'   => $order->id,
+                                    'paymentable_type' => Order::class,
+                                ]);
+
+                                // Update order
+                                $order->update([
+                                    'is_paid'        => true,
+                                    'total_payment' => $totalPaid + $remaining,
+                                    'total_cashback'=> 0,
+                                    'paid_at'       => now(),
+                                ]);
+                            });
+                        }
+                    }),
+
 
                     Tables\Actions\BulkAction::make(name: 'Status')
                         ->requiresConfirmation()
