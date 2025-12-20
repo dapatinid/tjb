@@ -47,6 +47,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PorderResource extends Resource
 {
@@ -743,7 +744,7 @@ class PorderResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
 
-                    Tables\Actions\BulkAction::make(name: 'Paid?')
+                    Tables\Actions\BulkAction::make('Paid?')
                         ->requiresConfirmation()
                         ->color('info')
                         ->icon('heroicon-o-credit-card')
@@ -751,9 +752,7 @@ class PorderResource extends Resource
                             DateTimePicker::make('date_payment')
                                 ->label('Date')
                                 ->required(),
-                            // Toggle::make('is_paid')
-                            //     ->label('Paid ?')
-                            //     ->required(),
+
                             ToggleButtons::make('payment_method')
                                 ->label('Method')
                                 ->options([
@@ -761,11 +760,15 @@ class PorderResource extends Resource
                                     'transfer' => 'Transfer',
                                 ])
                                 ->live()
-                                ->afterStateUpdated(fn(Set $set) => $set('rekening', null))
+                                ->afterStateUpdated(fn (Set $set) => $set('rekening', null))
                                 ->required()
                                 ->grouped(),
+
                             Select::make('rekening')
-                                ->options(fn(Get $get): array => match ($get('payment_method')) {
+                                ->required()
+                                ->searchable()
+                                ->preload()
+                                ->options(fn (Get $get) => match ($get('payment_method')) {
                                     'cash' => [
                                         'KAS UTAMA' => 'KAS UTAMA',
                                         'KAS KASIR' => 'KAS KASIR',
@@ -775,51 +778,76 @@ class PorderResource extends Resource
                                         'BANK BCA' => 'BANK BCA',
                                         'BANK BRI' => 'BANK BRI',
                                     ],
-                                    default => [
-                                        'KAS UTAMA' => 'KAS UTAMA',
-                                        'KAS KASIR' => 'KAS KASIR',
-                                        'KAS KECIL' => 'KAS KECIL',
-                                        'BANK BCA' => 'BANK BCA',
-                                        'BANK BRI' => 'BANK BRI',
-                                    ],
-                                })
-                                ->required()
-                                ->searchable()
-                                ->preload(),
+                                    default => [],
+                                }),
                         ])
                         ->action(function (Collection $records, array $data): void {
+
                             foreach ($records as $record) {
-                                // if ($data['is_paid'] == 1) {
-                                    if ($record->total_cashback < 0) {
-                                        Payment::where('paymentable_id', $record->id)->where('paymentable_type', Porder::class)->where('mutation_type', "Purchase")->where('nominal', 0)->delete();
 
-                                        $payment = new Payment();
-                                        $payment->date_payment = $data['date_payment'];
-                                        $payment->currency = 'idr';
-                                        $payment->payment_method = $data['payment_method'];
-                                        $payment->rekening = $data['rekening'];
-                                        $payment->nominal_mins = $record->total_cashback * -1;
-                                        $payment->nominal = $record->total_cashback * -1;
-                                        $payment->mutation_type = 'Purchase';
-                                        $payment->debit = 'NR-KR-C-2000 Hutang_Pembelian_Barang';
-                                        $payment->kredit = 'NR-DB-B-1100 CASH / BANK';
-                                        $payment->created_by = Auth::user()->id;
-                                        $payment->updated_by = Auth::user()->id;
-                                        $payment->user_id = $record->user_id;
-                                        $payment->branch_id = Auth::user()->branch_id;
-                                        $payment->paymentable_id = $record->id;
-                                        $payment->paymentable_type = 'App\Models\Porder';
-                                        $payment->save();
+                                DB::transaction(function () use ($record, $data) {
 
-                                        $paymentsSUM = Payment::where('paymentable_id', $record->id)->where('paymentable_type', Porder::class)->where('mutation_type', "Purchase")->sum('nominal_mins');
-                                        // $record->is_paid = $data['is_paid'];
-                                        $record->is_paid = 1;
-                                        $record->total_payment = $paymentsSUM;
-                                        $record->total_cashback = $paymentsSUM - $record->grand_total;
-                                        $record->paid_at = now();
-                                        $record->save();
+                                    // Lock Porder
+                                    $porder = Porder::whereKey($record->id)
+                                        ->lockForUpdate()
+                                        ->first();
+
+                                    // Skip jika sudah lunas
+                                    if ($porder->is_paid) {
+                                        return;
                                     }
-                                // }
+
+                                    // Total pembayaran purchase yang SUDAH ADA
+                                    $totalPaid = Payment::where('paymentable_id', $porder->id)
+                                        ->where('paymentable_type', Porder::class)
+                                        ->where('mutation_type', 'Purchase')
+                                        ->sum('nominal_mins');
+
+                                    $remaining = $porder->grand_total - $totalPaid;
+
+                                    // Tidak ada hutang
+                                    if ($remaining <= 0) {
+                                        return;
+                                    }
+
+                                    // Cegah double payment dengan idempotent check
+                                    $exists = Payment::where('paymentable_id', $porder->id)
+                                        ->where('paymentable_type', Porder::class)
+                                        ->where('mutation_type', 'Purchase')
+                                        ->where('nominal_mins', $remaining)
+                                        ->exists();
+
+                                    if ($exists) {
+                                        return;
+                                    }
+
+                                    // Create payment pelunasan hutang
+                                    Payment::create([
+                                        'date_payment'     => $data['date_payment'],
+                                        'currency'         => 'idr',
+                                        'payment_method'   => $data['payment_method'],
+                                        'rekening'         => $data['rekening'],
+                                        'nominal_mins'     => $remaining,
+                                        'nominal'          => $remaining,
+                                        'mutation_type'    => 'Purchase',
+                                        'debit'            => 'NR-KR-C-2000 Hutang_Pembelian_Barang',
+                                        'kredit'           => 'NR-DB-B-1100 CASH / BANK',
+                                        'created_by'       => Auth::id(),
+                                        'updated_by'       => Auth::id(),
+                                        'user_id'          => $porder->user_id,
+                                        'branch_id'        => Auth::user()->branch_id,
+                                        'paymentable_id'   => $porder->id,
+                                        'paymentable_type' => Porder::class,
+                                    ]);
+
+                                    // Update porder
+                                    $porder->update([
+                                        'is_paid'        => 1,
+                                        'total_payment' => $totalPaid + $remaining,
+                                        'total_cashback'=> 0,
+                                        'paid_at'       => now(),
+                                    ]);
+                                });
                             }
                         }),
 
