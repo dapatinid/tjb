@@ -100,6 +100,207 @@
     </div>
     @endif
 
+{{-- Scanner OCR --}}
+@if($isadmin == 1)
+<div class="mb-4 max-w-sm mx-auto" x-data="ocrScanner()">
+
+    {{-- Tombol buka scanner --}}
+    <button @click="toggleScanner()"
+            :class="scanning ? 'bg-red-500 hover:bg-red-600' : 'bg-indigo-500 hover:bg-indigo-600'"
+            class="w-full flex items-center justify-center gap-2 px-4 py-2 text-white text-sm font-medium rounded-lg transition mb-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none"
+             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"/>
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"/>
+        </svg>
+        <span x-text="scanning ? 'Tutup Kamera' : 'Scan Invoice'"></span>
+    </button>
+
+    {{-- Area kamera --}}
+    <div x-show="scanning" x-transition class="relative rounded-xl overflow-hidden bg-black shadow-lg">
+        <video x-ref="video" autoplay playsinline muted
+               class="w-full rounded-xl" style="max-height: 280px; object-fit: cover;"></video>
+        <canvas x-ref="canvas" class="hidden"></canvas>
+
+        {{-- Overlay garis scan --}}
+        <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center">
+            <div class="w-4/5 h-0.5 bg-red-400 opacity-70 animate-pulse"></div>
+            <div class="mt-2 text-white text-xs opacity-70 bg-black/40 px-2 py-1 rounded">
+                Arahkan ke kode transaksi di invoice
+            </div>
+        </div>
+
+        {{-- Status OCR --}}
+        <div class="absolute bottom-2 left-2 right-2">
+            <div x-show="ocrStatus"
+                 :class="ocrFound ? 'bg-green-500' : 'bg-black/60'"
+                 class="text-white text-xs px-3 py-1.5 rounded-lg text-center transition"
+                 x-text="ocrStatus">
+            </div>
+        </div>
+    </div>
+
+    {{-- Hasil deteksi --}}
+    <div x-show="detectedCode" x-transition
+         class="mt-2 flex items-center gap-2 px-3 py-2 bg-green-50 dark:bg-green-900/30
+                border border-green-300 dark:border-green-700 rounded-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 text-green-600 shrink-0" fill="none"
+             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/>
+        </svg>
+        <span class="text-sm text-green-700 dark:text-green-300">
+            Terdeteksi: <strong x-text="detectedCode"></strong>
+        </span>
+        <button @click="clearResult()"
+                class="ml-auto text-green-500 hover:text-red-500 transition text-xs">✕</button>
+    </div>
+</div>
+
+<script>
+// Load Tesseract.js sekali saja
+if (!window.TesseractLoaded) {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+    s.onload = () => { window.TesseractLoaded = true; };
+    document.head.appendChild(s);
+}
+
+function ocrScanner() {
+    return {
+        scanning:      false,
+        ocrStatus:     '',
+        ocrFound:      false,
+        detectedCode:  '',
+        scanInterval:  null,
+        worker:        null,
+        stream:        null,
+
+        // ✅ Sesuaikan pola ini dengan format code_tr Anda
+        // Contoh: TRX-20240419-001, INV/2024/001, dll
+        codePattern: /ORD\d{14}-\d+-\d+/g,
+
+        async toggleScanner() {
+            if (this.scanning) {
+                this.stopScanner();
+            } else {
+                await this.startScanner();
+            }
+        },
+
+        async startScanner() {
+            try {
+                // ✅ Coba kamera belakang dulu (HP), fallback ke kamera depan (laptop)
+                try {
+                    this.stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: { ideal: 'environment' }, width: 1280, height: 720 }
+                    });
+                } catch {
+                    this.stream = await navigator.mediaDevices.getUserMedia({
+                        video: true  // fallback: pakai kamera apapun yang tersedia
+                    });
+                }
+
+                this.$refs.video.srcObject = this.stream;
+                this.scanning  = true;
+                this.ocrStatus = 'Memulai OCR...';
+                this.ocrFound  = false;
+
+                this.worker = await Tesseract.createWorker('eng', 1, {
+                    tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-',
+                });
+
+                this.scanInterval = setInterval(() => this.doOCR(), 1500);
+
+            } catch (err) {
+                this.ocrStatus = 'Kamera tidak dapat diakses';
+                console.error(err);
+            }
+        },
+
+        async doOCR() {
+            if (!this.scanning || !this.worker) return;
+
+            const video  = this.$refs.video;
+            const canvas = this.$refs.canvas;
+
+            if (video.readyState < 2) return;
+
+            canvas.width  = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            const ctx = canvas.getContext('2d');
+
+            // ✅ Crop bagian tengah saja (lebih cepat + akurat)
+            const cropW = canvas.width  * 0.8;
+            const cropH = canvas.height * 0.3;
+            const cropX = (canvas.width  - cropW) / 2;
+            const cropY = (canvas.height - cropH) / 2;
+
+            ctx.drawImage(video, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+            canvas.width  = cropW;
+            canvas.height = cropH;
+
+            // Tingkatkan kontras untuk OCR lebih akurat
+            ctx.filter = 'contrast(1.5) grayscale(1)';
+            ctx.drawImage(canvas, 0, 0);
+
+            this.ocrStatus = 'Membaca...';
+
+            try {
+                const { data: { text } } = await this.worker.recognize(canvas);
+                const cleaned = text.toUpperCase().replace(/\s+/g, ' ').trim();
+
+                const matches = cleaned.match(this.codePattern);
+
+                if (matches && matches.length > 0) {
+                    const found = matches[0];
+                    this.detectedCode = found;
+                    this.ocrStatus    = `✓ Ditemukan: ${found}`;
+                    this.ocrFound     = true;
+
+                    // ✅ Auto-isi kolom search Livewire
+                    @this.set('search', found);
+
+                    // Berhenti scan setelah ketemu
+                    this.stopScanner();
+                } else {
+                    this.ocrStatus = 'Mencari kode transaksi...';
+                    this.ocrFound  = false;
+                }
+            } catch (e) {
+                this.ocrStatus = 'Gagal membaca, coba lagi...';
+            }
+        },
+
+        stopScanner() {
+            clearInterval(this.scanInterval);
+            this.scanInterval = null;
+
+            if (this.stream) {
+                this.stream.getTracks().forEach(t => t.stop());
+                this.stream = null;
+            }
+            if (this.worker) {
+                this.worker.terminate();
+                this.worker = null;
+            }
+
+            this.scanning  = false;
+            this.ocrStatus = '';
+        },
+
+        clearResult() {
+            this.detectedCode = '';
+            this.ocrFound     = false;
+            @this.set('search', '');
+        },
+    }
+}
+</script>
+@endif    
+
     {{-- Search --}}
     <div class="mt-4 mb-6 max-w-sm mx-auto">
         <div class="flex items-center gap-2 px-3 py-2 bg-white dark:bg-neutral-800 border
