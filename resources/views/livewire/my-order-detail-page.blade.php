@@ -413,7 +413,7 @@
             </div>
 
             <div class="grid grid-cols-3 gap-3">
-                <a wire:navigate href="/admin/orders/{{ $order->id }}/edit"
+                <a href="/admin/orders/{{ $order->id }}/edit"
                     class="{{ auth()->user()->is_admin == 1 ? 'block' : 'hidden' }}">
                     <button class="w-full p-3 mt-4 text-sm text-white bg-green-500 rounded-lg hover:bg-green-600">
                         <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit
@@ -507,38 +507,15 @@
                     <div class="text-sm text-red-500">{{ $message }}</div>
                 @enderror
                 <div class="p-4 overflow-y-auto">
-                    <label for="rekening" class="block mb-2 text-sm font-medium">Rekening</label>
-                    <select wire:model='rekening' name="rekening" id="rekening"
-                        class="block w-full px-4 py-3 text-sm text-center border-gray-200 rounded-lg focus:border-yellow-400 focus:ring-yellow-400"
-                        required="">
-                        {{-- @if ($this->payment_method === "cash") --}}
-                            <option value="">-</option>    
-                            <option value="KAS KASIR">KAS KASIR</option>                          
-                        {{-- @else --}}
+                    <label class="block mb-2 text-sm font-medium">Rekening</label>
+                    <select wire:model='rekening' name="rekening"
+                        class="block w-full px-4 py-3 text-sm text-center border-gray-200 rounded-lg focus:border-yellow-400 focus:ring-yellow-400">
+                            <option value="KAS KASIR">KAS KASIR</option>
+                            <option value="KAS UTAMA">KAS UTAMA</option>
                             <option value="BANK BCA">BANK BCA</option>
                             <option value="BANK BRI">BANK BRI</option>
-                        {{-- @endif --}}
-                            {{-- <script>
-                                let selectKas = {
-                                "KAS KASIR": "KAS KASIR",
-                                }
-                                let selectBank = {
-                                "BANK BCA": "BANK BCA",
-                                "BANK BRI": "BANK BRI",
-                                }
-                                const selectRek = document.getElementById('rekening')
-                                document.getElementById("payment_cash").addEventListener("click", (e) => {
-                                    selectRek.innerHTML = ''
-                                    Object.keys(selectKas).map(key => selectRek.add(new Option(selectKas[key], key)))
-                                    });
-                                document.getElementById("payment_transfer").addEventListener("click", (e) => {
-                                    selectRek.innerHTML = ''
-                                    Object.keys(selectBank).map(key => selectRek.add(new Option(selectBank[key], key)))
-                                    });
-
-                            </script> --}}
                     </select>
-                </div>
+                </div>               
                 @error('rekening')
                     <div class="text-sm text-red-500">{{ $message }}</div>
                 @enderror
@@ -667,18 +644,13 @@
                                         <div class="text-sm text-red-500">{{ $message }}</div>
                                     @enderror
                                     <div class="p-4 overflow-y-auto">
-                                        <label for="rekening_edit" class="block mb-2 text-sm font-medium">Rekening (wajib isi)</label>
-                                        <select
-                                            wire:model='rekening_edit' name="rekening_edit" id="rekening_edit"
-                                            class="block w-full px-4 py-3 text-sm text-center border-gray-200 rounded-lg focus:border-yellow-400 focus:ring-yellow-400"
-                                            required="">
-                                            {{-- @if ($this->payment_method === "cash") --}}
-                                                <option value="">-</option>    
-                                                <option value="KAS KASIR">KAS KASIR</option>                          
-                                            {{-- @else --}}
+                                        <label class="block mb-2 text-sm font-medium">Rekening (wajib isi)</label>
+                                        <select wire:model='rekening_edit' name="rekening_edit"
+                                            class="block w-full px-4 py-3 text-sm text-center border-gray-200 rounded-lg focus:border-yellow-400 focus:ring-yellow-400">
+                                                <option value="KAS KASIR">KAS KASIR</option>
+                                                <option value="KAS UTAMA">KAS UTAMA</option>
                                                 <option value="BANK BCA">BANK BCA</option>
                                                 <option value="BANK BRI">BANK BRI</option>
-                                            {{-- @endif --}}
                                         </select>
                                     </div>
                                     @error('rekening_edit')
