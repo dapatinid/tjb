@@ -268,7 +268,7 @@
     </div>
 
     <!-- Products -->
-    <div class="col-span-2 bg-white h-full">
+    <div class="col-span-2 h-full">
       <div class="flex items-center gap-2 mb-4 sticky top-0 p-2 border-b border-gray-200" style="background-color: white; z-index: 10;">
         <button @click="showCart = true" class="md:hidden">
             <div x-text="`${(qtybyqty)}`" x-show="qtybyqty > 0" class="absolute px-1 rounded-full -mt-1 -ml-1 text-white bg-gray-800 "></div>
