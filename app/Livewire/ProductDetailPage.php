@@ -79,29 +79,28 @@ class ProductDetailPage extends Component
         }
     }
 
-    public function render()
-    {
-        $branchID = Product::where('slug', $this->slug)->value('branch_id');
-        // $brnID = Product::where('slug', $this->slug)->value('brand_id');
-        $varget = Product::where('slug', $this->slug)->value('name');
-        // $variants = Product::where('is_active', 1)->where('name', '=', $varvalue)->where('slug', 'not like', $this->slug)->get();
-        $variants = Product::where('branch_id', $branchID)->where('is_active', 1)->where('name', 'like', $varget)->get();
-        // dd($variants);
-        $orderitems = OrderItem::all();
-        $branch = Branch::where('id', $branchID)->value('name');
-        $branchPartner = Branch::where('id', $branchID)->value('partner_id');
+        public function render()
+        {
+            // ✅ Satu query untuk product
+            $product = Product::where('slug', $this->slug)->firstOrFail();
 
-        $mitra = Partner::where('id', $branchPartner)->value('slug');
+            // ✅ Satu query untuk branch
+            $branch = Branch::find($product->branch_id);
 
-        return view(
-            'livewire.product-detail-page',
-            [
-                'product' => Product::where('slug', $this->slug)->firstOrFail(),
-                'orderitem' => $orderitems,
-                'variants' => $variants,
-                'branch' => $branch,
-                'mitra' => $mitra,
-            ]
-        );
-    }
+            // ✅ Variants dari data yang sudah ada
+            $variants = Product::where('branch_id', $product->branch_id)
+                ->where('is_active', 1)
+                ->where('name', $product->name)
+                ->get();
+
+            $mitra = Partner::where('id', $branch->partner_id)->value('slug');
+
+            return view('livewire.product-detail-page', [
+                'product'   => $product,
+                'orderitem' => collect(), // sudah tidak dipakai di blade
+                'variants'  => $variants,
+                'branch'    => $branch->name,
+                'mitra'     => $mitra,
+            ]);
+        }
 }

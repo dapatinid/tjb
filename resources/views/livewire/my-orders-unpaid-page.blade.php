@@ -1,317 +1,66 @@
-<div class="w-full max-w-[85rem] py-10 px-1 sm:px-4 lg:px-8 mx-auto">
-    
-    {{-- <div class="justify-start sm:hidden absolute left-4 top-1.5 bg-blue-600 dark:bg-neutral-800 py-2 pr-10">
-        <a class="cursor-pointer flex flex-nowrap items-center text-white bg:text-gray-300 "
-        href="/cart"                    
-        >
-            <x-far-arrow-alt-circle-left class="w-5 h-5 mr-2 text-white hover:text-blue-500"/> kembali
-        </a> 
-    </div> --}}
-
-    <h1 class="relative pb-6 text-2xl text-nowrap font-bold text-center text-slate-500 dark:text-white">
+<div class="w-full max-w-[85rem] py-10 px-4 mx-auto">
+    <h1 class="text-2xl font-bold text-center text-slate-500">
         @if ($isadmin == 1)
-            Orders | Pending<br>
-            <span class="tengah-aja text-lg text-red-500" id="RealShow">
-                (<span id="valueCountShow" >{{ $my_orders_sum_unpaid_count }}</span>) 
-                <span id="valueSumShow" >@currency($my_orders_sum_unpaid)</span>
-            </span>
-            <span class="tengah-aja text-lg text-red-500 counter-ani" id="CountHide">
-                (<span style="--animation: counter-unpaid-count"></span>) 
-                <span style="--animation: counter-unpaid"></span>
+            Orders | Unpaid <br>
+            <span class="text-lg">
+                 Rp {{ number_format($my_orders_sum_unpaid, 0, ',', '.') }} | 
+                {{ number_format($my_orders_sum_unpaid_count, 0, ',', '.') }} Transaksi
             </span>
         @else
-            <span class="tengah-aja text-lg text-red-500">
-                My Orders | @currency($my_orders_sum)
-            </span>
+            My Orders: Rp {{ number_format($my_orders_sum, 0, ',', '.') }}
         @endif
     </h1>
 
-    @auth
-        @if ($isadmin == 1)
-            <div class="flex mt-3">
-                <div
-                    class="flex p-1 mx-auto transition bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-neutral-700 dark:hover:bg-neutral-600">
-                    <nav class="flex gap-x-1" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
-                        <button type="button"
-                            class="inline-flex items-center px-2 py-1 text-sm font-medium text-gray-500 bg-transparent rounded-lg hs-tab-active:bg-white hs-tab-active:text-gray-700 hs-tab-active:dark:text-neutral-400 dark:hs-tab-active:bg-gray-800 gap-x-2 hover:text-gray-700 focus:outline-none focus:text-gray-700 hover:hover:text-yellow-600 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-white dark:focus:text-white active"
-                            id="segment-item-1" aria-selected="true" data-hs-tab="#segment-1" aria-controls="segment-1"
-                            role="tab">
-                            Unpaid
-                        </button>
-                        <a wire:navigate.hover href="/my-orders">
-                            <button type="button"
-                                class="inline-flex items-center px-2 py-1 text-sm font-medium text-gray-500 bg-transparent rounded-lg hs-tab-active:bg-white hs-tab-active:text-gray-700 hs-tab-active:dark:text-neutral-400 dark:hs-tab-active:bg-gray-800 gap-x-2 hover:text-gray-700 focus:outline-none focus:text-gray-700 hover:hover:text-yellow-600 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-white dark:focus:text-white"
-                                id="segment-item-4" aria-selected="false" data-hs-tab="#segment-4" aria-controls="segment-4"
-                                role="tab">
-                                Paid Orders
-                            </button>
-                        </a>
+    <div class="flex flex-wrap mt-6">
+        @forelse ($orders as $order)
+            @php
+                $statusColor = match($order->status) {
+                    'new' => 'bg-blue-500',
+                    'processing' => 'bg-yellow-500',
+                    'shipped' => 'bg-orange-500',
+                    'delivered' => 'bg-green-500',
+                    'canceled' => 'bg-red-500',
+                    default => 'bg-gray-500'
+                };
+                
+                // Cegah error 500 jika address null
+                $nama = $order->address ? ($order->address->first_name . ' ' . $order->address->last_name) : 'No Name';
+                $telp = $order->address->phone ?? '';
+                $method = $paymentlast->where('paymentable_id', $order->id)->first()->payment_method ?? '-';
+            @endphp
 
-                    </nav>
+            <div wire:key="{{ $order->id }}" class="w-full p-2 lg:w-1/3 sm:w-1/2">
+                <div class="bg-white border rounded-lg shadow-sm p-4 dark:bg-neutral-800">
+                    <div class="flex justify-between border-b pb-2 mb-2 dark:text-white">
+                        <span class="font-bold">#{{ $order->code_tr }}</span>
+                        <span class="text-sm truncate max-w-[150px]">{{ $order->user->name }}</span>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="px-2 py-0.5 text-xs text-white rounded {{ $statusColor }}">{{ strtoupper($order->status) }}</span>
+                            <span class="text-xs font-bold dark:text-gray-400">{{ $order->is_paid ? 'PAID' : 'UNPAID' }} ({{ strtoupper($method) }})</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">{{ $order->date_order }}</span>
+                            <span class="font-bold dark:text-gray-400">Rp {{ number_format($order->grand_total, 0, ',', '.') }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 flex gap-2">
+                        <a href="/my-orders/{{ $order->id }}" class="flex-1 bg-blue-600 text-white text-center py-1 rounded text-sm">Detail</a>
+                        @if($isadmin == 1)
+                            <button wire:click="changeStatus({{ $order->id }})" class="flex-1 bg-gray-200 text-gray-800 py-1 rounded text-sm">Ubah Status</button>
+                        @endif
+                    </div>
                 </div>
             </div>
-        @endif
-    @endauth
-
-    <div class="mt-3">
-        <div id="segment-1" role="tabpanel" aria-labelledby="segment-item-1">
-            <div class="flex flex-col pt-4 mt-4 ">
-                <div class="flex flex-wrap">
-                    
-
-                                    @forelse ($orders as $order)
-                                        @php
-                                            $status = '';
-                                            $payment_status = '';
-
-                                            if ($order->status == 'new') {
-                                                $status =
-                                                    '<span class="px-3 py-1 text-white bg-blue-500 rounded shadow cursor-pointer"><i class="fa fa-thumb-tack" aria-hidden="true"></i> New</span>';
-                                            }
-                                            if ($order->status == 'processing') {
-                                                $status =
-                                                    '<span class="px-3 py-1 text-white bg-yellow-500 rounded shadow cursor-pointer"><i class="fa fa-refresh" aria-hidden="true"></i> Processing</span>';
-                                            }
-                                            if ($order->status == 'shipped') {
-                                                $status =
-                                                    '<span class="px-3 py-1 text-white bg-orange-500 rounded shadow cursor-pointer"><i class="fa fa-truck" aria-hidden="true"></i> Shipped</span>';
-                                            }
-                                            if ($order->status == 'delivered') {
-                                                $status =
-                                                    '<span class="px-3 py-1 text-white bg-green-500 rounded shadow cursor-pointer"><i class="fa fa-check-circle" aria-hidden="true"></i> Delivered</span>';
-                                            }
-                                            if ($order->status == 'canceled') {
-                                                $status =
-                                                    '<span class="px-3 py-1 text-white bg-red-500 rounded shadow cursor-pointer"><i class="fa fa-times" aria-hidden="true"></i> Canceled</span>';
-                                            }
-
-                                            if ($order->is_paid == 0) {
-                                                $payment_status =
-                                                    '<span class="px-3 py-1 text-white bg-red-400 rounded shadow">Unpaid</span>';
-                                            }
-                                            if ($order->is_paid == 0 && $order->status == 'canceled') {
-                                                $payment_status =
-                                                    '<span class="px-3 py-1 text-white bg-gray-600 rounded shadow">Unpaid</span>';
-                                            }
-                                            if ($order->is_paid == 1) {
-                                                $payment_status =
-                                                    '<span class="px-3 py-1 text-white bg-blue-500 rounded shadow">Paid</span>';
-                                            }
-
-                                            if (empty($order->address->first_name)) {
-                                                $nama = '';
-                                            } else {
-                                                $nama =
-                                                    '-> ' .
-                                                    $order->address->first_name .
-                                                    ' ' .
-                                                    $order->address->last_name;
-                                            }
-
-                                            if (empty($order->address->phone)) {
-                                                $telp = '';
-                                            } else {
-                                                $telp = $order->address->phone;
-                                            }
-
-                                            $payment_last = $paymentlast
-                                                ->where('paymentable_id', $order->id)
-                                                ->value('payment_method');
-
-                                        @endphp
-                                        <div wire:key='{{ $order->id }}' class="w-full p-1 lg:w-1/3 sm:w-1/2 ">
-                                        <div id="hs-dropdown-left-but-right-on-lg" class="group hs-dropdown relative [--strategy:absolute]">
-                                            <div 
-                                                class="text-sm text-gray-800 whitespace-nowrap dark:text-gray-800">
-
-                                                <div 
-                                                style="position: relative; mask: radial-gradient(7px at 14px 14px, transparent 98%, black) -14px -14px;"  
-                                                class="flex justify-between px-3 py-2 bg-white border-b-2 border-gray-300 border-dashed group-hover:bg-zinc-50 group-focus:bg-zinc-50">
-                                                    <span>{{ $order->q }}</span>
-                                                    <span class="font-medium">{{ auth()->user()->is_admin == 1 ? ($order->user->id == 2 ? "Customer Umum" : $order->user->name) : '' }}
-                                                        {{ auth()->user()->is_admin == 0 ? $order->branch->name : '' }}
-                                                        {{ $nama }} </span>
-                                                    <span class="flex hover:lg:text-yellow-500 whitespace-nowrap">
-                                                        <svg class="relative -bottom-[2px] size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
-                                                    </span>
-                                                </div>
-                                                <div style="position: relative; mask: radial-gradient(7px at 14px 14px, transparent 98%, black) -14px -14px;"  
-                                                class="pt-2 bg-white group-hover:bg-zinc-50 group-focus:bg-zinc-50">
-                                                    <div class="flex justify-between px-3 py-2">
-                                                        <span class="">{!! $status !!}</span>
-                                                        <span class="text-center">{{ $order->sales_type }}</span>
-                                                        <span class="text-end">{{ $payment_last }}
-                                                            {!! $payment_status !!}</span>
-                                                    </div>
-
-                                                    <div class="flex justify-between px-3 pb-2">
-                                                        <span
-                                                            class="{{ Str::substr($order->date_order, 0, 10) != $today ? 'text-green-600' : '' }}">{{ $order->date_order }}</span>
-                                                        <span><a
-                                                                href="http://wa.me/+62{{ $telp }}">{{ $telp }}</a></span>
-                                                        <span class="font-medium">@currency($order->grand_total)</span>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                            <div role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown-left-but-right-on-lg"
-                                                class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden z-10 top-0 start-auto end-0 min-w-60 bg-gray-200 p-2 shadow-md rounded-lg mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700 dark:divide-neutral-700">
-
-                                                <div class="py-1">
-                                                    <a 
-                                                        href="/my-orders/{{ $order->id}}"><button
-                                                            class="w-full px-4 py-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-300 items-center flex space-x-2 justify-center"><x-fas-search class="size-4" /> <span> {{ auth()->user()->is_admin == 1 ? $order->id : 'Detail'  }}</span></button></a>
-                                                </div>
-                                                @auth
-                                                    @if (auth()->user()->is_admin == 1)
-                                                        <div class="py-1">
-                                                            <button
-                                                            wire:click.prevent='changeStatus({{ $order->id }})'
-                                                                    class="w-full px-4 py-2 text-white rounded-md bg-slate-600 hover:bg-slate-400">
-                                                                        Ganti Status</button>
-                                                        </div>
-                                                        <div class="py-1">
-                                                            <a href="{{ route('printorder', [$order->id]) }}" target="_blank"><button
-                                                                    class="w-full px-4 py-2 text-white rounded-md bg-slate-600 hover:bg-slate-400">
-                                                                    Print</button></a>
-                                                        </div>
-                                                        <div class="py-1">
-                                                            <a href="{{ route('printorderprocess', [$order->id]) }}" target="_blank"><button
-                                                                    class="w-full px-4 py-2 text-white rounded-md bg-slate-600 hover:bg-slate-400">
-                                                                    Srt Jalan</button></a>
-                                                        </div>
-                                                    @endif
-                                                    @if (auth()->user()->is_admin == 0)
-                                                        <div class="py-1">
-                                                            @php
-                                                                $wakasir = $branch
-                                                                    ->where('id', $order->branch_id)
-                                                                    ->value('phone');
-
-                                                            @endphp
-                                                            <a
-                                                            href="https://wa.me/+62{{ $wakasir }}?text=Apakah pesanan saya no. {{ $order->id }} sudah di proses?"><button
-                                                                class="w-full px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-500"><i
-                                                                    class="fa fa-whatsapp"
-                                                                    aria-hidden="true"></i> WA Kasir</button>
-                                                        </a>
-                                                        </div>
-                                                    @endif
-                                                @endauth
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @empty
-                                    <div class="py-4 text-xl font-semibold text-center text-slate-500 tengah-aja">Kosong</div>
-                                    @endforelse
-
-                                </div>
-                    <!-- pagination start -->
-                    {{-- <style>
-                        nav div div p {
-                            margin-left: 20px;
-                            margin-right: 20px;
-                        }
-                    </style> --}}
-                    <div class="flex justify-center my-5">
-                        {{-- {{ $orders->links('pagination::bootstrap-4') }} --}}
-                        {{ $orders->links('vendor.pagination.tailwind') }}
-                    </div>
-                    <!-- pagination end -->
-
-            </div>
-        </div>
-
-        
+        @empty
+            <div class="w-full text-center py-20 text-gray-500 italic">Belum ada pesanan.</div>
+        @endforelse
     </div>
 
-    {{-- <script>
-        const objShow = document.getElementById("RealShow");
-        const objHide = document.getElementById("CountHide");
-        objShow.classList.add("hidden");
-        setTimeout(() => {
-            objShow.classList.remove("hidden");
-            objHide.classList.add("hidden");
-        }, 5000);  
-    </script>     --}}
-
-<style>
-    @property --num {
-    syntax: '<integer>';
-    initial-value: 0;
-    inherits: false;
-    }
-
-    .counter-ani span {
-    counter-reset: num var(--num);
-    animation: var(--animation) 5s forwards ease-in-out;
-    }
-
-    .counter-ani span::after {
-    content: counter(num);
-    }
-
-    @keyframes counter-unpaid-count {
-    from {
-        --num: 0;
-    }
-    to {
-        --num: <?php echo $my_orders_sum_unpaid_count ?>;
-    }
-    }
-
-    @keyframes counter-unpaid {
-    from {
-        --num: 0;
-    }
-    to {
-        --num: <?php echo $my_orders_sum_unpaid ?>;
-    }
-    } 
-
-    /* show and hidden */
-
-    #RealShow{
-        -webkit-animation: 5s ease 0s normal forwards 1 fadein;
-        animation: 5s ease 0s normal forwards 1 fadein;
-    }
-
-    @keyframes fadein{
-        0% { opacity:0; }
-        99% { opacity:0; }
-        100% { opacity:1; }
-    }
-
-    @-webkit-keyframes fadein{
-        0% { opacity:0; }
-        99% { opacity:0; }
-        100% { opacity:1; }
-    }
-
-    
-    #CountHide{
-        -webkit-animation: 5s forwards 1 fadeout;
-        animation: 5s forwards 1 fadeout;
-    }
-
-    @keyframes fadeout{
-        99% {
-            visibility: visible;
-        }
-        100% {
-            visibility: hidden;
-        }
-    }
-
-    @-webkit-keyframes fadeout{
-        99% {
-            visibility: visible;
-        }
-        100% {
-            visibility: hidden;
-        }
-    }
-</style>    
-
+    <div class="mt-6">
+        {{ $orders->links() }}
+    </div>
 </div>

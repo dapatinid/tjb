@@ -71,21 +71,20 @@
     <h3 class="dark:text-white">Pendapatan</h3>
   </div>
 
-  <div class="bg-white rounded-xl space-y-1 divide-y-1 divide-zinc-200 p-4">
+  <div class="bg-white rounded-xl space-y-1 divide-y divide-zinc-200 p-4">
     {{-- {{ $pl_kredit }} --}}
-    @foreach ($pl_kredit as $kredit)        
+    @foreach ($pl_kredit as $kredit)
     <div class="pb-2 grid grid-cols-3">
-    <a href="/admin/payments?tableSearch={{ Str::after($kredit->kredit,'LR-KR-') }}" target="_blank"
-      class="flex items-center text-sm hover:text-blue-500">
-        {{ Str::after($kredit->kredit,'LR-KR-') }}      
-    </a>
-    <div class="flex items-center justify-end text-xs text-gray-500">
-      {{ $profitLoss->where('kredit', $kredit->kredit)->count() + $profitLoss->where('debit', $kredit->kredit)->count() }} transaksi
-    </div>
-      <div 
-        class="flex items-center justify-end text-green-60">
-        @formatNumber($profitLoss->where('kredit', $kredit->kredit)->sum('nominal') - $profitLoss->where('debit', $kredit->kredit)->sum('nominal'))
-      </div>
+        <a href="/admin/payments?tableSearch={{ Str::after($kredit->kredit,'LR-KR-') }}"
+          target="_blank" class="flex items-center text-sm hover:text-blue-500">
+            {{ Str::after($kredit->kredit,'LR-KR-') }}
+        </a>
+        <div class="flex items-center justify-end text-xs text-gray-500">
+            {{ $kredit->jumlah_transaksi }} transaksi
+        </div>
+        <div class="flex items-center justify-end">
+            @formatNumber($kredit->nominal)
+        </div>
     </div>
     @endforeach
   </div>
@@ -97,21 +96,20 @@
     <h3 class="dark:text-white">Biaya</h3>
   </div>
 
-  <div class="bg-white rounded-xl space-y-1 divide-y-1 divide-zinc-200 p-4">
+  <div class="bg-white rounded-xl space-y-1 divide-y divide-zinc-200 p-4">
     {{-- {{ $pl_debit }} --}}
-    @foreach ($pl_debit as $debit)        
+    @foreach ($pl_debit as $debit)
     <div class="pb-2 grid grid-cols-3">
-    <a href="/admin/payments?tableSearch={{ Str::after($debit->debit,'LR-DB-') }}" target="_blank"
-      class="flex items-center text-sm hover:text-blue-500">
-      {{ Str::after($debit->debit,'LR-DB-') }}    
-    </a>
-    <div class="flex items-center justify-end text-xs text-gray-500">
-      {{ $profitLoss->where('debit', $debit->debit)->count() + $profitLoss->where('kredit', $debit->debit)->count() }} transaksi
-    </div>
-    <div 
-        class="flex items-center justify-end text-green-60">
-        @formatNumber($profitLoss->where('debit', $debit->debit)->sum('nominal') - $profitLoss->where('kredit', $debit->debit)->sum('nominal'))
-      </div>
+        <a href="/admin/payments?tableSearch={{ Str::after($debit->debit,'LR-DB-') }}"
+          target="_blank" class="flex items-center text-sm hover:text-blue-500">
+            {{ Str::after($debit->debit,'LR-DB-') }}
+        </a>
+        <div class="flex items-center justify-end text-xs text-gray-500">
+            {{ $debit->jumlah_transaksi }} transaksi
+        </div>
+        <div class="flex items-center justify-end">
+            @formatNumber($debit->nominal)
+        </div>
     </div>
     @endforeach
   </div>

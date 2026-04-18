@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Models\Branch;
-use App\Models\Partner;
 use App\Models\Payment;
 use App\Models\User;
 use Carbon\Carbon;
@@ -11,94 +10,94 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 #[Title('Laba Rugi - TegarJaya')]
-
 class ProfitLossAllPage extends Component
 {
-    use WithPagination;
-
     #[Url()]
     public $date_awal = '';
+
     #[Url()]
     public $date_akhir = '';
-    public $branchByPartner = [];
 
     public function mount()
     {
-        if (Auth::check()) {
-
-            if (Auth::user()->is_admin == 1) {
-                if (Auth::user()->level === 'frontliner' ||  Auth::user()->roles[0]->name === "Kasir") {
-                    return $this->redirect('/dompet', navigate: true);
-                }
-            } else {
-                return $this->redirect('/dompet', navigate: true);
-            }
-        } else {
+        if (!Auth::check()) {
             return $this->redirect('/dompet', navigate: true);
         }
 
-        if ($this->date_awal == '' || $this->date_akhir == '') {
-            $date_awal = Carbon::now()->firstOfMonth()->format('Y-m-d');
-            $date_akhir = Carbon::now()->lastOfMonth()->format('Y-m-d');
-            $this->date_awal = $date_awal;
-            $this->date_akhir = $date_akhir;
+        $user = Auth::user();
+
+        if ($user->is_admin != 1) {
+            return $this->redirect('/dompet', navigate: true);
+        }
+
+        if ($user->level === 'frontliner' || ($user->roles[0]->name ?? '') === 'Kasir') {
+            return $this->redirect('/dompet', navigate: true);
+        }
+
+        // ✅ Default ke hari ini jika kosong
+        if ($this->date_awal === '' || $this->date_akhir === '') {
+            $this->date_awal  = Carbon::now()->format('Y-m-d');
+            $this->date_akhir = Carbon::now()->format('Y-m-d');
         }
     }
 
-    // change Branch in User
     public function changeBranch($branch_id)
     {
+        $user = Auth::user();
 
-        $data = User::where('id', Auth::user()->id);
-
-        if (Auth::user()->is_admin == 1) {
-            if (Auth::user()->level === 'backofficer') {
-                $update = [
-                    'branch_id' => $branch_id,
-                ];
-            } else {
-                $update = [
-                    'branch_id' => Auth::user()->branch_id,
-                ];
-            }
+        if ($user->is_admin == 1 && $user->level === 'backofficer') {
+            User::where('id', $user->id)->update(['branch_id' => $branch_id]);
         }
-        $data->update($update);
 
         return $this->redirect('/laba-rugi', navigate: true);
     }
 
     public function render()
     {
-        $branchByPartner = Branch::where('partner_id', Auth::user()->partner_id)->get()->pluck('id');
-        // dd($branchByPartner);
+        $user      = Auth::user();
+        $branchId  = $user->branch_id;
+        $dateStart = $this->date_awal  . ' 00:00:00';
+        $dateEnd   = $this->date_akhir . ' 23:59:59';
 
-        $profitLoss = Payment::all()->whereIn('branch_id', $branchByPartner)->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59']);
-        $pl_kredit = Payment::whereIn('branch_id', $branchByPartner)->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->where('kredit', 'like', '%LR-KR-%')
+        // ✅ Base query — reusable, tidak load ke memori
+        $base = Payment::whereBetween('date_payment', [$dateStart, $dateEnd]);
+
+        // ✅ profitLoss: query ke DB langsung, bukan ::all()
+        $profitLoss = (clone $base)->get();
+
+        // Kredit & Debit grouped
+        $pl_kredit = (clone $base)
+            ->where('kredit', 'like', '%LR-KR-%')
             ->groupBy('kredit')
-            ->selectRaw('count(*) as nominal, kredit')
-            ->orderBy('kredit', 'asc')->get();
-        $pl_debit = Payment::whereIn('branch_id', $branchByPartner)->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->where('debit', 'like', '%LR-DB-%')
-            ->groupBy('debit')
-            ->selectRaw('count(*) as nominal, debit')
-            ->orderBy('debit', 'asc')->get();
-        $pl_kredit_total = Payment::whereIn('branch_id', $branchByPartner)->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->where('kredit', 'like', '%LR-KR-%')->sum('nominal') - Payment::whereIn('branch_id', $branchByPartner)->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->where('debit', 'like', '%LR-KR-%')->sum('nominal');
-        $pl_debit_total = Payment::whereIn('branch_id', $branchByPartner)->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->where('debit', 'like', '%LR-DB-%')->sum('nominal') - Payment::whereIn('branch_id', $branchByPartner)->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->where('kredit', 'like', '%LR-DB-%')->sum('nominal');
+            ->selectRaw('kredit, SUM(nominal) as nominal, COUNT(*) as jumlah_transaksi')
+            ->orderBy('kredit')
+            ->get();
 
-        $branchQuery = Branch::query()->where('is_active', 1);
-        $mitra = Partner::all();
+        $pl_debit = (clone $base)
+            ->where('debit', 'like', '%LR-DB-%')
+            ->groupBy('debit')
+            ->selectRaw('debit, SUM(nominal) as nominal, COUNT(*) as jumlah_transaksi')
+            ->orderBy('debit')
+            ->get();
+
+        // ✅ Total: hitung di DB, bukan di collection
+        $pl_kredit_total = (clone $base)->where('kredit', 'like', '%LR-KR-%')->sum('nominal')
+                         - (clone $base)->where('debit',  'like', '%LR-KR-%')->sum('nominal');
+
+        $pl_debit_total  = (clone $base)->where('debit',  'like', '%LR-DB-%')->sum('nominal')
+                         - (clone $base)->where('kredit', 'like', '%LR-DB-%')->sum('nominal');
+
+        $branches = Branch::where('is_active', 1);
 
         return view('livewire.profit-loss-all-page', [
-            'profitLoss' => $profitLoss,
-            'pl_kredit' => $pl_kredit,
-            'pl_debit' => $pl_debit,
+            'profitLoss'      => $profitLoss,
+            'pl_kredit'       => $pl_kredit,
+            'pl_debit'        => $pl_debit,
             'pl_kredit_total' => $pl_kredit_total,
-            'pl_debit_total' => $pl_debit_total,
-
-            'mitra' => $mitra,
-            'branches' => $branchQuery,
+            'pl_debit_total'  => $pl_debit_total,
+            'branches'        => $branches,
         ]);
     }
 }

@@ -275,7 +275,13 @@
                             <li>
                               <a class="{{ request()->is('items') ? 'bg-linear-to-br from-green-400/50 to-green-700/50 dark:from-green-500/50 dark:to-green-800/50' : 'dark:bg-neutral-800' }} flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
                               href="/items-status">
-                                <x-fas-cube class="size-4" /> Stok
+                                <x-fas-cube class="size-4" /> Stok Semua
+                              </a>
+                            </li>    
+                            <li>
+                              <a class="{{ request()->is('items') ? 'bg-linear-to-br from-green-400/50 to-green-700/50 dark:from-green-500/50 dark:to-green-800/50' : 'dark:bg-neutral-800' }} flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
+                              href="/item-ledger">
+                                <x-fas-cube class="size-4" /> Stok per Produk
                               </a>
                             </li>    
                             @endauth                  

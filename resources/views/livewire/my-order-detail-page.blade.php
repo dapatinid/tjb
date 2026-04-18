@@ -590,7 +590,7 @@
                         </thead>
                         <tbody>
 
-                            @foreach ($payments->where('mutation_type', 'Sales')->where('paymentable_id', $this->order) as $key => $payment)
+                            @foreach ($payments as $key => $payment)
                                 @php
                                     $status = '';
                                     if ($payment->payment_method == 'cash') {

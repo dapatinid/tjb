@@ -15,7 +15,6 @@ use Livewire\WithPagination;
 class PaymentsPage extends Component
 {
     use WithPagination;
-    // protected $paginationTheme = 'bootstrap';
 
     #[Url()]
     public $date_awal = '';
@@ -24,47 +23,43 @@ class PaymentsPage extends Component
 
     public function mount()
     {
-        $isadmin = auth()->user()->is_admin;
-        if ($isadmin == 0) {
+        // Proteksi Admin
+        if (auth()->user()->is_admin == 0) {
             return redirect('/my-orders');
+        }
+
+        // Set default tanggal saat pertama kali load jika URL kosong
+        if (!$this->date_awal) {
+            $this->date_awal = Carbon::now()->format('Y-m-d');
+        }
+        if (!$this->date_akhir) {
+            $this->date_akhir = Carbon::now()->format('Y-m-d');
         }
     }
 
     public function render()
     {
-        if ($this->date_awal == '' || $this->date_akhir == '') {
-            // $date_awal = Carbon::now()->firstOfMonth()->format('Y-m-d');
-            // $date_akhir = Carbon::now()->format('Y-m-d');
-            $date_awal = Carbon::now()->format('Y-m-d');
-            $date_akhir = Carbon::now()->format('Y-m-d');
-            // $date_awal = Carbon::now()->startOfMonth()->format('Y-m-d');
-            // $date_akhir = Carbon::now()->endOfMonth()->format('Y-m-d');
-            // } else {
-            //     $date_awal = $this->date_awal;
-            //     $date_akhir = $this->date_akhir;
-            $this->date_awal = $date_awal;
-            $this->date_akhir = $date_akhir;
-        }
-
-        $orders = Order::all();
-        $users = User::all();
-
-        $payments = Payment::where('paymentable_type', Order::class)->where('mutation_type', "Sales")
+        // Query Payments dengan filter tanggal
+        $payments = Payment::where('paymentable_type', Order::class)
+        ->where('nominal', '!=', 0)
+            ->where('mutation_type', "Sales")
             ->whereBetween('date_payment', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])
             ->whereNull('deleted_at')
             ->orderBy('id', 'desc')
             ->paginate(12);
 
+        // Query Unpaid Orders
         $ordersUnpaid = Order::whereNull('deleted_at')
-                    ->where('status', '!=', 'canceled')
-                    ->orderBy('id', 'desc')
-                    ;
+            ->where('status', '!=', 'canceled')
+            ->where('total_cashback', '<', 0) // Pastikan hanya yang minus (piutang)
+            ->orderBy('id', 'desc');
 
+        // Ambil User & Order untuk helper di view (opsional, sebaiknya gunakan relasi model)
+        $users = User::all();
 
         return view('livewire.payments-page', [
-            'orders' => $orders,
             'payments' => $payments,
-            'ordersUnpaid' => $ordersUnpaid,
+            'ordersUnpaid' => $ordersUnpaid->paginate(12, ['*'], 'unpaidPage'), // Pagination terpisah
             'users' => $users,
         ]);
     }

@@ -31,7 +31,7 @@ class Navbar extends Component
     {
         // cek Branch
         if (Auth::check()) {
-            $thisBranch = Branch::all()->where('partner_id', auth()->user()->partner_id)->where('is_active', 1);
+            $thisBranch = Branch::where('partner_id', auth()->user()->partner_id)->where('is_active', 1)->get();
             $thisPartner = Partner::all();
         } else {
             $thisBranch = Branch::all()->where('partner_id', 1)->where('is_active', 1);

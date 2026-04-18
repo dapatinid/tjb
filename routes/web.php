@@ -34,8 +34,9 @@ use App\Livewire\SuccessPage;
 use App\Livewire\WalletPage;
 use Illuminate\Support\Facades\Route;
 
-    use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\CheckoutController;
+use App\Livewire\ItemLedgerPage;
 use App\Livewire\MyPos;
 use App\Livewire\PosSale;
 use App\Models\Cart;
@@ -50,8 +51,6 @@ Route::get('/', HomePage::class);
 Route::get('/cart', CartPage::class);
 
 Route::get('/checkout', CheckoutPage::class);
-Route::get('/my-orders', MyOrdersPage::class);
-Route::get('/my-orders/{order}', MyOrderDetailPage::class);
 
 Route::get('/login', LoginPage::class);
 // Route::get('/register', RegisterPage::class);
@@ -92,6 +91,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-account-edit', MyAccountEditPage::class);
     Route::get('/items-status', ItemsStatusPage::class);
     Route::get('/items-return', ItemsReturnPage::class);
+    Route::get('/item-ledger', ItemLedgerPage::class);
     // Route::get('/items-warehouse', ItemsWarehousePage::class);
     Route::get('/dompet', WalletPage::class);
     Route::get('/laba-rugi', ProfitLossPage::class);

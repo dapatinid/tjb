@@ -33,7 +33,8 @@
               <a href="/my-orders-unpaid" class="px-2 py-1 text-white bg-blue-500 rounded cursor-pointer">Order (Unpaid)</a>
               <a href="/my-orders" class="px-2 py-1 text-white bg-blue-500 rounded cursor-pointer">Order (Paid)</a>
               <a href="/payments" class="px-2 py-1 text-white bg-blue-500 rounded cursor-pointer">Payments</a>
-              <a href="/items-sold" class="px-2 py-1 text-white bg-blue-500 rounded cursor-pointer">Stock</a>
+              <a href="/items-status" class="px-2 py-1 text-white bg-blue-500 rounded cursor-pointer">Stock</a>
+              <a href="/item-ledger" class="px-2 py-1 text-white bg-blue-500 rounded cursor-pointer">Stock per Product</a>
             </div>
 
             <div class="flex justify-end gap-2 p-3 border-t border-gray-200">
@@ -81,8 +82,12 @@
             : '/storage/foto-produk.png'" alt="" class="w-full object-cover rounded mb-2 mx-auto aspect-square">
           <p class="font-semibold text-lg" x-text="`Rp${formatMoney(productDetail.price)}`"></p>
           <p class="text-gray-700 text-sm mb-2" x-text="productDetail.description"></p>
-
-          <div class="text-right mt-3">
+          
+          <div class="flex justify-between mt-3">
+              <div class="flex gap-x-3 items-center">
+                <a :href="'/product/' + productDetail.slug" class="text-blue-500 text-sm" target="_blank">Detail?</a>
+                <a :href="'/item-ledger?product_id=' + productDetail.id" class="text-blue-500 text-sm" target="_blank">Stok?</a>
+              </div>
               <button @click="showProductModal = false" class="px-3 py-1 bg-gray-300 rounded">Tutup</button>
           </div>
       </div>
@@ -91,10 +96,10 @@
     <!-- Sidebar Cart (mobile: slide-in, desktop: tetap terlihat) -->
     <div 
         class="fixed inset-y-0 left-0 w-full min-h-screen bg-white transform transition-transform duration-300 z-20
-               md:static md:translate-x-0 " 
+              md:static md:translate-x-0 md:flex md:flex-col md:h-screen md:sticky md:top-0" 
         :class="{ '-translate-x-full': !showCart, 'translate-x-0': showCart }">
 
-        <div class="sticky top-0 p-[15px] flex justify-between items-center bg-white border-b border-gray-200">
+        <div class="sticky top-0 p-[15px] flex justify-between items-center bg-white border-b border-gray-200 shrink-0">
           <h2 class="font-bold text-lg" x-text="`Cart (${(qtybyqty)}/${(countcart)})`"></h2> 
           <div class="flex justify-end gap-3">
             <button type="button"  class="text-blue-500" @click="showModalMenu = true; showCart = false">
@@ -171,104 +176,94 @@
           </div>       
         </div>
 
-        <!-- isi cart -->
-        <div class="px-3 pt-2 pb-24 h-[calc(100vh-4rem)] md:h-auto overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-gray-300" style="-webkit-overflow-scrolling: touch;">
-            <template x-if="cart.length === 0">
-                <div class="text-sm text-gray-500 text-center">Cart kosong</div>
-            </template>
 
-            <div class="space-y-2 " >
-                <template x-for="(item, idx) in cart" :key="item.id">
-                <div class="block items-center gap-2 border border-gray-200 rounded p-2">
-                    <div class="w-full flex justify-between">
-                        <div class="flex justify-start gap-2 cursor-pointer hover:underline hover:text-blue-500"  @click="showProduct(item.id)">
-                            <div class="font-medium text-sm" x-text="item.name"></div>
-                            <div class="font-light text-sm" x-text="item.variant"></div>
-                        </div>
-                        <div>
-                            <button @click="removeItem(idx)" class="text-red-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="w-full flex space-x-2">
-                        <div class="w-1/3">
-                            <input type="number" step="100" class="w-full text-sm border border-gray-200 rounded px-2 py-0" 
-                            x-mask:dynamic="(value) => {
-                            const numeric = value.replace(/[^0-9]/g, '');
-                            if (numeric === '') return '0';   // tampilkan 0 jika kosong
-                            return Number(numeric).toLocaleString('id-ID');
-                            }"
-                            x-model="item.price_display"
-                            @input="updatePrice(item)">
-                        </div>
-                        <div class="w-1/3 flex justify-center gap-1">
-                            <button @click="decrementQty(item)" onmouseup="setTimeout(() => this.blur(), 200)" class="items-center text-red-400 transition-colors duration-300 active:text-black focus:text-black">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm3 10.5a.75.75 0 0 0 0-1.5H9a.75.75 0 0 0 0 1.5h6Z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                                <input type="number" class="w-12 text-sm border border-gray-200 rounded px-2 py-0 text-center" x-model.number="item.quantity" @input="recalcItem(item)">
-                            <button @click="incrementQty(item)" onmouseup="setTimeout(() => this.blur(), 200)" class="items-center text-blue-500 transition-colors duration-300 active:text-black focus:text-black">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="w-1/3 flex justify-end text-sm" x-text="`${formatMoney(item.subtotal)}`">
-                        </div>
-                    </div>
-                </div>
+            {{-- ✅ Isi cart: scroll sendiri, mengisi sisa ruang --}}
+            <div class="cart-scroll flex-1 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-gray-300 px-3 pt-2"
+                style="-webkit-overflow-scrolling: touch;">
+                <template x-if="cart.length === 0">
+                    <div class="text-sm text-gray-500 text-center py-6">Cart kosong</div>
                 </template>
+                <div class="space-y-2 mb-3">
+                  <template x-for="(item, idx) in cart" :key="item.id">
+                  <div class="block items-center gap-2 border border-gray-200 rounded p-2">
+                      <div class="w-full flex justify-between">
+                          <div class="flex justify-start gap-2 cursor-pointer hover:underline hover:text-blue-500"  @click="showProduct(item.id)">
+                              <div class="font-medium text-sm" x-text="item.name"></div>
+                              <div class="font-light text-sm" x-text="item.variant"></div>
+                          </div>
+                          <div>
+                              <button @click="removeItem(idx)" class="text-red-600">
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                  </svg>
+                              </button>
+                          </div>
+                      </div>
+                      <div class="w-full flex space-x-2">
+                          <div class="w-1/3">
+                              <input type="number" step="100" class="w-full text-sm border border-gray-200 rounded px-2 py-0" 
+                              x-mask:dynamic="(value) => {
+                              const numeric = value.replace(/[^0-9]/g, '');
+                              if (numeric === '') return '0';   // tampilkan 0 jika kosong
+                              return Number(numeric).toLocaleString('id-ID');
+                              }"
+                              x-model="item.price_display"
+                              @input="updatePrice(item)">
+                          </div>
+                          <div class="w-1/3 flex justify-center gap-1">
+                              <button @click="decrementQty(item)" onmouseup="setTimeout(() => this.blur(), 200)" class="items-center text-red-400 transition-colors duration-300 active:text-black focus:text-black">
+                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                                  <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm3 10.5a.75.75 0 0 0 0-1.5H9a.75.75 0 0 0 0 1.5h6Z" clip-rule="evenodd" />
+                                  </svg>
+                              </button>
+                                  <input type="number" class="w-12 text-sm border border-gray-200 rounded px-2 py-0 text-center" x-model.number="item.quantity" @input="recalcItem(item)">
+                              <button @click="incrementQty(item)" onmouseup="setTimeout(() => this.blur(), 200)" class="items-center text-blue-500 transition-colors duration-300 active:text-black focus:text-black">
+                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                                  <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" clip-rule="evenodd" />
+                                  </svg>
+                              </button>
+                          </div>
+                          <div class="w-1/3 flex justify-end text-sm" x-text="`${formatMoney(item.subtotal)}`">
+                          </div>
+                      </div>
+                  </div>
+                  </template>
+                </div>
             </div>
 
-            <div class="mt-4">
+            {{-- ✅ Footer: fixed di bawah sidebar --}}
+            <div class="shrink-0 border-t border-gray-200 bg-white px-3 py-3">
                 <div class="flex justify-between">
-                <div class="font-bold text-sm" x-text="`Total : ${(totalweight)} kg`"></div>
-                {{-- <div class="font-bold text-sm" x-text="`Total : `"></div> --}}
-                <div class="font-bold text-sm" x-text="`Rp${formatMoney(total)}`"></div>
+                    <div class="font-bold text-sm" x-text="`Total : ${(totalweight)} kg`"></div>
+                    <div class="font-bold text-sm" x-text="`Rp${formatMoney(total)}`"></div>
                 </div>
-
                 <div class="mt-3 flex gap-2">
-                {{-- <input x-model="customer_name" placeholder="Nama pelanggan (opsional)" class="border border-gray-200 px-3 py-2 rounded w-full"> --}}
-                <button @click="showModal = true" 
-                    {{-- @click="clearCart()"  --}}
-                    class="px-3 py-2 border border-gray-200 rounded grow-0 text-red-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                    </svg>
-                </button>
-                <button x-show="cart.length > 0" 
-                  x-transition.delay.1000ms
-                  wire:click="triggerLoadCart"  
-                  {{-- @click="checkout()"  --}}
-                  @click="hiddenBtmCo()" 
-                  onmouseup="setTimeout(() => this.blur(), 200);"
-                  wire:loading.attr="disabled"
-                  class="px-3 py-2 bg-green-600 text-white rounded w-full transition-colors duration-300 active:bg-green-800 focus:bg-green-800">
-                    <!-- Normal Text -->
-                    <span wire:loading.remove>
-                        Checkout
-                    </span>
-
-                    <!-- Loading Spinner -->
-                    <span wire:loading class="flex items-center">
-                        <span class="flex flex-nowrap gap-2 justify-center">
-                          <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                          </svg>
-                          <span class="text-sm">
-                            Loading...
-                          </span>
+                    <button @click="showModal = true" 
+                        class="px-3 py-2 border border-gray-200 rounded grow-0 text-red-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                        </svg>
+                    </button>
+                    <button x-show="cart.length > 0" 
+                        x-transition.delay.1000ms
+                        wire:click="triggerLoadCart"  
+                        @click="hiddenBtmCo()" 
+                        onmouseup="setTimeout(() => this.blur(), 200);"
+                        wire:loading.attr="disabled"
+                        class="px-3 py-2 bg-green-600 text-white rounded w-full transition-colors duration-300 active:bg-green-800 focus:bg-green-800">
+                        <span wire:loading.remove>Checkout</span>
+                        <span wire:loading class="flex items-center">
+                            <span class="flex flex-nowrap gap-2 justify-center">
+                                <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                </svg>
+                                <span class="text-sm">Loading...</span>
+                            </span>
                         </span>
-                    </span>
-                </button>
+                    </button>
                 </div>
             </div>
-        </div>
         
     </div>
 
@@ -480,73 +475,74 @@
         </div>
       </div>  
 
-      <div class="grid lg:grid-cols-4 md:grid-cols-3 xs:grid-cols-3 grid-cols-2 gap-2 px-2">
-    <template x-for="(col, i) in roundRobin(products.data, colsCount)" :key="i">
-      <div>
-        <template x-for="p in col" :key="p.id">
-          <div class="relative ">
-          <div class="absolute top-2.5 left-2 bg-white p-1 rounded-full" @click="showProduct(p.id)"> 
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-            </svg>
-          </div>
-              <!-- 🔵 Badge jumlah produk di cart -->
-              <template x-if="cart.some(item => item.id === p.id)">
-                  <div 
-                      x-transition.scale.origin.top.right
-                      class="absolute top-2.5 right-2 bg-white border border-gray-300 rounded-full flex items-center justify-between h-6 shadow-md text-xs select-none"
-                  >
-                      <!-- Tombol - -->
-                      <button 
-                          class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold transition-colors duration-300 active:bg-red-400 focus:bg-red-400" onmouseup="setTimeout(() => this.blur(), 200)"
-                          @click.stop="
-                              let item = cart.find(i => i.id === p.id);
-                              if (item) {
-                                  if (item.quantity > 1) {
-                                      decrementQty(item);
-                                  } else {
-                                      cart = cart.filter(i => i.id !== p.id);
-                                      // this.recalcTotals(); // opsional kalau kamu mau recalculasi total
+      <div x-data="{ showCart: false, showModalMenu: false, showModal: false, showSidebar: false }" 
+          class="grid lg:grid-cols-4 md:grid-cols-3 xs:grid-cols-3 grid-cols-2 md:gap-x-2 gap-y-2 gap-0 md:items-start">
+        <template x-for="(col, i) in roundRobin(products.data, colsCount)" :key="i">
+          <div>
+            <template x-for="p in col" :key="p.id">
+              <div class="relative ">
+              <div class="absolute top-2.5 left-2 bg-white p-1 rounded-full" @click="showProduct(p.id)"> 
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                </svg>
+              </div>
+                  <!-- 🔵 Badge jumlah produk di cart -->
+                  <template x-if="cart.some(item => item.id === p.id)">
+                      <div 
+                          x-transition.scale.origin.top.right
+                          class="absolute top-2.5 right-2 bg-white border border-gray-300 rounded-full flex items-center justify-between h-6 shadow-md text-xs select-none"
+                      >
+                          <!-- Tombol - -->
+                          <button 
+                              class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold transition-colors duration-300 active:bg-red-400 focus:bg-red-400" onmouseup="setTimeout(() => this.blur(), 200)"
+                              @click.stop="
+                                  let item = cart.find(i => i.id === p.id);
+                                  if (item) {
+                                      if (item.quantity > 1) {
+                                          decrementQty(item);
+                                      } else {
+                                          cart = cart.filter(i => i.id !== p.id);
+                                          // this.recalcTotals(); // opsional kalau kamu mau recalculasi total
+                                      }
                                   }
-                              }
-                          "
-                      >−</button>
+                              "
+                          >−</button>
 
-                      <!-- Angka quantity -->
-                      <span class="text-gray-800 font-semibold mx-1" 
-                            x-text="(cart.find(i => i.id === p.id) || {}).quantity || ''">
-                      </span>
+                          <!-- Angka quantity -->
+                          <span class="text-gray-800 font-semibold mx-1" 
+                                x-text="(cart.find(i => i.id === p.id) || {}).quantity || ''">
+                          </span>
 
-                      <!-- Tombol + -->
-                      <button 
-                          class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold transition-colors duration-300 active:bg-blue-400 focus:bg-blue-400" onmouseup="setTimeout(() => this.blur(), 200)"
-                          @click.stop="
-                              let item = cart.find(i => i.id === p.id);
-                              if (item) {
-                                  incrementQty(item);
-                              }
-                          "
-                      >+</button>
-                  </div>
-              </template>
-              <button @click="addToCart(p)"  onmouseup="setTimeout(() => this.blur(), 300)" 
-                :class="cart.some(item => item.id === p.id) ? 'bg-yellow-300': p.is_active == 0 ? 'bg-green-400': 'bg-white'" 
-                {{-- :class="cart.some(item => item.id === p.id) ? 'bg-yellow-300': 'bg-white'"  --}}
-                {{-- :class="p.is_active == 0 ? 'bg-green-200': 'bg-white'"  --}}
-                class="w-full my-2 p-3 block rounded border border-gray-200 transition-colors duration-300 active:bg-blue-400 focus:bg-blue-400">
-                <img :src="p.images && p.images.length > 0 
-                ? '/storage/' + p.images[0] 
-                : '/storage/foto-produk.png'" alt="" class="rounded aspect-square object-cover">
-                <div x-text="p.name" class="font-semibold text-sm/4 mt-1 text-start line-clamp-2"></div>
-                <div class="flex flex-wrap justify-between gap-1">
-                    <em class="text-xs pe-1 line-clamp-2" x-text="p.variant"></em>
-                    <div class="flex ms-auto"><span class="text-xs" x-text="`Rp${formatMoney(p.price)}`"></span></div>       
-                </div>            
-              </button>
+                          <!-- Tombol + -->
+                          <button 
+                              class="w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold transition-colors duration-300 active:bg-blue-400 focus:bg-blue-400" onmouseup="setTimeout(() => this.blur(), 200)"
+                              @click.stop="
+                                  let item = cart.find(i => i.id === p.id);
+                                  if (item) {
+                                      incrementQty(item);
+                                  }
+                              "
+                          >+</button>
+                      </div>
+                  </template>
+                  <button @click="addToCart(p)"  onmouseup="setTimeout(() => this.blur(), 300)" 
+                    :class="cart.some(item => item.id === p.id) ? 'bg-yellow-300': p.is_active == 0 ? 'bg-green-400': 'bg-white'" 
+                    {{-- :class="cart.some(item => item.id === p.id) ? 'bg-yellow-300': 'bg-white'"  --}}
+                    {{-- :class="p.is_active == 0 ? 'bg-green-200': 'bg-white'"  --}}
+                    class="w-full my-2 p-3 block rounded border border-gray-200 transition-colors duration-300 active:bg-blue-400 focus:bg-blue-400">
+                    <img :src="p.images && p.images.length > 0 
+                    ? '/storage/' + p.images[0] 
+                    : '/storage/foto-produk.png'" alt="" class="rounded aspect-square object-cover">
+                    <div x-text="p.name" class="font-semibold text-sm/4 mt-1 text-start line-clamp-2"></div>
+                    <div class="flex flex-wrap justify-between gap-1">
+                        <em class="text-xs pe-1 line-clamp-2" x-text="p.variant"></em>
+                        <div class="flex ms-auto"><span class="text-xs" x-text="`Rp${formatMoney(p.price)}`"></span></div>       
+                    </div>            
+                  </button>
+              </div>
+            </template>
           </div>
         </template>
-      </div>
-    </template>
       </div>
 
       <!-- pagination -->
@@ -749,6 +745,12 @@ function posApp() {
             price_display: Number(p.price).toLocaleString('id-ID'),
           subtotal: Number(p.price),
           subtotalweight: Number(p.weight),
+        });
+
+        // ✅ Scroll ke bawah hanya jika item BARU
+        this.$nextTick(() => {
+            const cartScroll = document.querySelector('.cart-scroll');
+            if (cartScroll) cartScroll.scrollTop = cartScroll.scrollHeight;
         });
       }
       this.saveCart();

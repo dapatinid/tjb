@@ -56,7 +56,9 @@
 
     </div>
     <div class="flex justify-center items-center ms-17">
-      <span class="text-center dark:text-white text-sm font-normal">Periode s.d </span> 
+      <input type="date" wire:model.live="date_awal" name="date_awal" id="date_awal"
+      class="border-0 bg-transparent dark:text-white">
+      <span class="text-center dark:text-white text-sm font-normal"> s.d </span> 
       <input type="date" wire:model.live="date_akhir" name="date_akhir" id="date_akhir"
       class="border-0 bg-transparent dark:text-white">
     </div>
@@ -64,7 +66,7 @@
 
   <!-- JUDUL End -->
 
-<div  class="grid grid-cols-2 space-x-5">
+<div  class="grid grid-cols-2 space-x-5"> 
   {{-- wire:poll --}}
 
 <div class="">
@@ -74,46 +76,36 @@
 
   <div class="bg-white rounded-xl space-y-1 divide-y-1 divide-zinc-200 p-4">
     <h3 class="text-center pb-3">Aset Tetap</h3>
-    @php
-        $sum_tot_Debit_A = 0;
-    @endphp
-    @foreach ($nr_AktivaAsetTetap as $debit)        
+    @php $sum_tot_Debit_A = 0; @endphp
+    @foreach ($nr_AktivaAsetTetap as $kode => $net)
     <div class="pb-2 grid grid-cols-2">
-    <a href="/admin/payments?tableSearch={{ Str::after($debit,'NR-DB-') }}" target="_blank"
-      class="flex items-center text-sm hover:text-blue-500">
-      {{ Str::after($debit,'NR-DB-') }}    
-    </a>
-    <div 
-        class="flex items-center justify-end text-green-60">
-        @formatNumber($balance->where('debit', $debit)->sum('nominal') - $balance->where('kredit', $debit)->sum('nominal'))
-      </div>
+        <a href="/admin/payments?tableSearch={{ Str::after($kode,'NR-DB-') }}"
+           target="_blank" class="flex items-center text-sm hover:text-blue-500">
+            {{ Str::after($kode, 'NR-DB-') }}
+        </a>
+        <div class="flex items-center justify-end">
+            @formatNumber($net)
+        </div>
     </div>
-    @php
-        $sum_tot_Debit_A += $balance->where('debit', $debit)->sum('nominal') - $balance->where('kredit', $debit)->sum('nominal');
-    @endphp
+    @php $sum_tot_Debit_A += $net; @endphp
     @endforeach
     <h3 class="text-center pt-3">@formatNumber($sum_tot_Debit_A)</h3>
   </div>
 
   <div class="bg-white rounded-xl space-y-1 divide-y-1 divide-zinc-200 p-4 mt-4">
     <h3 class="text-center pb-3">Aset Lancar</h3>
-    @php
-        $sum_tot_Debit_B = 0;
-    @endphp
-    @foreach ($nr_AktivaAsetLancar as $debit)        
+    @php $sum_tot_Debit_B = 0; @endphp
+    @foreach ($nr_AktivaAsetLancar as $kode => $net)
     <div class="pb-2 grid grid-cols-2">
-    <a href="/admin/payments?tableSearch={{ Str::after($debit,'NR-DB-') }}" target="_blank"
-      class="flex items-center text-sm hover:text-blue-500">
-      {{ Str::after($debit,'NR-DB-') }}    
-    </a>
-    <div 
-        class="flex items-center justify-end text-green-60">
-        @formatNumber($balance->where('debit', $debit)->sum('nominal') - $balance->where('kredit', $debit)->sum('nominal'))
-      </div>
+        <a href="/admin/payments?tableSearch={{ Str::after($kode,'NR-DB-') }}"
+           target="_blank" class="flex items-center text-sm hover:text-blue-500">
+            {{ Str::after($kode, 'NR-DB-') }}
+        </a>
+        <div class="flex items-center justify-end">
+            @formatNumber($net)
+        </div>
     </div>
-    @php
-        $sum_tot_Debit_B += $balance->where('debit', $debit)->sum('nominal') - $balance->where('kredit', $debit)->sum('nominal');
-    @endphp
+    @php $sum_tot_Debit_B += $net; @endphp
     @endforeach
     <h3 class="text-center pt-3">@formatNumber($sum_tot_Debit_B)</h3>
   </div>
@@ -131,58 +123,47 @@
 
   <div class="bg-white rounded-xl space-y-1 divide-y-1 divide-zinc-200 p-4">
     <h3 class="text-center pb-3">Kewajiban</h3>
-    @php
-        $sum_tot_KreditC = 0;
-    @endphp    
-    @foreach ($nr_PasivaKewajiban as $kredit)        
+    @php $sum_tot_KreditC = 0; @endphp
+    @foreach ($nr_PasivaKewajiban as $kode => $net)
     <div class="pb-2 grid grid-cols-2">
-    <a href="/admin/payments?tableSearch={{ Str::after($kredit,'NR-KR-') }}" target="_blank"
-      class="flex items-center text-sm hover:text-blue-500">
-        {{ Str::after($kredit,'NR-KR-') }}      
-    </a>
-      <div 
-        class="flex items-center justify-end text-green-60">
-        @formatNumber($balance->where('kredit', $kredit)->sum('nominal') - $balance->where('debit', $kredit)->sum('nominal'))
-      </div>
+        <a href="/admin/payments?tableSearch={{ Str::after($kode,'NR-KR-') }}"
+           target="_blank" class="flex items-center text-sm hover:text-blue-500">
+            {{ Str::after($kode, 'NR-KR-') }}
+        </a>
+        <div class="flex items-center justify-end">
+            @formatNumber($net)
+        </div>
     </div>
-    @php
-        $sum_tot_KreditC += $balance->where('kredit', $kredit)->sum('nominal') - $balance->where('debit', $kredit)->sum('nominal');
-    @endphp 
+    @php $sum_tot_KreditC += $net; @endphp
     @endforeach
     <h3 class="text-center pt-3">@formatNumber($sum_tot_KreditC)</h3>
   </div>
 
   <div class="bg-white rounded-xl space-y-1 divide-y-1 divide-zinc-200 p-4 mt-4">
     <h3 class="text-center pb-3">Ekuitas</h3>
-    @php
-        $sum_tot_KreditD = 0;
-    @endphp    
-    @foreach ($nr_PasivaEkuitas as $kredit)        
+    @php $sum_tot_KreditD = 0; @endphp
+    @foreach ($nr_PasivaEkuitas as $kode => $net)
     <div class="pb-2 grid grid-cols-2">
-    <a href="/admin/payments?tableSearch={{ Str::after($kredit,'NR-KR-') }}" target="_blank"
-      class="flex items-center text-sm hover:text-blue-500">
-        {{ Str::after($kredit,'NR-KR-') }}      
-    </a>
-      <div 
-        class="flex items-center justify-end text-green-60">
-        @formatNumber($balance->where('kredit', $kredit)->sum('nominal') - $balance->where('debit', $kredit)->sum('nominal'))
-      </div>
+        <a href="/admin/payments?tableSearch={{ Str::after($kode,'NR-KR-') }}"
+           target="_blank" class="flex items-center text-sm hover:text-blue-500">
+            {{ Str::after($kode, 'NR-KR-') }}
+        </a>
+        <div class="flex items-center justify-end">
+            @formatNumber($net)
+        </div>
     </div>
-    @php
-        $sum_tot_KreditD += $balance->where('kredit', $kredit)->sum('nominal') - $balance->where('debit', $kredit)->sum('nominal');
-    @endphp 
+    @php $sum_tot_KreditD += $net; @endphp
     @endforeach
+    {{-- Laba Rugi Berjalan --}}
     <div class="pb-2 grid grid-cols-2">
-    <div
-      class="flex items-center text-sm">
-        D-6000 Laba Rugi Berjalan     
+        <div class="flex items-center text-sm">D-6000 Laba Rugi Berjalan</div>
+        <div class="flex items-center justify-end">
+            @formatNumber($pl_kredit_total - $pl_debit_total)
+        </div>
     </div>
-      <div 
-        class="flex items-center justify-end text-green-60">
-        @formatNumber($pl_kredit_total - $pl_debit_total)
-      </div>
-    </div>
-    <h3 class="text-center pt-3">@formatNumber($sum_tot_KreditD + $pl_kredit_total - $pl_debit_total)</h3>
+    <h3 class="text-center pt-3">
+        @formatNumber($sum_tot_KreditD + $pl_kredit_total - $pl_debit_total)
+    </h3>
   </div>
   <div class="flex justify-end mt-2 me-4 text-xl font-bold">
     <h3 class="dark:text-white">@formatNumber($sum_tot_KreditC + $sum_tot_KreditD + $pl_kredit_total - $pl_debit_total)</h3>

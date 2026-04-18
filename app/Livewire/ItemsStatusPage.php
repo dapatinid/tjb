@@ -2,52 +2,58 @@
 
 namespace App\Livewire;
 
-use App\Models\Order;
 use App\Models\OrderItem;
 use Livewire\Attributes\Title;
 use Livewire\Component;
-use Livewire\WithPagination;
-use App\Models\Product;
 use Carbon\Carbon;
 use Livewire\Attributes\Url;
 
 #[Title('Items Status')]
 class ItemsStatusPage extends Component
 {
-    use WithPagination;
-    // protected $paginationTheme = 'bootstrap';
-
     #[Url()]
     public $date_awal = '';
+
     #[Url()]
     public $date_akhir = '';
 
     public function mount()
     {
-        $isadmin = auth()->user()->is_admin;
-        if ($isadmin == 0) {
-            return redirect('/my-orders');
+        if (auth()->user()->is_admin == 0) {
+            return $this->redirect('/my-orders', navigate: true);
+        }
+
+        // ✅ Default tanggal awal = awal bulan ini, akhir = hari ini
+        if ($this->date_awal === '') {
+            $this->date_awal = Carbon::now()->firstOfMonth()->format('Y-m-d');
+        }
+        if ($this->date_akhir === '') {
+            $this->date_akhir = Carbon::now()->format('Y-m-d');
         }
     }
 
-    // public function updatedStatus()
-    // {
-    //         $this->dispatch('refreshPage');
-        
-    // }
-    
     public function render()
     {
-        if ($this->date_awal == '') {
-            $date_awal = Carbon::now()->firstOfYear()->format('Y-m-d');
-            $this->date_awal = $date_awal;
-        }
-        if ($this->date_akhir == '') {            
-            $date_akhir = Carbon::now()->format('Y-m-d');
-            $this->date_akhir = $date_akhir;
-        }
-
-        $orderItems = OrderItem::with('product')->where('branch_id', auth()->user()->branch_id)->orderBy('product_id', 'asc')->where('status', '!=', 'canceled')->whereBetween('date_order', [$this->date_awal . ' 00:00:00', $this->date_akhir . ' 23:59:59'])->get();
+        $orderItems = OrderItem::with([
+                // ✅ Eager load hanya kolom yang dibutuhkan JS di blade
+                'product:id,name,variant,low_alert',
+            ])
+            ->where('branch_id', auth()->user()->branch_id)
+            ->where('status', '!=', 'canceled')
+            ->whereBetween('date_order', [
+                $this->date_awal  . ' 00:00:00',
+                $this->date_akhir . ' 23:59:59',
+            ])
+            // ✅ Hanya ambil kolom yang benar-benar dipakai JS
+            ->select([
+                'product_id',
+                'quantity',
+                'p_quantity',
+                'mutation_type',
+                'status',
+            ])
+            ->orderBy('product_id')
+            ->get();
 
         return view('livewire.items-status-page', [
             'orderItems' => $orderItems,
