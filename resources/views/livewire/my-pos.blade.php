@@ -442,8 +442,8 @@
 
       <!-- Badge toggle kategori -->
       <div class="relative -mt-1 mb-1 mx-2">
-        <div class="absolute left-0 top-0 h-full w-10 md:hidden bg-gradient-to-r from-white to-transparent pointer-events-none z-5"></div>
-        <div class="absolute right-0 top-0 h-full w-10 md:hidden bg-gradient-to-l from-white to-transparent pointer-events-none z-5"></div>
+        {{-- <div class="absolute left-0 top-0 h-full w-10 md:hidden bg-gradient-to-r from-white to-transparent pointer-events-none z-5"></div>
+        <div class="absolute right-0 top-0 h-full w-10 md:hidden bg-gradient-to-l from-white to-transparent pointer-events-none z-5"></div> --}}
 
         <div
           class="flex gap-2 overflow-x-auto scrollbar-hide md:px-0 px-1"
@@ -476,7 +476,7 @@
       </div>  
 
       <div x-data="{ showCart: false, showModalMenu: false, showModal: false, showSidebar: false }" 
-          class="grid lg:grid-cols-4 md:grid-cols-3 xs:grid-cols-3 grid-cols-2 md:gap-x-2 gap-y-2 gap-0 md:items-start">
+          class="grid lg:grid-cols-4 md:grid-cols-3 xs:grid-cols-3 grid-cols-2 md:gap-x-2 gap-y-2 gap-2 md:items-start md:ms-0 ms-2 me-2">
         <template x-for="(col, i) in roundRobin(products.data, colsCount)" :key="i">
           <div>
             <template x-for="p in col" :key="p.id">
