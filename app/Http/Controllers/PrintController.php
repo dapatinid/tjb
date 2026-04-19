@@ -27,81 +27,99 @@ class PrintController extends Controller
     }
 
     // ✅ Helper: ambil data geografis hanya kode yang relevan
-    private function geoData(?Address $address): array
-    {
-        return [
-            'villages'  => Village::whereIn('code',  [$address->village  ?? ''])->get(),
-            'districts' => District::whereIn('code', [$address->district ?? ''])->get(),
-            'cities'    => City::whereIn('code',     [$address->city     ?? ''])->get(),
-            'states'    => Province::whereIn('code', [$address->state    ?? ''])->get(),
-        ];
-    }
+private function geoData(?Address $address, ?User $userModel = null): array
+{
+    // ✅ Kumpulkan semua kode yang mungkin dibutuhkan blade
+    $villageCodes  = array_filter([$address?->village,  $userModel?->village]);
+    $districtCodes = array_filter([$address?->district, $userModel?->district]);
+    $cityCodes     = array_filter([$address?->city,     $userModel?->city]);
+    $stateCodes    = array_filter([$address?->state,    $userModel?->state]);
 
-    public function printvieworder($id)
-    {
-        $this->guardAdmin('/my-orders');
+    return [
+        'villages'  => Village::whereIn('code',  $villageCodes  ?: [''])->get(),
+        'districts' => District::whereIn('code', $districtCodes ?: [''])->get(),
+        'cities'    => City::whereIn('code',     $cityCodes     ?: [''])->get(),
+        'states'    => Province::whereIn('code', $stateCodes    ?: [''])->get(),
+    ];
+}
 
-        $order      = Order::findOrFail($id);
-        $orderitems = OrderItem::where('order_id', $id)->get();
-        $address    = Address::where('order_id', $id)->first();
+public function printvieworder($id)
+{
+    $this->guardAdmin('/my-orders');
 
-        // ✅ Satu query untuk branch
-        $branch = Branch::select('logo', 'name_partner', 'name', 'phone')
-            ->find($order->branch_id);
+    $order      = Order::findOrFail($id);
+    $orderitems = OrderItem::where('order_id', $id)->get();
 
-        // ✅ Hanya payment untuk order ini
-        $paymentlast = Payment::where('paymentable_type', Order::class)
-            ->where('paymentable_id', $id)
-            ->orderBy('date_payment', 'desc')
-            ->get();
+    // ✅ Kembalikan ke query builder (tidak ->first()) karena blade pakai ->value()
+    $address = Address::where('order_id', $id);
+    $user    = User::where('id', $order->user_id);
 
-        $user = User::where('id', $order->user_id)->first();
+    $branch = Branch::select('logo', 'name_partner', 'name', 'phone')
+        ->find($order->branch_id);
 
-        return view('printorder', array_merge([
-            'date'               => date('d/m/Y'),
-            'order'              => $order,
-            'orderitems'         => $orderitems,
-            'address'            => $address,
-            'paymentlast'        => $paymentlast,
-            'user'               => $user,
-            'branchLogo'         => $branch?->logo,
-            'branchPartnerName'  => $branch?->name_partner,
-            'branchName'         => $branch?->name,
-            'branchPhone'        => $branch?->phone,
-        ], $this->geoData($address)));
-    }
+    $paymentlast = Payment::where('paymentable_type', Order::class)
+        ->where('paymentable_id', $id)
+        ->orderBy('date_payment', 'desc')
+        ->get();
 
-    public function printvieworderprocess($id)
-    {
-        $this->guardAdmin('/my-orders');
+    // ✅ Geo: ambil kode dari query builder dulu
+    $addressModel = $address->first();
+    $userModel    = $user->first();
 
-        $order      = Order::findOrFail($id);
-        $orderitems = OrderItem::where('order_id', $id)->get();
-        $address    = Address::where('order_id', $id)->first();
-        $user       = User::where('id', $order->user_id)->first();
+    return view('printorder', array_merge([
+        'date'              => date('d/m/Y'),
+        'order'             => $order,
+        'orderitems'        => $orderitems,
+        'address'           => $address,   // query builder untuk ->value()
+        'paymentlast'       => $paymentlast,
+        'user'              => $user,      // query builder untuk ->value()
+        'branchLogo'        => $branch?->logo,
+        'branchPartnerName' => $branch?->name_partner,
+        'branchName'        => $branch?->name,
+        'branchPhone'       => $branch?->phone,
+    ], $this->geoData($addressModel, $userModel)));
+}   
 
-        return view('printorder-process', array_merge([
-            'date'       => date('d/m/Y'),
-            'order'      => $order,
-            'orderitems' => $orderitems,
-            'address'    => $address,
-            'user'       => $user,
-        ], $this->geoData($address)));
-    }
+public function printvieworderprocess($id)
+{
+    $this->guardAdmin('/my-orders');
 
-    public function printviewtransferstock($id)
-    {
-        $this->guardAdmin('/admin/tr-stk-outs');
+    $order      = Order::findOrFail($id);
+    $orderitems = OrderItem::where('order_id', $id)->get();
+    $address    = Address::where('order_id', $id);
+    $user       = User::where('id', $order->user_id);
 
-        $trSTK      = TrStkOut::findOrFail($id);
-        $orderitems = OrderItem::where('tr_stk_out_id', $id)->get();
-        $branch     = Branch::where('is_active', 1)->get();
+    $addressModel = $address->first();
+    $userModel    = $user->first();
 
-        return view('print-transfer-stock', [
-            'date'       => date('d/m/Y'),
-            'trSTK'      => $trSTK,
-            'orderitems' => $orderitems,
-            'branch'     => $branch,
-        ]);
-    }
+    return view('printorder-process', array_merge([
+        'date'       => date('d/m/Y'),
+        'order'      => $order,
+        'orderitems' => $orderitems,
+        'address'    => $address,
+        'user'       => $user,
+    ], $this->geoData($addressModel, $userModel)));
+}
+
+public function printviewtransferstock($id)
+{
+    $this->guardAdmin('/admin/tr-stk-outs');
+
+    $trSTK      = TrStkOut::findOrFail($id);
+    $orderitems = OrderItem::where('tr_stk_out_id', $id)->get();
+
+    // ✅ Ambil hanya 2 branch yang relevan, tanpa filter is_active
+    // supaya tidak error jika branch sudah nonaktif
+    $branch = Branch::whereIn('id', [
+        $trSTK->from_branch_id,
+        $trSTK->to_branch_id,
+    ])->get();
+
+    return view('print-transfer-stock', [
+        'date'       => date('d/m/Y'),
+        'trSTK'      => $trSTK,
+        'orderitems' => $orderitems,
+        'branch'     => $branch,
+    ]);
+}
 }
