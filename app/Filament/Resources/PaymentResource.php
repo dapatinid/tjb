@@ -167,7 +167,7 @@ class PaymentResource extends Resource
                     ->summarize(Summarizer::make()
                         ->label('Total')->numeric(locale: 'id')->prefix('Rp ')
                         ->using(fn(QueryBuilder $query) => $query->sum('nominal_plus') - $query->sum('nominal_mins')))
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('currency')
                     ->searchable()
                     ->sortable()
