@@ -174,9 +174,9 @@ class PaymentResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('rekening')
                     ->label('Rekening')
-                    ->searchable()
+                    ->searchable(isIndividual: true)
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('nominal_plus')
                     ->label('Plus')
                     ->numeric(locale: 'id')->prefix('Rp ')
