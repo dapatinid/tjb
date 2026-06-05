@@ -59,13 +59,11 @@ class BalanceSheetAllPage extends Component
         $end       = $this->date_akhir . ' 23:59:59';
 
         // Ambil semua kode akun unik (dari debit & kredit)
-        $debitCodes  = Payment::where('branch_id', $branchId)
-            ->whereBetween('date_payment', [$start, $end])
+        $debitCodes  = Payment::whereBetween('date_payment', [$start, $end])
             ->where('debit', 'like', "%{$pattern}%")
             ->distinct()->pluck('debit');
 
-        $kreditCodes = Payment::where('branch_id', $branchId)
-            ->whereBetween('date_payment', [$start, $end])
+        $kreditCodes = Payment::whereBetween('date_payment', [$start, $end])
             ->where('kredit', 'like', "%{$pattern}%")
             ->distinct()->pluck('kredit');
 
@@ -74,12 +72,10 @@ class BalanceSheetAllPage extends Component
         // Untuk setiap kode, hitung sum debit & kredit sekaligus di DB
         $result = [];
         foreach ($allCodes as $code) {
-            $sumDebit  = Payment::where('branch_id', $branchId)
-                ->whereBetween('date_payment', [$start, $end])
+            $sumDebit  = Payment::whereBetween('date_payment', [$start, $end])
                 ->where('debit', $code)->sum('nominal');
 
-            $sumKredit = Payment::where('branch_id', $branchId)
-                ->whereBetween('date_payment', [$start, $end])
+            $sumKredit = Payment::whereBetween('date_payment', [$start, $end])
                 ->where('kredit', $code)->sum('nominal');
 
             $net = $side === 'debit'
