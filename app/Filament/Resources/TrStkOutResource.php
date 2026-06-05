@@ -445,7 +445,7 @@ class TrStkOutResource extends Resource
                 Tables\Actions\EditAction::make('print')
                     // ->label('Print Transfer')
                     ->hiddenLabel()
-                    ->url(fn(TrStkOut $record) => route('printtransferstock', $record))
+                    ->url(fn(TrStkOut $record) => route('printtransferstock-out', $record))
                     ->openUrlInNewTab()
                     ->icon('heroicon-o-printer'),
             ])

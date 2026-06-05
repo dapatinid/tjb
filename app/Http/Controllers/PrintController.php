@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\City;
 use App\Models\District;
 use App\Models\Province;
+use App\Models\TrStkIn;
 use App\Models\TrStkOut;
 use App\Models\Village;
 
@@ -101,7 +102,7 @@ public function printvieworderprocess($id)
     ], $this->geoData($addressModel, $userModel)));
 }
 
-public function printviewtransferstock($id)
+public function printviewtransferstockout($id)
 {
     $this->guardAdmin('/admin/tr-stk-outs');
 
@@ -115,7 +116,29 @@ public function printviewtransferstock($id)
         $trSTK->to_branch_id,
     ])->get();
 
-    return view('print-transfer-stock', [
+    return view('print-transfer-stock-out', [
+        'date'       => date('d/m/Y'),
+        'trSTK'      => $trSTK,
+        'orderitems' => $orderitems,
+        'branch'     => $branch,
+    ]);
+}
+
+public function printviewtransferstockin($id)
+{
+    $this->guardAdmin('/admin/tr-stk-ins');
+
+    $trSTK      = TrStkIn::findOrFail($id);
+    $orderitems = OrderItem::where('tr_stk_in_id', $id)->get();
+
+    // ✅ Ambil hanya 2 branch yang relevan, tanpa filter is_active
+    // supaya tidak error jika branch sudah nonaktif
+    $branch = Branch::whereIn('id', [
+        $trSTK->from_branch_id,
+        $trSTK->to_branch_id,
+    ])->get();
+
+    return view('print-transfer-stock-in', [
         'date'       => date('d/m/Y'),
         'trSTK'      => $trSTK,
         'orderitems' => $orderitems,

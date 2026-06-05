@@ -413,6 +413,12 @@ class TrStkInResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make('print')
+                    // ->label('Print Transfer')
+                    ->hiddenLabel()
+                    ->url(fn(TrStkIn $record) => route('printtransferstock-in', $record))
+                    ->openUrlInNewTab()
+                    ->icon('heroicon-o-printer'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

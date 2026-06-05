@@ -793,6 +793,28 @@ class JournalResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->summarize(Sum::make()->numeric(locale: 'id')->prefix('Rp ')->label('Nominal')),
+
+                Tables\Columns\TextColumn::make('rekening')
+                    ->label('Rekening')
+                    ->getStateUsing(function (Journal $record) {
+                        // Mengambil semua nama rekening dari relasi payments dan menjadikannya array
+                        return $record->payments->pluck('rekening')->filter()->toArray();
+                    })
+                    ->badge() // Ditampilkan sebagai badge agar rapi jika ada lebih dari satu rekening
+                    ->color('gray'),
+
+                Tables\Columns\TextColumn::make('debit')
+                    ->label('Debit')
+                    ->numeric(locale: 'id')->prefix('Rp ')
+                    ->alignRight()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('kredit')
+                    ->label('Kredit')
+                    ->numeric(locale: 'id')->prefix('Rp ')
+                    ->alignRight()
+                    ->sortable(),                    
+                    
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

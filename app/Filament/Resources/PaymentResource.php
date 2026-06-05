@@ -111,6 +111,17 @@ class PaymentResource extends Resource
                     ->limit(15)
                     ->searchable(isIndividual: true)
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('notes')
+                    ->label('Keterangan')
+                    ->getStateUsing(function (Payment $record) {
+                            return $record->paymentable->notes;
+                    })
+                    ->summarize(Summarizer::make()
+                        ->label('Total')->numeric(locale: 'id')->prefix('Rp ')
+                        ->using(fn(QueryBuilder $query) => $query->sum('nominal_plus') - $query->sum('nominal_mins')))
+                    ->toggleable(isToggledHiddenByDefault: false), 
+                    
                 Tables\Columns\TextColumn::make('mutation_type')
                     ->label('Type')
                     ->url(function ($state, $record) {
@@ -159,21 +170,19 @@ class PaymentResource extends Resource
                     })
                     ->color('info')
                     ->searchable(isIndividual: true)
-                    ->sortable(),
+                    ->sortable(),                   
                 Tables\Columns\TextColumn::make('payment_method')
                     ->label('Method')
                     ->searchable(isIndividual: true)
                     ->sortable()
-                    ->summarize(Summarizer::make()
-                        ->label('Total')->numeric(locale: 'id')->prefix('Rp ')
-                        ->using(fn(QueryBuilder $query) => $query->sum('nominal_plus') - $query->sum('nominal_mins')))
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('currency')
                     ->searchable()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('rekening')
                     ->label('Rekening')
+                    ->badge()
                     ->searchable(isIndividual: true)
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
@@ -182,8 +191,7 @@ class PaymentResource extends Resource
                     ->numeric(locale: 'id')->prefix('Rp ')
                     ->alignRight()
                     ->searchable()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->sortable()                    
                     ->summarize(Sum::make()->numeric(locale: 'id')->prefix('Rp ')->label('Total+'))
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('nominal_mins')
@@ -191,8 +199,7 @@ class PaymentResource extends Resource
                     ->numeric(locale: 'id')->prefix('Rp ')
                     ->alignRight()
                     ->searchable()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->sortable()                    
                     ->summarize(Sum::make()->numeric(locale: 'id')->prefix('Rp ')->label('Total-'))
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('nominal')

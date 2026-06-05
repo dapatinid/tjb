@@ -133,7 +133,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/printprevieworder/{id}', [PrintController::class, 'printvieworder'])->name('printorder');
     Route::get('/printprevieworderprocess/{id}', [PrintController::class, 'printvieworderprocess'])->name('printorderprocess');
-    Route::get('/printpreviewtransferstock/{id}', [PrintController::class, 'printviewtransferstock'])->name('printtransferstock');
+    Route::get('/printpreviewtransferstock-out/{id}', [PrintController::class, 'printviewtransferstockout'])->name('printtransferstock-out');
+    Route::get('/printpreviewtransferstock-in/{id}', [PrintController::class, 'printviewtransferstockin'])->name('printtransferstock-in');
     Route::get('/exportproducts', [ExportController::class, 'exportProduct']);
     Route::get('/exportbrands', [ExportController::class, 'exportBrand']);
     Route::get('/exportdompetbydatetransaksi/{byfilter}', [ExportController::class, 'exportDompetDateTrans'])->name('exportdompetbydatetransaksi');
