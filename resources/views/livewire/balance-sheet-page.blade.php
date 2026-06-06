@@ -4,7 +4,7 @@
       
   <div class="block mt-2 ">
       <div wire:ignore class="flex justify-between">
-      <a class="cursor-pointer flex flex-nowrap items-center dark:text-gray-300 bg-white dark:bg-gray-800 p-1 rounded-full"
+      <a class="print:hidden cursor-pointer flex flex-nowrap items-center dark:text-gray-300 p-1 rounded-full"
         href="/dompet" wire:navigate                   
         >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -12,8 +12,8 @@
             </svg>
 
       </a> 
-      <h1 class="md:text-2xl text-sm font-bold dark:text-white tengah-aja">NERACA - {{ Str::upper(auth()->user()->branch->name) }}</h1>
-      <button type="button" class="cursor-pointer text-red-500 text-sm underline underline-offset-2 font-semibold text-right bg-white dark:bg-gray-800 p-1 rounded-full"
+      <h1 class="md:text-2xl text-sm font-bold dark:text-white mx-auto mb-2">NERACA - {{ Str::upper(auth()->user()->branch->name) }}</h1>
+      <button type="button" class="print:hidden cursor-pointer text-red-500 text-sm underline underline-offset-2 font-semibold text-right p-1 rounded-full"
         aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-scale-animation-modal" data-hs-overlay="#hs-scale-animation-modal">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
