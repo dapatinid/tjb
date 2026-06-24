@@ -801,19 +801,22 @@ class JournalResource extends Resource
                         return $record->payments->pluck('rekening')->filter()->toArray();
                     })
                     ->badge() // Ditampilkan sebagai badge agar rapi jika ada lebih dari satu rekening
-                    ->color('gray'),
+                    ->color('gray')
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('debit')
                     ->label('Debit')
                     ->numeric(locale: 'id')->prefix('Rp ')
                     ->alignRight()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('kredit')
                     ->label('Kredit')
                     ->numeric(locale: 'id')->prefix('Rp ')
                     ->alignRight()
-                    ->sortable(),                    
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),                    
                     
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
