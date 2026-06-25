@@ -806,14 +806,12 @@ class JournalResource extends Resource
 
                 Tables\Columns\TextColumn::make('debit')
                     ->label('Debit')
-                    ->numeric(locale: 'id')->prefix('Rp ')
                     ->alignRight()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('kredit')
                     ->label('Kredit')
-                    ->numeric(locale: 'id')->prefix('Rp ')
                     ->alignRight()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),                    
