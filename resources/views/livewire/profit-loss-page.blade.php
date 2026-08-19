@@ -62,6 +62,9 @@
       <input type="date" wire:model.live="date_akhir" name="date_akhir" id="date_akhir"
       class="border-0 bg-transparent dark:text-white ms-10">
     </div>
+    <div class="flex justify-center items-center">
+            <span>Diunduh {{ now() }}<span>
+    </div>
   </div>
 
   <!-- JUDUL End -->
