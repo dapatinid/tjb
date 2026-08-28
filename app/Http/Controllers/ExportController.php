@@ -55,7 +55,7 @@ class ExportController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $filename = 'stok_status_' . now()->format('Ymd_His') . '.xlsx';
+        $filename = 'stok_status_' . now()->format('Ymd_His') . auth()->user()->branch->name . '.xlsx';
         
         // Lempar parameter tanggal ke Constructor StokStatusExport
         return Excel::download(new StokStatusExport($data, $startDate, $endDate), $filename, \Maatwebsite\Excel\Excel::XLSX);
