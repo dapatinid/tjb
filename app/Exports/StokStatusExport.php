@@ -32,7 +32,7 @@ class StokStatusExport implements FromCollection, WithMapping, WithHeadings, Wit
 
         // Menyusun string Judul Besar
         $title = sprintf(
-            '[%s] STOK STATUS %s sd %s diunduh pada %s', 
+            '%s ~ STOK STATUS %s sd %s ~ diunduh pada %s', 
             $branchName,
             $this->startDate, 
             $this->endDate, 
