@@ -164,11 +164,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 🔹 Tombol Export
 document.addEventListener('click', (e) => {
-    // Perbaikan logic targeting icon di dalam button
     const targetBtn = e.target.closest('#exportExcelBtn'); 
     
     if (targetBtn) {
-        // Ambil nilai dari form input
         const dateAwal = document.getElementById('date_awal').value;
         const dateAkhir = document.getElementById('date_akhir').value;
 
@@ -180,19 +178,33 @@ document.addEventListener('click', (e) => {
             },
             body: JSON.stringify({ 
                 data: exportData,
-                start_date: dateAwal,   // Sisipkan tanggal awal
-                end_date: dateAkhir     // Sisipkan tanggal akhir
+                start_date: dateAwal,
+                end_date: dateAkhir
             })
         })
         .then(res => {
             if (res.headers.get("Content-Type").includes("application/json")) {
                 return res.json().then(console.log); 
             } else {
+                // TANGKAP NAMA FILE DARI BACKEND LARAVEL
+                const contentDisposition = res.headers.get('Content-Disposition');
+                let fileName = "stok_status.xlsx"; // Fallback default
+                
+                if (contentDisposition) {
+                    const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+                    if (fileNameMatch && fileNameMatch.length === 2) {
+                        fileName = fileNameMatch[1];
+                    }
+                }
+
                 return res.blob().then(blob => {
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement("a");
                     a.href = url;
-                    a.download = "stok_status_" + (new Date().getTime()) + ".xlsx";
+                    
+                    // GUNAKAN VARIABEL NAMA FILE DARI BACKEND
+                    a.download = fileName; 
+                    
                     a.click();
                     URL.revokeObjectURL(url);
                 });

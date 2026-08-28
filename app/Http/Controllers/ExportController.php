@@ -10,6 +10,7 @@ use App\Exports\DompetExportByDateDiedit;
 use App\Exports\StokStatusExport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
 
 class ExportController extends Controller
 {
@@ -51,13 +52,20 @@ class ExportController extends Controller
     {
         $data = $request->input('data', []);
         
-        // Tangkap tanggal awal dan akhir dari JSON Request
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $filename = 'stok_status_' . now()->format('Ymd_His') . auth()->user()->branch->name . '.xlsx';
+        // 1. Ambil nama branch dengan aman
+        $branchName = auth()->check() && auth()->user()->branch 
+            ? auth()->user()->branch->name 
+            : 'Pusat';
+
+        // 2. Format nama branch agar aman untuk nama file (spasi jadi strip)
+        $cleanBranch = Str::slug($branchName);
+
+        // 3. Susun filename
+        $filename = 'stok_status_' . $cleanBranch . '_' . now()->format('Ymd_His') . '.xlsx';
         
-        // Lempar parameter tanggal ke Constructor StokStatusExport
         return Excel::download(new StokStatusExport($data, $startDate, $endDate), $filename, \Maatwebsite\Excel\Excel::XLSX);
     }
 }
