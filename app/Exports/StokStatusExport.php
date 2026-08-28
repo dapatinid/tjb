@@ -31,12 +31,12 @@ class StokStatusExport implements FromCollection, WithMapping, WithHeadings
             'Status',
             'Beli',
             'Jual',
-            'Produksi',
-            'Adjustment',
-            'Transfer Out',
-            'Transfer In',
+            'Prod',
+            'Adj',
+            'Tf Out',
+            'Tf In',
             'Saldo',
-            'Saldo Gudang',
+            'Sld Gdg',
         ];
     }
 
