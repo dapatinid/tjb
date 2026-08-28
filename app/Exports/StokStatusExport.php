@@ -24,9 +24,16 @@ class StokStatusExport implements FromCollection, WithMapping, WithHeadings, Wit
 
     public function headings(): array
     {
+        // Ambil nama branch dari user login. 
+        // Diberi pengecekan (fallback) untuk mencegah error jika relasi/branch kosong
+        $branchName = auth()->check() && auth()->user()->branch 
+            ? auth()->user()->branch->name 
+            : 'Pusat'; // Ganti 'Pusat' dengan default fallback Anda
+
         // Menyusun string Judul Besar
         $title = sprintf(
-            'STOK STATUS %s sd %s diunduh pada %s', 
+            '[%s] STOK STATUS %s sd %s diunduh pada %s', 
+            $branchName,
             $this->startDate, 
             $this->endDate, 
             now()->format('Y-m-d H:i:s')
@@ -49,7 +56,7 @@ class StokStatusExport implements FromCollection, WithMapping, WithHeadings, Wit
                 'Sld Gdg',
             ]
         ];
-    }
+    }   
 
     public function map($item): array
     {

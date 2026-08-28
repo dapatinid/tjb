@@ -1,6 +1,6 @@
 <div class="w-full max-w-[85rem] py-10 px-4 sm:px-6 lg:px-8 mx-auto">
   <h1 class="text-2xl font-bold text-center text-slate-500 dark:text-white">
-    Items List
+    Items List {{ Str::upper(auth()->user()->branch->name) }}
   </h1>
   
   <div class="flex items-center justify-between mt-3">
