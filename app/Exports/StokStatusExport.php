@@ -8,6 +8,7 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 
 class StokStatusExport implements FromCollection, WithMapping, WithHeadings, WithStyles
 {
@@ -82,8 +83,22 @@ class StokStatusExport implements FromCollection, WithMapping, WithHeadings, Wit
 
     public function styles(Worksheet $sheet)
     {
-        // Merge cell A1 sampai K1 untuk judul agar rapi
+        // 1. Merge cell A1 sampai K1 untuk judul agar rapi
         $sheet->mergeCells('A1:K1');
+
+        // 2. Dapatkan baris terakhir yang ada datanya
+        $highestRow = $sheet->getHighestRow();
+
+        // 3. Terapkan Border dari A3 sampai K{baris_terakhir}
+        // Kolom K adalah kolom ke-11 (Sld Gdg)
+        $sheet->getStyle('A3:K' . $highestRow)->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['argb' => 'FF000000'], // Warna Hitam
+                ],
+            ],
+        ]);
 
         return [
             // Style Baris 1 (Judul Besar)
