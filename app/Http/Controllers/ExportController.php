@@ -50,8 +50,14 @@ class ExportController extends Controller
     public function exportTabelStokStatus(Request $request)
     {
         $data = $request->input('data', []);
+        
+        // Tangkap tanggal awal dan akhir dari JSON Request
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
 
         $filename = 'stok_status_' . now()->format('Ymd_His') . '.xlsx';
-        return Excel::download(new StokStatusExport($data), $filename, \Maatwebsite\Excel\Excel::XLSX);
+        
+        // Lempar parameter tanggal ke Constructor StokStatusExport
+        return Excel::download(new StokStatusExport($data, $startDate, $endDate), $filename, \Maatwebsite\Excel\Excel::XLSX);
     }
 }

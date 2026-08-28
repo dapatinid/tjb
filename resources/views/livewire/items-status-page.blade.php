@@ -164,24 +164,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 🔹 Tombol Export
 document.addEventListener('click', (e) => {
-    if (e.target.id === 'exportExcelBtn') {
+    // Perbaikan logic targeting icon di dalam button
+    const targetBtn = e.target.closest('#exportExcelBtn'); 
+    
+    if (targetBtn) {
+        // Ambil nilai dari form input
+        const dateAwal = document.getElementById('date_awal').value;
+        const dateAkhir = document.getElementById('date_akhir').value;
+
         fetch("{{ route('exporttabelstok') }}", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRF-TOKEN": "{{ csrf_token() }}"
             },
-            body: JSON.stringify({ data: exportData })
+            body: JSON.stringify({ 
+                data: exportData,
+                start_date: dateAwal,   // Sisipkan tanggal awal
+                end_date: dateAkhir     // Sisipkan tanggal akhir
+            })
         })
         .then(res => {
             if (res.headers.get("Content-Type").includes("application/json")) {
-                return res.json().then(console.log); // Debug JSON dulu
+                return res.json().then(console.log); 
             } else {
                 return res.blob().then(blob => {
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement("a");
                     a.href = url;
-                    a.download = "stok_status.xlsx";
+                    a.download = "stok_status_" + (new Date().getTime()) + ".xlsx";
                     a.click();
                     URL.revokeObjectURL(url);
                 });

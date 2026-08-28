@@ -6,37 +6,48 @@ use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class StokStatusExport implements FromCollection, WithMapping, WithHeadings
+class StokStatusExport implements FromCollection, WithMapping, WithHeadings, WithStyles
 {
     protected $data;
+    protected $startDate;
+    protected $endDate;
 
-    public function __construct($data)
+    public function __construct($data, $startDate, $endDate)
     {
-        // Pastikan data jadi array associative, bukan object JS
         $this->data = collect(json_decode(json_encode($data), true));
-
-        // Optional debug ke log
-        // \Log::info('📦 Data diterima di export:', [
-        //     'count' => $this->data->count(),
-        //     'sample' => $this->data->take(1),
-        // ]);
+        $this->startDate = $startDate ?: '-';
+        $this->endDate = $endDate ?: '-';
     }
 
     public function headings(): array
     {
+        // Menyusun string Judul Besar
+        $title = sprintf(
+            'STOK STATUS %s sd %s diunduh pada %s', 
+            $this->startDate, 
+            $this->endDate, 
+            now()->format('Y-m-d H:i:s')
+        );
+
         return [
-            'ID',
-            'Nama Produk',
-            'Status',
-            'Beli',
-            'Jual',
-            'Prod',
-            'Adj',
-            'Tf Out',
-            'Tf In',
-            'Saldo',
-            'Sld Gdg',
+            [$title], // Baris 1: Judul Besar (A1)
+            [],       // Baris 2: Kosong
+            [         // Baris 3: Heading Kolom (A3)
+                'ID',
+                'Nama Produk',
+                'Status',
+                'Beli',
+                'Jual',
+                'Prod',
+                'Adj',
+                'Tf Out',
+                'Tf In',
+                'Saldo',
+                'Sld Gdg',
+            ]
         ];
     }
 
@@ -60,5 +71,18 @@ class StokStatusExport implements FromCollection, WithMapping, WithHeadings
     public function collection()
     {
         return $this->data;
+    }
+
+    public function styles(Worksheet $sheet)
+    {
+        // Merge cell A1 sampai K1 untuk judul agar rapi
+        $sheet->mergeCells('A1:K1');
+
+        return [
+            // Style Baris 1 (Judul Besar)
+            1 => ['font' => ['bold' => true, 'size' => 14]],
+            // Style Baris 3 (Heading Tabel)
+            3 => ['font' => ['bold' => true]],
+        ];
     }
 }
